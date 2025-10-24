@@ -1,7 +1,9 @@
 :root{
     --primary-c: #4582ff;
     --bgr-c: #F7F6F5;
+    --text-c:#342d47;
     --section-bgr:#FCFCFC;
+    --border-c: #545454;
 }
 /* === INTER FONT FAMILY === */
 @font-face {
@@ -32,19 +34,19 @@
   font-style: italic;
 }
 
-@font-face {
-  font-family: 'Inter';
-  src: url('../../fonts/Inter/Inter_18pt-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: 'Inter';
+//   src: url('../../fonts/Inter/Inter_18pt-SemiBold.ttf') format('truetype');
+//   font-weight: 600;
+//   font-style: normal;
+// }
 
-@font-face {
-  font-family: 'Inter';
-  src: url('../../fonts/Inter/Inter_18pt-SemiBoldItalic.ttf') format('truetype');
-  font-weight: 600;
-  font-style: italic;
-}
+// @font-face {
+//   font-family: 'Inter';
+//   src: url('../../fonts/Inter/Inter_18pt-SemiBoldItalic.ttf') format('truetype');
+//   font-weight: 600;
+//   font-style: italic;
+// }
 
 @font-face {
   font-family: 'Inter';
@@ -64,7 +66,7 @@
 html, body {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  color: #222;
+  color: var(--text-c);
   background-color: #fff;
 }
 
