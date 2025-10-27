@@ -1,7 +1,8 @@
+import React from "react";
+import Search  from '../../../components/Learner/Search/SearchResult';
 
-function Search(){
-    return(
-        <h1>Search page</h1>
-    )
-}
-export default Search;
+const SearchPage = () => {
+  return <Search />;
+};
+
+export default SearchPage;

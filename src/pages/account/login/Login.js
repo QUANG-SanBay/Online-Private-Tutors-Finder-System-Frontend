@@ -1,7 +1,9 @@
+import React from "react";
+import Login from '../../../components/login/Login';
 
-function Login(){
-    return(
-        <h1>Login page</h1>
-    )
-}
-export default Login;
+
+const LoginPage = () => {
+  return <Login />;
+};
+
+export default LoginPage;
