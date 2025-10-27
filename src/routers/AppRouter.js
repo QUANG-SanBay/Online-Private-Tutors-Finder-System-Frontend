@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router-dom'
 import { learnerRouter, publicRouter } from './routes'
 import  {DefaultLayout}  from '~/components/layouts/';
 
-
 function AppRouter() {
     return (
         //public router
