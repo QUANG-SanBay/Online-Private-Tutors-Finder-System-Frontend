@@ -1,5 +1,5 @@
 import React from "react";
-import Contact from '../../../components/Learner/Contact/Contact';
+import Contact from './contact_cpn';
 
 
 const ContactPage = () => {

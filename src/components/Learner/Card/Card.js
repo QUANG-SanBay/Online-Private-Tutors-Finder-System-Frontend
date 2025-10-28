@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "./TutorDetail.scss";
+import "~/pages/learner/TutorDetail/TutorDetail.scss";
 import TutorFormModal from "../TutorModal/TutorModal";
 
 
