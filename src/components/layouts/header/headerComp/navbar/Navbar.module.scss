@@ -44,7 +44,6 @@
   // hover
   &:hover {
     color: var(--primary-c);
-    font-weight: 600;
 
     &::after {
       width: 100%;
@@ -54,7 +53,6 @@
   // active state
   &.active {
     color: var(--primary-c);
-    font-weight: 700;
 
     &::after {
       width: 100%;

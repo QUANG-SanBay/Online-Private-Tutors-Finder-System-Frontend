@@ -1,6 +1,7 @@
 import {Logo, Search, Notification, Avata, Navbar} from './headerComp'
 import styles from './Header.module.scss'
 function Header(){
+
     return(
         <header className={styles.header}>
             <div className={styles.headerCtn}>

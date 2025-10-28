@@ -1,5 +1,14 @@
 .account{
+    position: relative;
     margin-right: 24px;
+    &:hover{
+        cursor: pointer;
+    }
+    .show{
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
 }
 .accountAvt{
     position: relative;
@@ -7,6 +16,7 @@
     height: 40px;
     width: 40px;
 }
+
 .accountImg{
     display: flex;
     align-items: center;
@@ -29,6 +39,12 @@
     transform: translateY(-50%);
 }
 .accountIconItem{
+    display: inline-flex; 
     font-size: 1.2rem;
     color: var(--text-c);
+    transition: transform 0.3s ease;
+    transform: rotate(-180deg);
+    &.rotate{
+        transform: rotate(0deg);
+    }
 }
