@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import "./TutorDetail.scss";
 import { FaStar } from "react-icons/fa";
-import ClassCard from "../TutorDetail/Card";
+import ClassCard from "~/components/Learner/Card/Card";
 
 
 const TutorDetail = () => {
@@ -109,9 +109,6 @@ const TutorDetail = () => {
           <p>
             Giáo viên: <span className="teacher">Giáo viên</span>
           </p>
-          <a href="#" className="link">
-            Xem thêm thông tin giáo viên
-          </a>
           <h3 className="price">200.000đ</h3>
           <p className="desc">Thông tin khóa học đang được cập nhật</p>
           <button className="btn-primary">Đăng ký thuê gia sư</button>
