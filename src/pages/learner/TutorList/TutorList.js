@@ -1,5 +1,5 @@
 import React from "react";
-import TutorList from '../../../components/Learner/TutorList/TutorList';
+import TutorList from './TutorList_cpn';
 
 
 const TutorListPage = () => {

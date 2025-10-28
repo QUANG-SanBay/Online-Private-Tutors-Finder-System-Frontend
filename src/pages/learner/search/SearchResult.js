@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./SearchResult.scss";
 import "../TutorDetail/TutorDetail.scss";
-import ClassCard from "../../Learner/TutorDetail/Card";
+import ClassCard from "~/components/Learner/Card/Card";
 
 const classes = [
   {
