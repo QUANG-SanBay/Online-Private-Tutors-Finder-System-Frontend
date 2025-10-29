@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./Login.scss";
 import { FaUser, FaLock, FaGoogle } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Logo } from "../layouts/header/headerComp";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,8 +47,7 @@ const Login = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <Logo />
-        <h1>Đăng nhập tại đây</h1>
+        <h1>Đăng nhập</h1>
 
         <form onSubmit={handleLogin}>
           <div className="input-box">
@@ -87,7 +85,7 @@ const Login = () => {
                 checked={form.remember}
                 onChange={handleChange}
               />{" "}
-              Ghi nhớ cho lần đăng nhập sau
+              Ghi nhớ đăng nhập
             </label>
             <a href="/ForgotPassword">Quên mật khẩu?</a>
           </div>

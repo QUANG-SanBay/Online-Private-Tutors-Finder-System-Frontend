@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.scss";
-import { Logo } from "../layouts/header/headerComp";
 
 const OTP = () => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputsRef = useRef([]);
   const [timeLeft, setTimeLeft] = useState(60);
 
@@ -22,7 +21,7 @@ const OTP = () => {
     const newOtp = [...otp];
     newOtp[index] = val;
     setOtp(newOtp);
-    if (index < 3) {
+    if (index < 5) {
       inputsRef.current[index + 1].focus();
     }
   };
@@ -36,12 +35,12 @@ const OTP = () => {
   };
 
   const handleVerifyOTP = () => {
-    if (otp.some((o) => o === "")) return alert("Nhập đầy đủ 4 số OTP!");
+    if (otp.some((o) => o === "")) return alert("Nhập đầy đủ 6 số OTP!");
     navigate("/NewPassword");
   };
 
   const handleResend = () => {
-    setOtp(["", "", "", ""]);
+    setOtp(["", "", "", "", "", ""]);
     setTimeLeft(60);
     inputsRef.current[0].focus();
     alert("OTP mới đã gửi (giả lập)");
@@ -50,7 +49,6 @@ const OTP = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <Logo />
         <h1>Nhập mã OTP</h1>
         <div className="otp-box">
           {otp.map((val, idx) => (
@@ -78,6 +76,10 @@ const OTP = () => {
 
         <button className="btn-login" onClick={handleVerifyOTP}>
           Xác thực OTP
+        </button>
+
+        <button className="btn-other" onClick={handleResend} disabled={timeLeft > 0}>
+          Gửi lại OTP
         </button>
       </div>
     </div>

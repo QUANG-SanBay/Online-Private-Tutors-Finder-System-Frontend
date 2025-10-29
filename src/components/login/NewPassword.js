@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Login.scss";
-import { Logo } from "../layouts/header/headerComp";
 
 const NewPassword = () => {
   const navigate = useNavigate();
@@ -21,7 +20,6 @@ const NewPassword = () => {
   return (
     <div className="login-page">
       <div className="login-container">
-        <Logo />
         <h1>Đặt mật khẩu mới</h1>
 
         {/* Mật khẩu mới */}
