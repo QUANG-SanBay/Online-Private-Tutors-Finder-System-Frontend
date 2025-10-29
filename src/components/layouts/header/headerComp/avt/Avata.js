@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import Dropdown from '../dropdown/Dropdown';
 import avt from '~/assets/imgs/img.jpg'
 import styles from './Avata.module.scss'
-import { icon } from '@fortawesome/fontawesome-svg-core';
 
 function Avata({className}){
     const [open, setOpen] = useState(false);

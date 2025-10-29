@@ -1,4 +1,4 @@
-import {Logo, Search, Notification, Avata, Navbar} from './headerComp'
+import {Logo, Notification, Avata, Navbar} from './headerComp'
 import styles from './Header.module.scss'
 function Header(){
 
@@ -7,13 +7,13 @@ function Header(){
             <div className={styles.headerCtn}>
                 <div className={styles.headerTop}>
                     <Logo></Logo>
-                    <Search></Search>
+                    {/* <Search></Search> */}
+                    <Navbar></Navbar>
                     <div className={styles.action}>
                         <Notification></Notification>
                         <Avata></Avata>
                     </div>
                 </div>
-                <Navbar></Navbar>
             </div>
         </header>
     )

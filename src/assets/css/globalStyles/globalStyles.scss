@@ -1,13 +1,16 @@
 :root{
     --primary-c: #4582ff;
+    --primary-c-01: rgba(69, 130, 255, 0.1);
     --bgr-c: #F7F6F5;
     --text-c:#342d47;
     --section-bgr:#FCFCFC;
     --border-c: #545454;
+    --border-c-04: #bebebe;
     --hover-c: #E4E4E4;
+    --bgr-hover-c: rgba(0, 0, 0, 0.03);
     --bg-hover-c: #F0F0F0;
     --bg-light-c: #FCFCFC;
-    --box-shadow: 0 0px 1px rgba(0, 0, 0, 0.7);
+    --box-shadow: 0.5px 0.5px 1.5px rgba(0, 0, 0, 0.7);
 }
 /* === INTER FONT FAMILY === */
 @font-face {
