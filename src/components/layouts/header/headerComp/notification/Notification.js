@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import styles from './Notification.module.scss'
+import Modal from "~/components/modal/Modal";
 import NotifiDropdown from "~/components/dropdown/notifiDropdown/NotifiDropdown";
 
 function Notification(){

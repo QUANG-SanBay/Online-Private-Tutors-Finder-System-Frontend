@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {Logo, Notification, Avata, Navbar} from './headerComp'
 import styles from './Header.module.scss'
 function Header(){
@@ -6,7 +7,9 @@ function Header(){
         <header className={styles.header}>
             <div className={styles.headerCtn}>
                 <div className={styles.headerTop}>
-                    <Logo></Logo>
+                    <Link to={'/'}>
+                        <Logo></Logo>
+                    </Link>
                     {/* <Search></Search> */}
                     <Navbar></Navbar>
                     <div className={styles.action}>
