@@ -5,9 +5,7 @@ import styles from './Logo.module.scss'
 function Logo({className}){
 
     return(
-        <div className={clsx(styles.logo, {
-            ...className
-        })}>
+        <div className={clsx(styles.logo, className)}>
             <span className={styles.logoIcon}>
                 <FontAwesomeIcon icon={faGraduationCap}/>
             </span>

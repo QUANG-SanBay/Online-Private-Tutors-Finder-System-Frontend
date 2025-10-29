@@ -1,0 +1,64 @@
+.group{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 8px;
+}
+.label{
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-c);
+    .required{
+        font-size: 1.6rem;
+        color: #d33;
+        margin-left: 4px;
+    }
+}
+.input {
+  font-family: 'Inter';
+  height: 38px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: var(--input-bgr);
+  font-size: 1.4rem;
+  outline: none;
+  box-shadow: 0 0 2px transparent;
+  transition: all 0.12s ease-in-out;
+}
+.input:focus {
+  border-color: rgb(0, 255, 0);
+  box-shadow: 0 0 2px rgb(0, 255, 0);
+  background: var(--btn-bgr-white);
+}
+.invalid { border-color: #d33; }
+.error { color: #d33; font-size: 1.2rem; }
+.selectedValues{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .selectedItem{
+    font-size: 1.2rem;
+    background-color: #e8e8e8;
+    border-radius: 8px;
+    line-height: 32px;
+    padding-left: 8px;
+    button
+    {
+      margin-left: 4px;
+      padding: 2px 4px;
+      font-weight: bold;
+      background-color: transparent;
+      color: #2c2c2c;
+      line-height: 32px;
+      padding: 0 8px;
+      &:hover{
+        color: #d33;
+        cursor: pointer;
+      }
+  }
+  }
+}

@@ -1,0 +1,17 @@
+.register{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.formContainer{
+    display: flex;
+    flex-direction: column;
+    width: 800px;
+    padding: 16px;
+    background-color: var(--section-bgr);
+    margin-top: 32px;
+    margin-bottom: 32px;
+    border-radius: 12px;
+    border: 1px solid var(--border-c-04);
+}
