@@ -1,6 +1,6 @@
 .group{
     display: flex;
-    width: 100%;
+    max-width: 100%;
     flex-direction: column;
     padding: 8px;
 }
@@ -16,13 +16,17 @@
 }
 .input {
   font-family: 'Inter';
-  height: 38px;
+  min-height: 38px;
+  max-height: 120px;
+  max-width: 100%;
   width: 100%;
+  resize: vertical;
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
   background: var(--input-bgr);
   font-size: 1.4rem;
+  line-height: 1.5;
   outline: none;
   box-shadow: 0 0 2px transparent;
   transition: all 0.12s ease-in-out;
@@ -37,6 +41,7 @@
 .selectedValues{
   display: flex;
   flex-wrap: wrap;
+  max-width: 100%;
   gap: 8px;
   margin-bottom: 8px;
 

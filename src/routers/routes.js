@@ -1,6 +1,6 @@
 import {
     Home, EBooks, Profile,
-    Search, Register
+    Search, RegisterTutor, RegisterLearner
 } from '~/pages'
 
 import LoginPage from '../pages/account/login/Login';
@@ -20,7 +20,8 @@ const publicRouter = [
     {path: '/ForgotPassword', element: <ForgotPassword/>},
     {path: '/OTP', element: <OTP/>},
     {path: '/NewPassword', element: <NewPassword/>},
-    {path: '/Register', element: <Register/>}
+    {path: '/RegisterTutor', element: <RegisterTutor/>},
+    {path: '/RegisterLearner', element: <RegisterLearner/>}
 ]
 
 const learnerRouter = [

@@ -1,4 +1,4 @@
-import './gribCustom.css';
+import './gribCustom.scss';
 
 function GribCustom({  children}) {
     return ( 
