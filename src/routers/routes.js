@@ -12,16 +12,17 @@ import NewPassword from '../pages/account/login/NewPassword';
 import TutorList from '../pages/learner/TutorList/TutorList';
 import TutorDetail from '../pages/learner/TutorDetail/TutorDetail';
 
-
 import ContactPage from '~/pages/learner/contact/Contact';
+//tutor pages
+import TutorHome from '~/pages/tutor/home/TutorHome';
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
     {path: '/ForgotPassword', element: <ForgotPassword/>},
     {path: '/OTP', element: <OTP/>},
     {path: '/NewPassword', element: <NewPassword/>},
-    {path: '/RegisterTutor', element: <RegisterTutor/>},
-    {path: '/RegisterLearner', element: <RegisterLearner/>}
+    {path: '/register/tutor', element: <RegisterTutor/>},
+    {path: '/register/learner', element: <RegisterLearner/>}
 ]
 
 const learnerRouter = [
@@ -35,4 +36,8 @@ const learnerRouter = [
     {path: '/Contact', element: <ContactPage/>}
 ]
 
-export {learnerRouter, publicRouter };
+const tutorRouter = [
+    {path: '/tutor/home', element: <TutorHome/>}
+];
+
+export {learnerRouter, publicRouter, tutorRouter };

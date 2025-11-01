@@ -7,11 +7,15 @@ import avt from '~/assets/imgs/img.jpg'
 import styles from './Avata.module.scss'
 import Modal from '~/components/modal/Modal';
 
-function Avata({ className }) {
+function Avata({ className, userType = 'learner' }) {
     const [open, setOpen] = useState(false);
     const menuArr = [
         { label: 'Hồ sơ của bạn', path: '/Profile', icon: faUser },
         { label: 'Đăng xuất', path: '/logout', icon: faRightFromBracket },
+    ];
+    const menuArrTutor = [
+        { label: 'Hồ sơ của bạn', path: '/tutor/Profile', icon: faUser },
+        { label: 'Đăng xuất', path: '/tutor/logout', icon: faRightFromBracket },
     ];
     return (
         <div className={clsx(styles.account, className)} onClick={() => setOpen(!open)}>
@@ -26,7 +30,9 @@ function Avata({ className }) {
                         </span>
                     </div>
                 </div>
-                <Dropdown arr={menuArr} className={clsx(styles.accountDropdown, open ? styles.show : '')} />
+                {userType === 'learner' ? 
+                <Dropdown arr={menuArr} className={clsx(styles.accountDropdown, open ? styles.show : '')} /> 
+                : <Dropdown arr={menuArrTutor} className={clsx(styles.accountDropdown, open ? styles.show : '')} />}
                 {open && <Modal type='default'></Modal>}
             </div>
         </div>

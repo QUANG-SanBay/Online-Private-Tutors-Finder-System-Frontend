@@ -1,20 +1,22 @@
 import { Link } from 'react-router-dom';
-import {Logo, Notification, Avata, Navbar} from './headerComp'
+import { Logo, Notification, Avata, Navbar } from './headerComp'
 import styles from './Header.module.scss'
-function Header(){
+function Header({ showNavbar = true, showNotification = true, userType = 'learner' }) {
 
-    return(
+    return (
         <header className={styles.header}>
             <div className={styles.headerCtn}>
                 <div className={styles.headerTop}>
-                    <Link to={'/'}>
-                        <Logo></Logo>
-                    </Link>
+                    {userType === 'learner' ?
+                        <Link to={'/'}><Logo></Logo></Link>
+                        : <Link to={'/tutor/home'}><Logo></Logo></Link>}
                     {/* <Search></Search> */}
-                    <Navbar></Navbar>
+                    {showNavbar && <Navbar userType={userType}></Navbar>}
                     <div className={styles.action}>
-                        <Notification></Notification>
-                        <Avata></Avata>
+                        {showNotification &&
+                            <Notification></Notification>
+                        }
+                        <Avata userType={userType}></Avata>
                     </div>
                 </div>
             </div>
