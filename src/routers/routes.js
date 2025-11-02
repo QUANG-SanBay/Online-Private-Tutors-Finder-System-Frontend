@@ -15,6 +15,8 @@ import TutorDetail from '../pages/learner/TutorDetail/TutorDetail';
 import ContactPage from '~/pages/learner/contact/Contact';
 //tutor pages
 import TutorHome from '~/pages/tutor/home/TutorHome';
+import TutorSchedule from '~/pages/tutor/schedule/TutorSchedule';
+import ParentRequest from '~/pages/tutor/parentRequest/ParentRequest';
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
@@ -37,7 +39,9 @@ const learnerRouter = [
 ]
 
 const tutorRouter = [
-    {path: '/tutor/home', element: <TutorHome/>}
+    {path: '/tutor/home', element: <TutorHome/>},
+    {path: '/tutor/schedule', element: <TutorSchedule/>},
+    {path: '/tutor/parent-requests', element: <ParentRequest/>}
 ];
 
 export {learnerRouter, publicRouter, tutorRouter };

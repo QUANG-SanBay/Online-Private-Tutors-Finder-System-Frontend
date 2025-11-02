@@ -1,3 +1,7 @@
+import avt from "~/assets/imgs/img.jpg";
+import styles from "./BodyMiniProfile.module.scss";
+import clsx from "clsx";
+
 function BodyMiniProfile() {
     //fake data
     const userData = {
@@ -10,17 +14,17 @@ function BodyMiniProfile() {
         educationLevel: "Đại học",
         certificates: "không",
         introduction: "Xin chào tôi là Nguyễn Văn A, tôi là gia sư dạy toán với hơn 5 năm kinh nghiệm giảng dạy. Tôi cam kết mang đến cho học sinh những phương pháp học tập hiệu quả và thú vị.",
-        avatarUrl: "", // URL ảnh đại diện
+        avatarUrl: avt, // URL ảnh đại diện
     };
     return ( 
-        <div>
-            <div>
-                <div>
+        <div className={styles.bodyMiniProfile}>
+            <div className={styles.avatarContainer}>
+                <div className={styles.avatarBox}>
                     <img src={userData.avatarUrl} alt="ảnh của bạn"/>
                 </div>
             </div>
-            <div>
-                <ul>
+            <div className={styles.infoContainer}>
+                <ul className={styles.infoList}>
                     <li>
                         <strong>Họ và tên:
                         </strong>
@@ -61,7 +65,7 @@ function BodyMiniProfile() {
                         </strong>
                         <span>{userData.certificates}</span>
                     </li>
-                    <li>
+                    <li className={styles.introduction}>
                         <strong>Giới thiệu:
                         </strong>
                         <span>

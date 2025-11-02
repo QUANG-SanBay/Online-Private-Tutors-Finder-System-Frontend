@@ -4,7 +4,6 @@ import clsx from "clsx";
 
 function Navbar() {
   const location = useLocation();
-
   const learnerMenu = [
     { title: "Trang chủ", path: "/" },
     { title: "Gia sư", path: "/Tutor" },
