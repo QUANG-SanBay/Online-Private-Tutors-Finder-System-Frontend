@@ -1,7 +1,5 @@
+import LearnerDashboard from "~/components/Learner/profile/LearnerDashboard";
 
-function Profile(){
-    return(
-        <h1>Profile page</h1>
-    )
+export default function DashboardPage() {
+  return <LearnerDashboard />;
 }
-export default Profile;
