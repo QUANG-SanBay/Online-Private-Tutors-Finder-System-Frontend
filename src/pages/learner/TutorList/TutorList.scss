@@ -64,6 +64,11 @@
 }
 
 /* ========== CARD ========== */
+.tutor-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
 .tutor-card {
   display: flex;
   flex-direction: column;

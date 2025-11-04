@@ -2,10 +2,11 @@ import React, {useState} from "react";
 import "./TutorDetail.scss";
 import { FaStar } from "react-icons/fa";
 import ClassCard from "~/components/Learner/Card/Card";
-
+import TutorFormModal from "~/components/Learner/TutorModal/TutorModal";
 
 const TutorDetail = () => {
   const [activeTab, setActiveTab] = useState("course");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const reviews = [
     {
       id: 1,
@@ -111,7 +112,11 @@ const TutorDetail = () => {
           </p>
           <h3 className="price">200.000đ</h3>
           <p className="desc">Thông tin khóa học đang được cập nhật</p>
-          <button className="btn-primary">Đăng ký thuê gia sư</button>
+          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>Đăng ký thuê gia sư</button>
+          <TutorFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          />
         </div>
       </div>
 
@@ -200,8 +205,7 @@ const TutorDetail = () => {
           </div>
         )}
       </div>
-
-      {/* Other Classes */}
+    {/* Other Classes */}
       <div className="other-classes">
         <h2>Lớp học khác</h2>
         <div className="class-grid">
@@ -211,6 +215,7 @@ const TutorDetail = () => {
         </div>
       </div>
   </div>
+  
   );
 };
 

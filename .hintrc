@@ -9,7 +9,8 @@
         "ignore": [
           "accent-color",
           "backdrop-filter",
-          "inset"
+          "inset",
+          "text-orientation"
         ]
       }
     ]
