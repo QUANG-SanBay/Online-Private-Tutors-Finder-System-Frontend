@@ -257,3 +257,18 @@
   font-size: 14px;
   font-weight: bold;
 }
+.redirect{
+    color: rgba(244, 232, 232, 0.91);
+    font-size: 1.4rem;
+    margin-top: 8px;
+    text-align: center;
+    .link{
+        color: rgb(54, 134, 255);
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 5px;
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Login.scss";
 import { FaUser, FaLock, FaGoogle } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -98,6 +98,11 @@ const Login = () => {
           <button type="button" className="btn-google">
             <FaGoogle className="google-icon" /> Đăng nhập với Google
           </button>
+          <div className="redirect"> 
+            <p className="text" >Bạn chưa có tài khoản?
+            <Link to="/register/tutor" className='link'>Đăng kí</Link>
+            </p>
+          </div> 
         </form>
 
         <footer>
