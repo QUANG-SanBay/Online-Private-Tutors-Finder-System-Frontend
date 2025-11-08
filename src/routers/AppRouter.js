@@ -36,7 +36,7 @@ function AppRouter() {
             {/* tutor chỉ được vào */}
             {tutorRouter.map((item, index) => (
                 <Route key={index} path={item.path} element={
-                    <TutorLayout userType={userType}>
+                    <TutorLayout >
                         {item.element}
                     </TutorLayout>
                 }></Route>
