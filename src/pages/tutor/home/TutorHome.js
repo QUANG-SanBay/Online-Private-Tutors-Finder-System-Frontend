@@ -6,8 +6,8 @@ import styles from './TutorHome.module.scss';
 import ListClasses from "./listClasses/ListClasses";
 function TutorHome() {
     return ( 
-        <div>
-            <section>
+        <div className={styles.tutorHome}>
+            <section className={styles.section}>
                 <Grid container spacing={2} columns={12}>
                     <Grid item xs={12} size={{xs:12, sm:12, md:8, lg:8}}>
                         <MiniProfile></MiniProfile>
@@ -26,7 +26,7 @@ function TutorHome() {
                     </Grid>
                 </Grid>
             </section>
-            <section>
+            <section className={styles.section}>
                 <ListClasses />
             </section>
         </div>
