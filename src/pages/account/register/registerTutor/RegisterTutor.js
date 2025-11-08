@@ -11,7 +11,7 @@ function Register(){
                 <RegisterForm />
             <div className={styles.redirect}>
                 <p className={styles.text}>Bạn đã có tài khoản? <Link to="/Login" className={styles.link}>Đăng nhập</Link></p>
-                <p className={styles.text}>Bạn Muốn đăng ký với tư cách người học? <Link to="/RegisterLearner" className={styles.link}>Đăng ký(Người học)</Link></p>
+                <p className={styles.text}>Bạn Muốn đăng ký với tư cách người học? <Link to="/register/learner" className={styles.link}>Đăng ký(Người học)</Link></p>
             </div>
             </div>
         </div>  

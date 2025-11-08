@@ -100,7 +100,7 @@ const Login = () => {
           </button>
           <div className="redirect"> 
             <p className="text" >Bạn chưa có tài khoản?
-            <Link to="/register/tutor" className='link'>Đăng kí</Link>
+            <Link to="/register/learner" className='link'>Đăng kí</Link>
             </p>
           </div> 
         </form>

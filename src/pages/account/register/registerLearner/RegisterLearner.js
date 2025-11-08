@@ -11,7 +11,7 @@ function RegisterLearner() {
                 <ReisterFormLearner/>
             <div className={styles.redirect}>
                 <p className={styles.text}>Bạn đã có tài khoản? <Link to="/Login" className={styles.link}>Đăng nhập</Link></p>
-                <p className={styles.text}>Bạn Muốn đăng ký với tư cách người dạy? <Link to="/RegisterTutor" className={styles.link}>Đăng ký(Người dạy)</Link></p>
+                <p className={styles.text}>Bạn Muốn đăng ký với tư cách người dạy? <Link to="/register/tutor" className={styles.link}>Đăng ký(Người dạy)</Link></p>
             </div>
             </div>
         </div>

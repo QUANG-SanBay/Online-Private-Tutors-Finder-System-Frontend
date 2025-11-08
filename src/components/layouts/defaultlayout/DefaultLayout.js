@@ -1,10 +1,10 @@
 import Header from '../header/Header'
 import Footer from '../footer/Footer'
 
-function DefaultLayout({children}){
+function DefaultLayout({userType, children}){
     return(
         <>
-            <Header/>
+            <Header userType={userType} showNotification ={false}/>
             <main style={{marginTop: '80px'}}>
                 {children}
             </main>

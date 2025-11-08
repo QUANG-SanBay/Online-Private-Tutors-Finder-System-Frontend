@@ -2,8 +2,15 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 import clsx from "clsx";
 
-function Navbar() {
+function Navbar({userType}) {
   const location = useLocation();
+  const defaultMenu = [
+    { title: "Trang chủ", path: "/" },
+    { title: "Gia sư", path: "/Tutor" },
+    { title: "E-Books", path: "/EBooks" },
+    { title: "Liên hệ", path: "/Contact" },
+  ];
+
   const learnerMenu = [
     { title: "Trang chủ", path: "/" },
     { title: "Gia sư", path: "/Tutor" },
@@ -12,7 +19,10 @@ function Navbar() {
     { title: "Liên hệ", path: "/Contact" },
   ];
 
-  const menu = [...learnerMenu];
+  let menu = defaultMenu;
+  if (userType === "learner") {
+    menu = learnerMenu;
+  }
 
   return (
     <nav className={styles.navbar}>

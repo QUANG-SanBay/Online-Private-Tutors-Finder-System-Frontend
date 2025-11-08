@@ -2,6 +2,9 @@ import {
     Home, EBooks, Profile,
     RegisterTutor, RegisterLearner
 } from '~/pages'
+//Dashboard
+import Dashboard from '~/pages/dashboard/Dashboard';
+//Account pages
 
 import LoginPage from '~/pages/account/login/Login';
 import ForgotPassword from '~/pages/account/login/ForgotPassword'; 
@@ -24,12 +27,14 @@ const publicRouter = [
     {path: '/ForgotPassword', element: <ForgotPassword/>},
     {path: '/OTP', element: <OTP/>},
     {path: '/NewPassword', element: <NewPassword/>},
-    {path: '/register/tutor', element: <RegisterTutor/>},
-    {path: '/register/learner', element: <RegisterLearner/>}
+    {path: '/register/tutor', element: <RegisterTutor/> },
+    {path: '/register/learner', element: <RegisterLearner/>},
+    {path: '/', element: <Dashboard/>},
+    // bổ xung trang dashboard chung cho tất cả người dùng
 ]
 
 const learnerRouter = [
-    {path: '/', element: <Home/>},
+    // {path: '/', element: <Home/>},
     {path: '/EBooks', element: <EBooks/>},
     {path: '/Profile', element: <Profile/>},
     {path: '/Tutor', element: <TutorList/>},
@@ -40,7 +45,7 @@ const learnerRouter = [
 ]
 
 const tutorRouter = [
-    {path: '/tutor/home', element: <TutorHome/>},
+    {path: '/tutor/home', element: <TutorHome/>},// sửa lại profile tutor to lên,( xử lý điều hướng) 
     {path: '/tutor/schedule', element: <TutorSchedule/>},
     {path: '/tutor/parent-requests', element: <ParentRequest/>}
 ];
