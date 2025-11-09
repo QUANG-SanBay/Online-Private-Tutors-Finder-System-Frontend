@@ -1,4 +1,4 @@
-import TutorCard from './tutorCard/TutorCard';
+import TutorCard from '~/components/tutorCard/TutorCard';
 import styles from './TopTutorBody.module.scss';
 import img from '~/assets/imgs/img.jpg';
 

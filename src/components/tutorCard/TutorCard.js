@@ -48,7 +48,7 @@ function TutorCard({ id, image, isVerified, name, subject, rating, reviewCount, 
                         size="small"
                         onClick={handleViewProfile}
                     >
-                        Xem hồ sơ
+                        Xem chi tiết
                     </Button>
                 </div>
             </div>
