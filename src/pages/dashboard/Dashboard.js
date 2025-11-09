@@ -1,7 +1,13 @@
+import Banner from "./banner/Banner";
+import Progress from "./progress/Progress";
+import TopTutor from "./topTutor/TopTutor";
+
 function Dashboard() {
     return ( 
         <div>
-            <h1>Dashboard</h1>
+            <Banner />
+            <Progress />
+            <TopTutor />
         </div>
      );
 }

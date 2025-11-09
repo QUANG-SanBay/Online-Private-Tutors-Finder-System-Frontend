@@ -1,5 +1,5 @@
 import {
-    Home, EBooks, Profile,
+     EBooks, Profile,
     RegisterTutor, RegisterLearner
 } from '~/pages'
 //Dashboard

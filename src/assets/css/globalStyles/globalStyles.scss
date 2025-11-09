@@ -1,5 +1,6 @@
 :root{
     --max-width: 1200px;
+    --padding-left-right: 12px;
     --primary-c: #4582ff;
     --primary-c-01: rgba(69, 130, 255, 0.1);
     --bgr-c: #F7F6F5;
@@ -83,6 +84,7 @@ html, body {
   font-weight: 400;
   color: var(--text-c);
   background-color: var(--bgr-c);
+  line-height: 1.5;
 }
 
 *{
@@ -96,11 +98,6 @@ html{
     box-sizing: border-box;
 }
 
-body{
-    font-family: var(--font-family);
-    font-weight: 400;
-    line-height: 1.5;
-}
 
 a[href]{
     text-decoration: none;
