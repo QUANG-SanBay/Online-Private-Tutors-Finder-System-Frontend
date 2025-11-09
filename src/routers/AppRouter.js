@@ -4,16 +4,16 @@ import { DefaultLayout } from '~/components/layouts/';
 import TutorLayout from '~/components/layouts/tutorLayout/TutorLayout';
 
 function AppRouter() {
-    let userType; // 'learner', 'tutor', 'admin', or null for public
-    if(!userType){
-        userType = false;
-    }else if(userType === 'learner'){
-        userType = 'learner';
-    }else if(userType === 'tutor'){
-        userType = 'tutor';
-    }else{
-        userType = 'admin';
-    }
+    let userType = 'learner'; // 'learner', 'tutor', 'admin', or null for public
+    // if(!userType){
+    //     userType = false;
+    // }else if(userType === 'learner'){
+    //     userType = 'learner';
+    // }else if(userType === 'tutor'){
+    //     userType = 'tutor';
+    // }else{
+    //     userType = 'admin';
+    // }
 
     return (
         //public router

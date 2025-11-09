@@ -7,7 +7,7 @@ function RegisterLearner() {
     return ( 
         <div className={clsx(styles.register)}>
             <div className={clsx(styles.formContainer)}>
-                <HeaderForm/>
+                <HeaderForm title="Đăng ký làm học viên" description="Hãy điền thông tin bên dưới để đăng ký làm học viên" />
                 <ReisterFormLearner/>
             <div className={styles.redirect}>
                 <p className={styles.text}>Bạn đã có tài khoản? <Link to="/Login" className={styles.link}>Đăng nhập</Link></p>

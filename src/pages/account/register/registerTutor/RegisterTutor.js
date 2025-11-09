@@ -7,7 +7,7 @@ function Register(){
     return(
         <div className={clsx(styles.register)}>
             <div className={clsx(styles.formContainer)}>
-                <HeaderForm />
+                <HeaderForm title={'Đăng ký làm gia sư'} description={'Hãy điền thông tin bên dưới để đăng ký làm gia sư'} />
                 <RegisterForm />
             <div className={styles.redirect}>
                 <p className={styles.text}>Bạn đã có tài khoản? <Link to="/Login" className={styles.link}>Đăng nhập</Link></p>
