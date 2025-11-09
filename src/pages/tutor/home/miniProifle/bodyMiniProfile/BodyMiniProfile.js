@@ -1,6 +1,7 @@
 import avt from "~/assets/imgs/img.jpg";
 import styles from "./BodyMiniProfile.module.scss";
 import clsx from "clsx";
+import { Grid } from "@mui/material";
 
 function BodyMiniProfile() {
     //fake data
@@ -17,13 +18,13 @@ function BodyMiniProfile() {
         avatarUrl: avt, // URL ảnh đại diện
     };
     return ( 
-        <div className={styles.bodyMiniProfile}>
-            <div className={styles.avatarContainer}>
+        <Grid container className={styles.bodyMiniProfile}>
+            <Grid item size={{ xs: 12, sm: 3, md: 3, lg: 2.5 }} className={styles.avatarContainer}>
                 <div className={styles.avatarBox}>
                     <img src={userData.avatarUrl} alt="ảnh của bạn"/>
                 </div>
-            </div>
-            <div className={styles.infoContainer}>
+            </Grid>
+            <Grid item size={{ xs: 12, sm: 9, md: 9, lg: 9.5 }} className={styles.infoContainer}>
                 <ul className={styles.infoList}>
                     <li>
                         <strong>Họ và tên:
@@ -73,8 +74,8 @@ function BodyMiniProfile() {
                         </span>
                     </li>
                 </ul>
-            </div>
-        </div>
+            </Grid>
+        </Grid>
      );
 }
 

@@ -1,4 +1,3 @@
-import styles from './Footer.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faGraduationCap, 
@@ -11,6 +10,8 @@ import {
     faYoutube as faYoutubeBrand 
 } from '@fortawesome/free-brands-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import styles from './Footer.module.scss';
+import { Logo } from '../header/headerComp';
 
 function Footer() {
     const navigate = useNavigate();
@@ -36,8 +37,7 @@ function Footer() {
                     {/* Brand Section */}
                     <div className={styles.column}>
                         <div className={styles.brand}>
-                            <FontAwesomeIcon icon={faGraduationCap} className={styles.brandIcon} />
-                            <span className={styles.brandName}>TutorConnect</span>
+                            <Logo/>
                         </div>
                         <p className={styles.brandDescription}>
                             Kết nối tri thức – Nâng tầm tương lai. Nền tảng kết nối gia sư và học viên hàng đầu Việt Nam.

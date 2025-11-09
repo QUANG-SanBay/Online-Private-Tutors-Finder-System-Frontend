@@ -1,14 +1,17 @@
 .bodyMiniProfile{
-    padding: 0 16px;
+    padding: 0 24px;
     height: 100%;
     display: flex;
 }
 .avatarContainer{
-    height: 100%;
     display: flex;
     flex: 0;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
+    @media (max-width: 600px) {
+        padding: 8px 0;
+        justify-content: center;
+    }
 }
 .avatarBox{
     height: 160px;
@@ -26,7 +29,6 @@
     padding-top: 16px;
     flex: 1;
     max-width: 100%;
-    margin-left: 16px;
     display: flex;
     align-items: start;
 }
@@ -40,7 +42,6 @@
         flex: 0 0 50%;
         width: 50%;
         font-size: 1.4rem;
-        line-height: 1.25;
         margin-bottom: 8px;
         strong{
             font-weight: 600;

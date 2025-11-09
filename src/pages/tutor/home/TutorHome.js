@@ -14,7 +14,7 @@ function TutorHome() {
                     </Grid>
                     <Grid item xs={12} size={{xs:12, sm:12, md:4, lg:4}}>
                         <div className={styles.boxInfor}>
-                            <Grid container spacing={0} columns={12} >
+                            <Grid container spacing={0} columns={12} className={styles.gridBoxInfor}>
                                 <Grid item size={{xs:12, sm:6, md:12, lg:12}}>
                                     <BoxInfor type="primary" title="LỊCH DẠY CỦA BẠN" quanity="5" path="/tutor/schedule" icon={faCalendarDays} />
                                 </Grid>
