@@ -1,9 +1,11 @@
-.container {
-  gap: 2rem;
-  padding: 2rem;
+.tutorSchedule{
   width: 100%;
+  padding: 12px;
+
+}
+.container {
+  margin: 0 auto;
   max-width: var(--max-width);
-  margin: auto;
 }
 
 .header {
@@ -147,7 +149,7 @@
 }
 
 .session {
-  writing-mode: vertical-rl;
+  // writing-mode: vertical-rl;
   background: var(--primary-c-01);
   font-weight: 700;
   font-size: 1.4rem;

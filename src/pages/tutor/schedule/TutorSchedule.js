@@ -37,7 +37,7 @@ const scheduleData = [
     subject: "Toán học",
     time: "15:00 - 16:30",
     student: "Phạm Thị D",
-    status: "pause", 
+    status: "pause",
   },
   {
     date: "2025-11-05",
@@ -65,7 +65,7 @@ const scheduleData = [
   },
 ];
 
-export default function TutorSchedule() {
+function TutorSchedule() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
@@ -81,82 +81,85 @@ export default function TutorSchedule() {
     d.setDate(d.getDate() + days);
     setCurrentDate(d);
   };
-
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>Lịch dạy</h2>
+    <div className={styles.tutorSchedule}>
 
-        <div className={styles.controls}>
-          <button onClick={() => go(-7)}><FiChevronLeft /></button>
-          <button onClick={() => setCurrentDate(new Date())} className={styles.today}>
-            Hôm nay
-          </button>
-          <button onClick={() => go(7)}><FiChevronRight /></button>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h2>Lịch dạy</h2>
 
-          <div className={styles.dateBox}>
-            <FiCalendar />
-            <input 
-              type="date" 
-              value={format(currentDate, "yyyy-MM-dd")}
-              onChange={(e) => setCurrentDate(new Date(e.target.value))}
-            />
+          <div className={styles.controls}>
+            <button onClick={() => go(-7)}><FiChevronLeft /></button>
+            <button onClick={() => setCurrentDate(new Date())} className={styles.today}>
+              Hôm nay
+            </button>
+            <button onClick={() => go(7)}><FiChevronRight /></button>
+
+            <div className={styles.dateBox}>
+              <FiCalendar />
+              <input
+                type="date"
+                value={format(currentDate, "yyyy-MM-dd")}
+                onChange={(e) => setCurrentDate(new Date(e.target.value))}
+                
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Calendar Grid */}
-      <div className={styles.calendar}>
-        
-        {/* Header */}
-        <div className={styles.timeCol}>Ca dạy</div>
-        {weekDays.map((d, i) => (
-          <div
-            key={i}
-            className={`${styles.dayHeader} ${
-              format(d, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
-                ? styles.activeDay
-                : ""
-            }`}
-          >
-            {d.getDay() === 0 ? "CN" : `Thứ ${d.getDay() + 1}`}
-            <span>{format(d, "dd/MM")}</span>
-          </div>
-        ))}
+        {/* Calendar Grid */}
+        <div className={styles.calendar}>
 
-        {/* Sáng */}
-        <div className={styles.session}>Sáng</div>
-        {weekDays.map((day, i) => (
-          <div key={i} className={styles.cell}>
-            {scheduleData
-              .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Sáng")
-              .map((x, i) => (<TutorEventCard key={i} data={x} />))
-            }
-          </div>
-        ))}
+          {/* Header */}
+          <div className={styles.timeCol}>Ca dạy</div>
+          {weekDays.map((d, i) => (
+            <div
+              key={i}
+              className={`${styles.dayHeader} ${format(d, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
+                  ? styles.activeDay
+                  : ""
+                }`}
+            >
+              {d.getDay() === 0 ? "CN" : `Thứ ${d.getDay() + 1}`}
+              <span>{format(d, "dd/MM")}</span>
+            </div>
+          ))}
 
-        {/* Chiều */}
-        <div className={styles.session}>Chiều</div>
-        {weekDays.map((day, i) => (
-          <div key={i} className={styles.cell}>
-            {scheduleData
-              .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Chiều")
-              .map((x, i) => (<TutorEventCard key={i} data={x} />))
-            }
-          </div>
-        ))}
+          {/* Sáng */}
+          <div className={styles.session}>Sáng</div>
+          {weekDays.map((day, i) => (
+            <div key={i} className={styles.cell}>
+              {scheduleData
+                .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Sáng")
+                .map((x, i) => (<TutorEventCard key={i} data={x} />))
+              }
+            </div>
+          ))}
 
-        {/* Tối */}
-        <div className={styles.session}>Tối</div>
-        {weekDays.map((day, i) => (
-          <div key={i} className={styles.cell}>
-            {scheduleData
-              .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Tối")
-              .map((x, i) => (<TutorEventCard key={i} data={x} />))
-            }
-          </div>
-        ))}
+          {/* Chiều */}
+          <div className={styles.session}>Chiều</div>
+          {weekDays.map((day, i) => (
+            <div key={i} className={styles.cell}>
+              {scheduleData
+                .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Chiều")
+                .map((x, i) => (<TutorEventCard key={i} data={x} />))
+              }
+            </div>
+          ))}
+
+          {/* Tối */}
+          <div className={styles.session}>Tối</div>
+          {weekDays.map((day, i) => (
+            <div key={i} className={styles.cell}>
+              {scheduleData
+                .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Tối")
+                .map((x, i) => (<TutorEventCard key={i} data={x} />))
+              }
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
+export default TutorSchedule;

@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import clsx from 'clsx';
 import styles from './FormGroup.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function FormGroup({
     label,
@@ -16,7 +17,10 @@ function FormGroup({
     autoComplete,
     options,
     multiple = false,
-    accept // thêm
+    accept, // thêm
+    icon, // FontAwesome icon
+    rows = 3, // number of rows for textarea
+    disabled = false
 }) {
     const autoId = useId();
     const inputId = id || `${name || 'input'}-${autoId}`;
@@ -111,6 +115,7 @@ function FormGroup({
             value={value}
             onChange={onChange}
             required={required}
+            disabled={disabled}
             className={clsx(styles.input, { [styles.invalid]: !!error })}
         >
             {placeholder && (
@@ -143,7 +148,9 @@ function FormGroup({
                 name={name}
                 placeholder={placeholder}
                 required={required}
-                className={clsx(styles.input, { [styles.invalid]: !!error })}
+                disabled={disabled}
+                rows={rows}
+                className={clsx(styles.input, styles.textarea, { [styles.invalid]: !!error })}
                 value={value}
                 onChange={onChange}
             />
@@ -156,6 +163,7 @@ function FormGroup({
                 onChange={onChange}
                 placeholder={placeholder}
                 required={required}
+                disabled={disabled}
                 autoComplete={autoComplete}
                 accept={accept} // truyền xuống input file
                 className={clsx(styles.input, { [styles.invalid]: !!error })}
@@ -167,6 +175,7 @@ function FormGroup({
         <div className={clsx(styles.group, className)}>
             {label && (
                 <label htmlFor={inputId} className={styles.label}>
+                    {icon && <FontAwesomeIcon icon={icon} className={styles.labelIcon} />}
                     {label} {required && <span className={styles.required}>*</span>}
                 </label>
             )}
