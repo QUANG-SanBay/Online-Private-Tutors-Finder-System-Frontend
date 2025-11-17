@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { faAngleDown, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faBook, faCheck, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import clsx from 'clsx';
 import Dropdown from '../dropdown/Dropdown';
@@ -11,6 +11,8 @@ function Avata({ className, userType = 'learner' }) {
     const [open, setOpen] = useState(false);
     const menuArr = [
         { label: 'Hồ sơ của bạn', path: '/Profile', icon: faUser },
+        { label: 'Lớp đã học', path: '/Classed', icon: faBook},
+        { label: 'Yêu cầu đã gửi', path: '/Request', icon: faCheck},
         { label: 'Đăng xuất', path: '/logout', icon: faRightFromBracket },
     ];
     const menuArrTutor = [

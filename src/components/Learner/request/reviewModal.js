@@ -59,22 +59,6 @@ export function ReviewModal({ open, onClose, onSubmit, classItem }) {
           onChange={(e) => setComment(e.target.value)}
         />
 
-        {/* Upload image */}
-        <div style={{ marginTop: 10 }}>
-          <label>Hình ảnh (tùy chọn)</label><br/>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-
-          {imagePreview && (
-            <div style={{ marginTop: 10 }}>
-              <img 
-                src={imagePreview} 
-                alt="Preview" 
-                style={{ width: 120, height: 120, objectFit: "cover", borderRadius: 8 }}
-              />
-            </div>
-          )}
-        </div>
-
         {/* Actions */}
         <div className={styles["ld-modal-actions"]}>
           <button className={`${styles["btn"]} ${styles["btn-secondary"]}`} onClick={handleClose}>
