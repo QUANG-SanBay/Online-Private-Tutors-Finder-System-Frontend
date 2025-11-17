@@ -29,6 +29,7 @@ function TutorProfile() {
         rating: 4.9,
         totalReviews: 127,
         proofFiles: ['Bằng Đại học Sư phạm', 'Chứng chỉ giảng dạy'],
+        avatarUrl: '', // Empty for default icon display
     });
 
     const [subjects, setSubjects] = useState([
@@ -63,6 +64,39 @@ function TutorProfile() {
         setIsEditing(false);
     };
 
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
+                return;
+            }
+
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước ảnh không được vượt quá 5MB');
+                return;
+            }
+
+            // Create preview URL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    avatarUrl: reader.result
+                }));
+                setTutorData(prev => ({
+                    ...prev,
+                    avatarUrl: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+            // TODO: Upload to server and get URL
+        }
+    };
+
     return (
         <div className={styles.tutorProfile}>
             <div className={styles.container}>
@@ -73,6 +107,7 @@ function TutorProfile() {
                     onSaveClick={handleSave}
                     onCancelClick={handleCancel}
                     onPasswordClick={() => setShowPasswordModal(true)}
+                    onAvatarChange={handleAvatarChange}
                 />
 
                 <ProfileTabs
@@ -107,10 +142,10 @@ function TutorProfile() {
                 </div>
             </div>
 
-            {/* <PasswordModal
+            <PasswordModal
                 isOpen={showPasswordModal}
                 onClose={() => setShowPasswordModal(false)}
-            /> */}
+            />
         </div>
     );
 }

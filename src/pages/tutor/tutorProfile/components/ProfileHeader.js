@@ -19,15 +19,36 @@ function ProfileHeader({
     onEditClick, 
     onSaveClick, 
     onCancelClick,
-    onPasswordClick 
+    onPasswordClick,
+    onAvatarChange
 }) {
+    const handleAvatarClick = () => {
+        document.getElementById('avatarInput').click();
+    };
+
     return (
         <div className={styles.profileHeader}>
             <div className={styles.avatarSection}>
                 <div className={styles.avatar}>
-                    <FontAwesomeIcon icon={faUser} />
+                    {tutorData.avatarUrl ? (
+                        <img src={tutorData.avatarUrl} alt={tutorData.fullName} />
+                    ) : (
+                        <FontAwesomeIcon icon={faUser} />
+                    )}
                 </div>
-                <button className={styles.changeAvatarBtn}>Đổi ảnh đại diện</button>
+                <input
+                    type="file"
+                    id="avatarInput"
+                    accept="image/*"
+                    onChange={onAvatarChange}
+                    style={{ display: 'none' }}
+                />
+                <button 
+                    className={styles.changeAvatarBtn}
+                    onClick={handleAvatarClick}
+                >
+                    Đổi ảnh đại diện
+                </button>
             </div>
             
             <div className={styles.headerInfo}>

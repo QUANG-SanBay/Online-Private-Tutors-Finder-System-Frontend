@@ -1,6 +1,6 @@
 .section {
     .sectionTitle {
-        font-size: 1.5rem;
+        font-size: 2rem;
         font-weight: 700;
         color: var(--text-c);
         margin-bottom: 2rem;
@@ -31,13 +31,13 @@
             div {
                 h4 {
                     margin: 0;
-                    font-size: 1.1rem;
+                    font-size: 1.6rem;
                     font-weight: 600;
                     color: var(--text-c);
                 }
 
                 span {
-                    font-size: 0.9rem;
+                    font-size: 1.2rem;
                     color: #666;
                 }
             }
@@ -64,12 +64,12 @@
             border-left: 4px solid var(--primary-c);
 
             strong {
-                font-size: 1rem;
+                font-size: 1.4rem;
                 color: var(--text-c);
             }
 
             span {
-                font-size: 0.9rem;
+                font-size: 1.2rem;
                 color: #666;
             }
 
@@ -79,7 +79,7 @@
                 background-color: #e8f5e9;
                 color: #2e7d32;
                 border-radius: 12px;
-                font-size: 0.8rem;
+                font-size: 1.2rem;
                 font-weight: 600;
                 width: fit-content;
             }
