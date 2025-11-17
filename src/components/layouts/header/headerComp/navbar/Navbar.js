@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 import clsx from "clsx";
 
-function Navbar({userType}) {
+function Navbar({userType, onLinkClick, isMobile = false}) {
   const location = useLocation();
   const defaultMenu = [
     { title: "Trang chủ", path: "/" },
@@ -25,7 +25,7 @@ function Navbar({userType}) {
   }
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={clsx(styles.navbar, { [styles.mobile]: isMobile })}>
       <ul className={styles.navMenu}>
         {menu.map((item, index) => (
           <li key={index} className={styles.navItem}>
@@ -34,6 +34,7 @@ function Navbar({userType}) {
               className={clsx(styles.navLink, {
                 [styles.active]: location.pathname === item.path,
               })}
+              onClick={onLinkClick}
             >
               {item.title}
             </Link>
