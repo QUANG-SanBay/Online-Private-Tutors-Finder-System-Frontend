@@ -21,6 +21,7 @@ import ContactPage from '~/pages/learner/contact/Contact';
 import TutorHome from '~/pages/tutor/home/TutorHome';
 import TutorSchedule from '~/pages/tutor/schedule/TutorSchedule';
 import ParentRequest from '~/pages/tutor/parentRequest/ParentRequest';
+import TutorProfile from '~/pages/tutor/tutorProfile/TutorProfile';
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
@@ -47,7 +48,8 @@ const learnerRouter = [
 const tutorRouter = [
     {path: '/tutor/home', element: <TutorHome/>},// sửa lại profile tutor to lên,( xử lý điều hướng) 
     {path: '/tutor/schedule', element: <TutorSchedule/>},
-    {path: '/tutor/parent-requests', element: <ParentRequest/>}
+    {path: '/tutor/parent-requests', element: <ParentRequest/>},
+    {path: '/tutor/profile', element: <TutorProfile/>}
 ];
 
 export {learnerRouter, publicRouter, tutorRouter };

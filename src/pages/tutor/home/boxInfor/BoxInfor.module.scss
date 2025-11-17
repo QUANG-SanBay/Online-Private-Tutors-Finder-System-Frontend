@@ -10,7 +10,7 @@
         box-shadow: var(--box-shadow-pm);
     }
     .itemBox{
-        h2, span, a.link{
+        h2, p, a.link{
             color: var(--text-c-light);
         }
     }
@@ -43,7 +43,7 @@
         color: var(--text-c);
         line-height: 1.5;
     }
-    span{
+    p{
         font-size: 2.4rem;
         font-weight: 600;
         line-height: 1.5;
@@ -51,6 +51,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+    span{
+        font-size: 1.4rem;
     }
     a.link{
         font-size: 1.4rem;
