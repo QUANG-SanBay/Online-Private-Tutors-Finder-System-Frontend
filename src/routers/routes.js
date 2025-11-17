@@ -22,6 +22,8 @@ import TutorHome from '~/pages/tutor/home/TutorHome';
 import TutorSchedule from '~/pages/tutor/schedule/TutorSchedule';
 import ParentRequest from '~/pages/tutor/parentRequest/ParentRequest';
 import TutorProfile from '~/pages/tutor/tutorProfile/TutorProfile';
+import { Classed, Request } from '~/pages/learner';
+
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
@@ -38,6 +40,8 @@ const learnerRouter = [
     // {path: '/', element: <Home/>},
     {path: '/EBooks', element: <EBooks/>},
     {path: '/Profile', element: <Profile/>},
+    {path: '/Classed', element: <Classed/>},
+    {path: '/Request', element: <Request/>},
     {path: '/Tutor', element: <TutorList/>},
     {path: '/Tutor/:tutorId', element: <TutorDetail/>},
     {path: '/Schedule', element: <Schedule/>},
