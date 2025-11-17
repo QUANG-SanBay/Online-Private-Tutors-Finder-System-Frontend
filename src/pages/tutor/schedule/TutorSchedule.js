@@ -3,6 +3,10 @@ import styles from "./TutorSchedule.module.scss";
 import { format } from "date-fns";
 import { FiChevronLeft, FiChevronRight, FiCalendar } from "react-icons/fi";
 import TutorEventCard from "~/components/schedule/TutorEventCard";
+import AvailabilityModal from "./AvailabilityModal";
+import AvailabilityList from "./AvailabilityList";
+import ConfirmDialog from "./ConfirmDialog";
+import ScheduleTabs from "./ScheduleTabs";
 
 // Mock schedule data for tutor - showing students instead of tutors
 const scheduleData = [
@@ -37,7 +41,7 @@ const scheduleData = [
     subject: "Toán học",
     time: "15:00 - 16:30",
     student: "Phạm Thị D",
-    status: "pause",
+    status: "pause", 
   },
   {
     date: "2025-11-05",
@@ -65,8 +69,19 @@ const scheduleData = [
   },
 ];
 
-function TutorSchedule() {
+export default function TutorSchedule() {
+  const [activeTab, setActiveTab] = useState('schedule');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [showAvailabilityModal, setShowAvailabilityModal] = useState(false);
+  const [editingAvailability, setEditingAvailability] = useState(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [deletingIndex, setDeletingIndex] = useState(null);
+  const [availabilities, setAvailabilities] = useState([
+    { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '12:00', status: 'Available' },
+    { dayOfWeek: 'Thứ 2', startTime: '14:00', endTime: '18:00', status: 'Available' },
+    { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
+    { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
+  ]);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(currentDate);
@@ -81,85 +96,158 @@ function TutorSchedule() {
     d.setDate(d.getDate() + days);
     setCurrentDate(d);
   };
+
+  const handleAddAvailability = () => {
+    setEditingAvailability(null);
+    setShowAvailabilityModal(true);
+  };
+
+  const handleEditAvailability = (index) => {
+    setEditingAvailability({ ...availabilities[index], index });
+    setShowAvailabilityModal(true);
+  };
+
+  const handleDeleteAvailability = (index) => {
+    setDeletingIndex(index);
+    setShowConfirmDialog(true);
+  };
+
+  const confirmDelete = () => {
+    if (deletingIndex !== null) {
+      setAvailabilities(prev => prev.filter((_, i) => i !== deletingIndex));
+      // TODO: Call API to delete
+      setDeletingIndex(null);
+    }
+  };
+
+  const handleSaveAvailability = (data) => {
+    if (editingAvailability !== null && editingAvailability.index !== undefined) {
+      // Edit existing
+      setAvailabilities(prev => 
+        prev.map((item, i) => i === editingAvailability.index ? data : item)
+      );
+      // TODO: Call API to update
+    } else {
+      // Add new
+      setAvailabilities(prev => [...prev, data]);
+      // TODO: Call API to create
+    }
+  };
+
   return (
     <div className={styles.tutorSchedule}>
-
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h2>Lịch dạy</h2>
+        <ScheduleTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-          <div className={styles.controls}>
-            <button onClick={() => go(-7)}><FiChevronLeft /></button>
-            <button onClick={() => setCurrentDate(new Date())} className={styles.today}>
-              Hôm nay
-            </button>
-            <button onClick={() => go(7)}><FiChevronRight /></button>
+        {activeTab === 'availability' && (
+          <AvailabilityList
+            availabilities={availabilities}
+            onAdd={handleAddAvailability}
+            onEdit={handleEditAvailability}
+            onDelete={handleDeleteAvailability}
+          />
+        )}
 
-            <div className={styles.dateBox}>
-              <FiCalendar />
-              <input
-                type="date"
-                value={format(currentDate, "yyyy-MM-dd")}
-                onChange={(e) => setCurrentDate(new Date(e.target.value))}
-                
-              />
-            </div>
+        {activeTab === 'schedule' && (
+          <>
+            <div className={styles.header}>
+              <h2>Lịch dạy</h2>
+
+              <div className={styles.controls}>
+          <button onClick={() => go(-7)}><FiChevronLeft /></button>
+          <button onClick={() => setCurrentDate(new Date())} className={styles.today}>
+            Hôm nay
+          </button>
+          <button onClick={() => go(7)}><FiChevronRight /></button>
+
+          <div className={styles.dateBox}>
+            <FiCalendar />
+            <input 
+              type="date" 
+              value={format(currentDate, "yyyy-MM-dd")}
+              onChange={(e) => setCurrentDate(new Date(e.target.value))}
+            />
           </div>
         </div>
+      </div>
 
-        {/* Calendar Grid */}
-        <div className={styles.calendar}>
+      {/* Calendar Grid */}
+      <div className={styles.calendar}>
+        
+        {/* Header */}
+        <div className={styles.timeCol}>Ca dạy</div>
+        {weekDays.map((d, i) => (
+          <div
+            key={i}
+            className={`${styles.dayHeader} ${
+              format(d, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
+                ? styles.activeDay
+                : ""
+            }`}
+          >
+            {d.getDay() === 0 ? "CN" : `Thứ ${d.getDay() + 1}`}
+            <span>{format(d, "dd/MM")}</span>
+          </div>
+        ))}
 
-          {/* Header */}
-          <div className={styles.timeCol}>Ca dạy</div>
-          {weekDays.map((d, i) => (
-            <div
-              key={i}
-              className={`${styles.dayHeader} ${format(d, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
-                  ? styles.activeDay
-                  : ""
-                }`}
-            >
-              {d.getDay() === 0 ? "CN" : `Thứ ${d.getDay() + 1}`}
-              <span>{format(d, "dd/MM")}</span>
-            </div>
-          ))}
+        {/* Sáng */}
+        <div className={styles.session}>Sáng</div>
+        {weekDays.map((day, i) => (
+          <div key={i} className={styles.cell}>
+            {scheduleData
+              .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Sáng")
+              .map((x, i) => (<TutorEventCard key={i} data={x} />))
+            }
+          </div>
+        ))}
 
-          {/* Sáng */}
-          <div className={styles.session}>Sáng</div>
-          {weekDays.map((day, i) => (
-            <div key={i} className={styles.cell}>
-              {scheduleData
-                .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Sáng")
-                .map((x, i) => (<TutorEventCard key={i} data={x} />))
-              }
-            </div>
-          ))}
+        {/* Chiều */}
+        <div className={styles.session}>Chiều</div>
+        {weekDays.map((day, i) => (
+          <div key={i} className={styles.cell}>
+            {scheduleData
+              .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Chiều")
+              .map((x, i) => (<TutorEventCard key={i} data={x} />))
+            }
+          </div>
+        ))}
 
-          {/* Chiều */}
-          <div className={styles.session}>Chiều</div>
-          {weekDays.map((day, i) => (
-            <div key={i} className={styles.cell}>
-              {scheduleData
-                .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Chiều")
-                .map((x, i) => (<TutorEventCard key={i} data={x} />))
-              }
-            </div>
-          ))}
-
-          {/* Tối */}
-          <div className={styles.session}>Tối</div>
-          {weekDays.map((day, i) => (
-            <div key={i} className={styles.cell}>
-              {scheduleData
-                .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Tối")
-                .map((x, i) => (<TutorEventCard key={i} data={x} />))
-              }
-            </div>
-          ))}
+        {/* Tối */}
+        <div className={styles.session}>Tối</div>
+        {weekDays.map((day, i) => (
+          <div key={i} className={styles.cell}>
+            {scheduleData
+              .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Tối")
+              .map((x, i) => (<TutorEventCard key={i} data={x} />))
+            }
+          </div>
+        ))}
         </div>
+          </>
+        )}
+
+        <AvailabilityModal
+          isOpen={showAvailabilityModal}
+          onClose={() => {
+            setShowAvailabilityModal(false);
+            setEditingAvailability(null);
+          }}
+          onSave={handleSaveAvailability}
+          editData={editingAvailability}
+          existingAvailabilities={availabilities}
+        />
+
+        <ConfirmDialog
+          isOpen={showConfirmDialog}
+          onClose={() => {
+            setShowConfirmDialog(false);
+            setDeletingIndex(null);
+          }}
+          onConfirm={confirmDelete}
+          title="Xác nhận xóa"
+          message="Bạn có chắc chắn muốn xóa lịch rảnh này không?"
+        />
       </div>
     </div>
   );
 }
-export default TutorSchedule;
