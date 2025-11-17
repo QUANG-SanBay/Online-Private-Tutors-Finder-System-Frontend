@@ -17,10 +17,10 @@ function TutorHome() {
                             <div className={styles.boxInfor}>
                                 <Grid container spacing={2} columns={12} className={styles.gridBoxInfor}>
                                     <Grid item size={{ xs: 12, sm: 6, md: 12, lg: 12 }}>
-                                        <BoxInfor type="primary" title="LỊCH DẠY CỦA BẠN" quanity="5" unit={` / Tuần`} path="/tutor/schedule" icon={faCalendarDays} />
+                                        <BoxInfor type="primary" title="QUẢN LÝ LỊCH DẠY" quanity="5" unit={` Buổi dạy / tuần`} path="/tutor/schedule" icon={faCalendarDays} />
                                     </Grid>
                                     <Grid item size={{ xs: 12, sm: 6, md: 12, lg: 12 }}>
-                                        <BoxInfor title="YÊU CẦU MỚI" quanity="6" path="/tutor/parent-requests" icon={faBell} />
+                                        <BoxInfor title="QUẢN LÝ YÊU CẦU" quanity="3" path="/tutor/parent-requests" icon={faBell} />
                                     </Grid>
                                 </Grid>
                             </div>
