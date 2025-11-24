@@ -59,3 +59,42 @@
     }
   }
 }
+
+// Mobile styles
+.navbar.mobile {
+  width: 100%;
+  height: auto;
+
+  .navMenu {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .navItem {
+    width: 100%;
+    font-size: 1.6rem;
+
+    & + .navItem {
+      margin-left: 0;
+    }
+  }
+
+  .navLink {
+    width: 100%;
+    padding: 1.4rem 1.2rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &::after {
+      display: none;
+    }
+
+    &:hover,
+    &.active {
+      background-color: rgba(69, 130, 255, 0.1);
+      color: var(--primary-c);
+      padding-left: 1.6rem;
+    }
+  }
+}

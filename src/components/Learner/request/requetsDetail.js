@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Profile.module.scss";
+import styles from "../profile/Profile.module.scss";
 
 export default function RequestDetailModal({ open, onClose, request }) {
   if (!open) return null;

@@ -7,6 +7,8 @@ export {default as NewPassword} from '../account/login/NewPassword'
 export {default as EBooks} from './e-books/EBooks'
 export {default as Home} from './home/Home'
 export {default as Profile} from './profile/Profile'
+export {default as Classed} from './classed/Classed'
+export {default as Request} from './request/Request'
 export {default as Schedule} from './schedule/Schedule'
 
 export {default as TutorList} from './TutorList/TutorList'
