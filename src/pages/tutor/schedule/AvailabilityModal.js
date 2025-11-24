@@ -9,16 +9,13 @@ import styles from './AvailabilityModal.module.scss';
 function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabilities = [] }) {
     const [formData, setFormData] = useState({
         dayOfWeek: '',
-        startTime: '',
-        endTime: '',
+        timeSlot: '',
         status: 'Available'
     });
 
     const [errors, setErrors] = useState({
         dayOfWeek: '',
-        startTime: '',
-        endTime: '',
-        timeRange: ''
+        timeSlot: ''
     });
 
     const daysOfWeek = [
@@ -31,85 +28,58 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
         { value: 'Chủ nhật', label: 'Chủ nhật' }
     ];
 
+    const timeSlots = [
+        { value: '08:00-09:30', label: '8:00 - 9:30', startTime: '08:00', endTime: '09:30' },
+        { value: '09:30-11:00', label: '9:30 - 11:00', startTime: '09:30', endTime: '11:00' },
+        { value: '13:00-14:30', label: '13:00 - 14:30', startTime: '13:00', endTime: '14:30' },
+        { value: '14:30-16:00', label: '14:30 - 16:00', startTime: '14:30', endTime: '16:00' },
+        { value: '17:00-18:30', label: '17:00 - 18:30', startTime: '17:00', endTime: '18:30' },
+        { value: '18:30-20:00', label: '18:30 - 20:00', startTime: '18:30', endTime: '20:00' }
+    ];
+
     useEffect(() => {
         if (editData) {
-            setFormData(editData);
+            // Convert startTime-endTime to timeSlot format
+            const timeSlotValue = `${editData.startTime}-${editData.endTime}`;
+            setFormData({
+                dayOfWeek: editData.dayOfWeek,
+                timeSlot: timeSlotValue,
+                status: editData.status
+            });
         } else {
             setFormData({
                 dayOfWeek: '',
-                startTime: '',
-                endTime: '',
+                timeSlot: '',
                 status: 'Available'
             });
         }
         setErrors({
             dayOfWeek: '',
-            startTime: '',
-            endTime: '',
-            timeRange: ''
+            timeSlot: ''
         });
     }, [editData, isOpen]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         
-        // Format time input (only allow HH:MM format)
-        if (name === 'startTime' || name === 'endTime') {
-            // Remove any non-numeric characters except colon
-            let formatted = value.replace(/[^\d:]/g, '');
-            
-            // Auto-add colon after 2 digits
-            if (formatted.length === 2 && !formatted.includes(':')) {
-                formatted = formatted + ':';
-            }
-            
-            // Limit to HH:MM format (5 characters)
-            if (formatted.length > 5) {
-                formatted = formatted.slice(0, 5);
-            }
-            
-            setFormData(prev => ({
-                ...prev,
-                [name]: formatted
-            }));
-        } else {
-            setFormData(prev => ({
-                ...prev,
-                [name]: value
-            }));
-        }
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
 
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
-                [name]: '',
-                timeRange: ''
+                [name]: ''
             }));
         }
-    };
-
-    const checkTimeOverlap = (newStart, newEnd, existingStart, existingEnd) => {
-        const [newStartH, newStartM] = newStart.split(':').map(Number);
-        const [newEndH, newEndM] = newEnd.split(':').map(Number);
-        const [existStartH, existStartM] = existingStart.split(':').map(Number);
-        const [existEndH, existEndM] = existingEnd.split(':').map(Number);
-
-        const newStartMin = newStartH * 60 + newStartM;
-        const newEndMin = newEndH * 60 + newEndM;
-        const existStartMin = existStartH * 60 + existStartM;
-        const existEndMin = existEndH * 60 + existEndM;
-
-        // Check if times overlap
-        return (newStartMin < existEndMin && newEndMin > existStartMin);
     };
 
     const handleSubmit = () => {
         const newErrors = {
             dayOfWeek: '',
-            startTime: '',
-            endTime: '',
-            timeRange: ''
+            timeSlot: ''
         };
 
         let hasError = false;
@@ -119,40 +89,13 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
             hasError = true;
         }
 
-        // Validate time format (HH:MM)
-        const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
-        
-        if (!formData.startTime) {
-            newErrors.startTime = 'Vui lòng nhập thời gian bắt đầu';
+        if (!formData.timeSlot) {
+            newErrors.timeSlot = 'Vui lòng chọn khung giờ';
             hasError = true;
-        } else if (!timeRegex.test(formData.startTime)) {
-            newErrors.startTime = 'Định dạng không hợp lệ (VD: 08:00)';
-            hasError = true;
-        }
-
-        if (!formData.endTime) {
-            newErrors.endTime = 'Vui lòng nhập thời gian kết thúc';
-            hasError = true;
-        } else if (!timeRegex.test(formData.endTime)) {
-            newErrors.endTime = 'Định dạng không hợp lệ (VD: 17:30)';
-            hasError = true;
-        }
-
-        // Compare times
-        if (formData.startTime && formData.endTime && timeRegex.test(formData.startTime) && timeRegex.test(formData.endTime)) {
-            const [startHour, startMin] = formData.startTime.split(':').map(Number);
-            const [endHour, endMin] = formData.endTime.split(':').map(Number);
-            const startMinutes = startHour * 60 + startMin;
-            const endMinutes = endHour * 60 + endMin;
-            
-            if (startMinutes >= endMinutes) {
-                newErrors.timeRange = 'Thời gian kết thúc phải sau thời gian bắt đầu';
-                hasError = true;
-            }
         }
 
         // Check for overlapping time slots on the same day
-        if (!hasError && formData.dayOfWeek && formData.startTime && formData.endTime) {
+        if (!hasError && formData.dayOfWeek && formData.timeSlot) {
             const currentIndex = editData?.index;
             const overlappingSlot = existingAvailabilities.find((slot, index) => {
                 // Skip checking against itself when editing
@@ -160,20 +103,16 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
                     return false;
                 }
                 
-                // Check if same day and overlapping time
-                if (slot.dayOfWeek === formData.dayOfWeek) {
-                    return checkTimeOverlap(
-                        formData.startTime,
-                        formData.endTime,
-                        slot.startTime,
-                        slot.endTime
-                    );
+                // Check if same day and same time slot
+                const currentTimeSlot = `${slot.startTime}-${slot.endTime}`;
+                if (slot.dayOfWeek === formData.dayOfWeek && currentTimeSlot === formData.timeSlot) {
+                    return true;
                 }
                 return false;
             });
 
             if (overlappingSlot) {
-                newErrors.timeRange = `Trùng lịch với khung giờ ${overlappingSlot.startTime} - ${overlappingSlot.endTime}`;
+                newErrors.timeSlot = `Khung giờ này đã được thêm cho ${formData.dayOfWeek}`;
                 hasError = true;
             }
         }
@@ -183,22 +122,28 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
             return;
         }
 
-        onSave(formData);
+        // Parse timeSlot to get startTime and endTime
+        const selectedSlot = timeSlots.find(slot => slot.value === formData.timeSlot);
+        const dataToSave = {
+            dayOfWeek: formData.dayOfWeek,
+            startTime: selectedSlot.startTime,
+            endTime: selectedSlot.endTime,
+            status: formData.status
+        };
+
+        onSave(dataToSave);
         handleClose();
     };
 
     const handleClose = () => {
         setFormData({
             dayOfWeek: '',
-            startTime: '',
-            endTime: '',
+            timeSlot: '',
             status: 'Available'
         });
         setErrors({
             dayOfWeek: '',
-            startTime: '',
-            endTime: '',
-            timeRange: ''
+            timeSlot: ''
         });
         onClose();
     };
@@ -225,40 +170,19 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
                     <div className={styles.errorMessage}>{errors.dayOfWeek}</div>
                 )}
 
-                <div className={styles.timeRow}>
-                    <div className={styles.timeField}>
-                        <FormGroup
-                            label="Thời gian bắt đầu"
-                            icon={faClock}
-                            name="startTime"
-                            type="text"
-                            value={formData.startTime}
-                            onChange={handleChange}
-                            placeholder="VD: 08:00"
-                            required
-                        />
-                        {errors.startTime && (
-                            <div className={styles.errorMessage}>{errors.startTime}</div>
-                        )}
-                    </div>
-                    <div className={styles.timeField}>
-                        <FormGroup
-                            label="Thời gian kết thúc"
-                            icon={faClock}
-                            name="endTime"
-                            type="text"
-                            value={formData.endTime}
-                            onChange={handleChange}
-                            placeholder="VD: 17:30"
-                            required
-                        />
-                        {errors.endTime && (
-                            <div className={styles.errorMessage}>{errors.endTime}</div>
-                        )}
-                    </div>
-                </div>
-                {errors.timeRange && (
-                    <div className={styles.errorMessage}>{errors.timeRange}</div>
+                <FormGroup
+                    label="Khung giờ học"
+                    icon={faClock}
+                    name="timeSlot"
+                    type="select"
+                    value={formData.timeSlot}
+                    onChange={handleChange}
+                    options={timeSlots}
+                    placeholder="Chọn khung giờ"
+                    required
+                />
+                {errors.timeSlot && (
+                    <div className={styles.errorMessage}>{errors.timeSlot}</div>
                 )}
 
                 <FormGroup

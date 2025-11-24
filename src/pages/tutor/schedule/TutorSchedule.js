@@ -77,10 +77,10 @@ export default function TutorSchedule() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [deletingIndex, setDeletingIndex] = useState(null);
   const [availabilities, setAvailabilities] = useState([
-    { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '12:00', status: 'Available' },
-    { dayOfWeek: 'Thứ 2', startTime: '14:00', endTime: '18:00', status: 'Available' },
-    { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
-    { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
+    { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '09:30', status: 'Available' },
+    { dayOfWeek: 'Thứ 2', startTime: '14:30', endTime: '16:00', status: 'Available' },
+    // { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
+    // { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
   ]);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
