@@ -112,7 +112,7 @@ function Footer() {
                 {/* Copyright */}
                 <div className={styles.footerBottom}>
                     <span className={styles.copyright}>
-                        &copy; 2025 TutorConnect. Tất cả quyền được bảo lưu.
+                        &copy; 2025 TutorFinder. Tất cả quyền được bảo lưu.
                     </span>
                 </div>
             </div>
