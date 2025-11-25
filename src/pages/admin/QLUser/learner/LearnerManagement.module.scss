@@ -1,0 +1,30 @@
+.learnerManagement {
+    padding: 2.4rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 2.4rem;
+}
+
+.title {
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: var(--primary-c);
+    margin-bottom: 2rem;
+}
+
+.content {
+    margin-top: 2.4rem;
+}
+
+@media (max-width: 768px) {
+    .learnerManagement {
+        padding: 1.6rem;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+}
