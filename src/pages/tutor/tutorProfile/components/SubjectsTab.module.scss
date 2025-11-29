@@ -49,42 +49,42 @@
         }
     }
 
-    .availabilityList {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
+    // .availabilityList {
+    //     display: grid;
+    //     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    //     gap: 1rem;
 
-        .availabilityCard {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 1.2rem;
-            background: #f9f9f9;
-            border-radius: 10px;
-            border-left: 4px solid var(--primary-c);
+    //     .availabilityCard {
+    //         display: flex;
+    //         flex-direction: column;
+    //         gap: 0.5rem;
+    //         padding: 1.2rem;
+    //         background: #f9f9f9;
+    //         border-radius: 10px;
+    //         border-left: 4px solid var(--primary-c);
 
-            strong {
-                font-size: 1.4rem;
-                color: var(--text-c);
-            }
+    //         strong {
+    //             font-size: 1.4rem;
+    //             color: var(--text-c);
+    //         }
 
-            span {
-                font-size: 1.2rem;
-                color: #666;
-            }
+    //         span {
+    //             font-size: 1.2rem;
+    //             color: #666;
+    //         }
 
-            .statusBadge {
-                display: inline-block;
-                padding: 0.3rem 0.8rem;
-                background-color: #e8f5e9;
-                color: #2e7d32;
-                border-radius: 12px;
-                font-size: 1.2rem;
-                font-weight: 600;
-                width: fit-content;
-            }
-        }
-    }
+    //         .statusBadge {
+    //             display: inline-block;
+    //             padding: 0.3rem 0.8rem;
+    //             background-color: #e8f5e9;
+    //             color: #2e7d32;
+    //             border-radius: 12px;
+    //             font-size: 1.2rem;
+    //             font-weight: 600;
+    //             width: fit-content;
+    //         }
+    //     }
+    // }
 }
 
 @media (max-width: 768px) {
@@ -93,8 +93,8 @@
             grid-template-columns: 1fr;
         }
 
-        .availabilityList {
-            grid-template-columns: 1fr;
-        }
+        // .availabilityList {
+        //     grid-template-columns: 1fr;
+        // }
     }
 }
