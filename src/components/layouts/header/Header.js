@@ -49,8 +49,9 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
     };
 
     const getProfilePath = () => {
-        if (userType === 'tutor') return '/tutor/profile';
         if (userType === 'learner') return '/profile';
+        if (userType === 'tutor') return '/tutor/profile';
+        if (userType === 'admin') return '/admin/profile';
         return '/';
     };
 
