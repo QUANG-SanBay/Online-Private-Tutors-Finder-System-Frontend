@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import Button from '~/components/button/Button';
-import ScheduleModal from './ScheduleModal';
+import ScheduleModal from '../scheduleModal/ScheduleModal';
 import styles from './ConfirmDialog.module.scss';
 
 function ConfirmDialog({ isOpen, onClose, onConfirm, title, message }) {
