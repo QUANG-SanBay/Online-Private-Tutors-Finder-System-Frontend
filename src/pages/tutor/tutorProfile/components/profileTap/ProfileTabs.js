@@ -1,11 +1,18 @@
 import styles from './ProfileTabs.module.scss';
 
-function ProfileTabs({ activeTab, onTabChange }) {
+function ProfileTabs({ activeTab, onTabChange, isEditing }) {
     const tabs = [
         { id: 'info', label: 'Thông tin cá nhân' },
         { id: 'education', label: 'Học vấn & Giới thiệu' },
-        { id: 'subjects', label: 'Môn học & Lịch dạy' }
+        { id: 'subjects', label: 'Môn học' }
     ];
+    const handleTabClick = (tabId) => {
+        if (!isEditing) {
+            onTabChange(tabId);
+        }else{
+            alert('Vui lòng lưu thay đổi hoặc hủy các thay đổi trước khi chuyển tab.');
+        }
+    };
 
     return (
         <div className={styles.tabs}>
@@ -13,7 +20,7 @@ function ProfileTabs({ activeTab, onTabChange }) {
                 <button 
                     key={tab.id}
                     className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}
-                    onClick={() => onTabChange(tab.id)}
+                    onClick={() => handleTabClick(tab.id)}
                 >
                     {tab.label}
                 </button>
