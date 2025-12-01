@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faPhone, faEdit, faSave, faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import clsx from 'clsx';
 import Button from '~/components/button/Button';
+import AvatarSection from './avataSection/AvatarSection';
 import FormGroup from '~/components/formGroup/FormGroup';
 import styles from './AdminProfile.module.scss';
+import InforSection from './inforSection/InforSection';
 
 function AdminProfile() {
     const [isEditing, setIsEditing] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState(null);
+    const [avatarFile, setAvatarFile] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const fileInputRef = useRef(null);
 
@@ -33,14 +37,50 @@ function AdminProfile() {
         setIsEditing(false);
         if (avatarPreview && typeof avatarPreview === 'string' && avatarPreview.startsWith('blob:')) {
             URL.revokeObjectURL(avatarPreview);
-            setAvatarPreview(null);
         }
+        setAvatarPreview(null);
+        setAvatarFile(null);
     };
 
-    const handleSave = () => {
-        setAdminData({ ...editData });
-        setIsEditing(false);
-        setShowNotification(true);
+    const handleSave = async () => {
+        try {
+            let updatedData = { ...editData };
+            
+            // Nếu có file mới, upload lên server
+            if (avatarFile) {
+                const formData = new FormData();
+                formData.append('avatar', avatarFile);
+                
+                // TODO: Gọi API upload
+                // const response = await fetch('/api/upload-avatar', {
+                //     method: 'POST',
+                //     body: formData
+                // });
+                // const { avatarUrl } = await response.json();
+                
+                // Giả lập response (xóa dòng này khi có API thật)
+                const avatarUrl = avatarPreview; // Tạm thời dùng blob URL
+                
+                updatedData.avatar = avatarUrl; // Lưu URL string từ server
+            }
+            
+            // TODO: Gọi API cập nhật thông tin admin
+            // await fetch('/api/admin/profile', {
+            //     method: 'PUT',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(updatedData)
+            // });
+            
+            setAdminData(updatedData);
+            setIsEditing(false);
+            setAvatarFile(null);
+            setAvatarPreview(null);
+            setShowNotification(true);
+        } catch (error) {
+            //debug
+            console.error('Error saving profile:', error);
+            alert('Có lỗi xảy ra khi lưu thông tin!');
+        }
     };
 
     useEffect(() => {
@@ -57,11 +97,16 @@ function AdminProfile() {
 
         if (name === 'avatar' && files?.[0]) {
             const file = files[0];
-            setEditData(prev => ({ ...prev, avatar: file }));
-
+            
+            // Lưu file object để upload sau
+            setAvatarFile(file);
+            
+            // Cleanup preview cũ
             if (avatarPreview && typeof avatarPreview === 'string' && avatarPreview.startsWith('blob:')) {
                 URL.revokeObjectURL(avatarPreview);
             }
+            
+            // Tạo preview URL mới
             setAvatarPreview(URL.createObjectURL(file));
             return;
         }
@@ -103,104 +148,22 @@ function AdminProfile() {
                 </div>
 
                 <div className={styles.content}>
-                    <div className={styles.avatarSection}>
-                        <div
-                            className={`${styles.avatarContainer} ${isEditing ? styles.editable : ''}`}
-                            onClick={handleAvatarClick}
-                        >
-                            {avatarPreview || adminData.avatar ? (
-                                <img
-                                    src={avatarPreview || adminData.avatar}
-                                    alt="Admin Avatar"
-                                    className={styles.avatar}
-                                />
-                            ) : (
-                                <div className={styles.avatarPlaceholder}>
-                                    <FontAwesomeIcon icon={faUser} />
-                                </div>
-                            )}
-                            {isEditing && (
-                                <div className={styles.avatarOverlay}>
-                                    <FontAwesomeIcon icon={faEdit} />
-                                    <span>Thay đổi</span>
-                                </div>
-                            )}
-                        </div>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            name="avatar"
-                            onChange={handleChange}
-                            className={styles.avatarInput}
-                        />
-                        <div className={styles.roleInfo}>
-                            <h2 className={styles.name}>{isEditing ? editData.fullName : adminData.fullName}</h2>
-                            <span className={styles.role}>{adminData.role}</span>
-                            <span className={styles.userId}>ID: {adminData.id}</span>
-                        </div>
-                    </div>
+                    <AvatarSection
+                        onChange={handleChange}
+                        onClick={handleAvatarClick}
+                        fileInputRef={fileInputRef}
+                        avatarPreview={avatarPreview}
+                        adminData={adminData}
+                        isEditing={isEditing}
+                        editData={editData}
+                    /> 
 
-                    <div className={styles.infoSection}>
-                        <h3 className={styles.sectionTitle}>Thông tin chi tiết</h3>
-
-                        <div className={styles.formGrid}>
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Họ và tên"
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                placeholder="Nhập họ và tên"
-                                value={isEditing ? editData.fullName : adminData.fullName}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                                required
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Email"
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Nhập email"
-                                value={isEditing ? editData.email : adminData.email}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                                required
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Số điện thoại"
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                placeholder="Nhập số điện thoại"
-                                value={isEditing ? editData.phone : adminData.phone}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                                required
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Vai trò"
-                                type="text"
-                                id="role"
-                                name="role"
-                                value={adminData.role}
-                                disabled
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Ngày tạo tài khoản"
-                                type="text"
-                                id="createdAt"
-                                name="createdAt"
-                                value={new Date(adminData.createdAt).toLocaleDateString('vi-VN')}
-                                disabled
-                            />
-                        </div>
-                    </div>
+                    <InforSection
+                        adminData={adminData}
+                        isEditing={isEditing}
+                        editData={editData}
+                        onChange={handleChange}
+                    />
                 </div>
             </div>
         </div>

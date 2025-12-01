@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PageHeader, RequestFilters, RequestList, RejectModal } from './components';
 import styles from './ParentRequest.module.scss';
+import HeaderPage from '~/components/headerPage/HeaderPage';
 
 // Mock data
 const mockRequests = [
@@ -112,6 +113,7 @@ function ParentRequest() {
     return (
         <div className={styles.parentRequest}>
             <div className={styles.container}>
+                <HeaderPage title="Quản lý yêu cầu" />
                 <PageHeader pendingCount={pendingCount} />
 
                 <RequestFilters

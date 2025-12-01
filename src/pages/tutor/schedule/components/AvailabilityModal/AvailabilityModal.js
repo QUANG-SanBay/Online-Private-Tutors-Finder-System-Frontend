@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ScheduleModal from './ScheduleModal';
+import ScheduleModal from '../scheduleModal/ScheduleModal';
 import FormGroup from '~/components/formGroup/FormGroup';
 import Button from '~/components/button/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
