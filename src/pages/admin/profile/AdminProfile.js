@@ -6,6 +6,7 @@ import Button from '~/components/button/Button';
 import AvatarSection from './avataSection/AvatarSection';
 import FormGroup from '~/components/formGroup/FormGroup';
 import styles from './AdminProfile.module.scss';
+import InforSection from './inforSection/InforSection';
 
 function AdminProfile() {
     const [isEditing, setIsEditing] = useState(false);
@@ -157,66 +158,12 @@ function AdminProfile() {
                         editData={editData}
                     /> 
 
-                    <div className={styles.infoSection}>
-                        <h3 className={styles.sectionTitle}>Thông tin chi tiết</h3>
-
-                        <div className={styles.formGrid}>
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Họ và tên"
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                placeholder="Nhập họ và tên"
-                                value={isEditing ? editData.fullName : adminData.fullName}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                                required
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Email"
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Nhập email"
-                                value={isEditing ? editData.email : adminData.email}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                                required
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Số điện thoại"
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                placeholder="Nhập số điện thoại"
-                                value={isEditing ? editData.phone : adminData.phone}
-                                onChange={handleChange}
-                                disabled={!isEditing}
-                                required
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Vai trò"
-                                type="text"
-                                id="role"
-                                name="role"
-                                value={adminData.role}
-                                disabled
-                            />
-                            <FormGroup
-                                className={styles.inputField}
-                                label="Ngày tạo tài khoản"
-                                type="text"
-                                id="createdAt"
-                                name="createdAt"
-                                value={new Date(adminData.createdAt).toLocaleDateString('vi-VN')}
-                                disabled
-                            />
-                        </div>
-                    </div>
+                    <InforSection
+                        adminData={adminData}
+                        isEditing={isEditing}
+                        editData={editData}
+                        onChange={handleChange}
+                    />
                 </div>
             </div>
         </div>
