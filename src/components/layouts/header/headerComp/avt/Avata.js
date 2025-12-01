@@ -37,7 +37,7 @@ function Avata({ className, userType = 'learner' }) {
             <div className={styles.accountCtn}>
                 <div className={styles.accountAvt}>
                     <div className={styles.accountImg}>
-                        <img src={avt} className={styles.accountImgItem}></img>
+                        <img src={avt} className={styles.accountImgItem} alt='avata'></img>
                     </div>
                     <div className={styles.accountIcon}>
                         <span className={clsx(styles.accountIconItem, open ? styles.rotate : '')}>

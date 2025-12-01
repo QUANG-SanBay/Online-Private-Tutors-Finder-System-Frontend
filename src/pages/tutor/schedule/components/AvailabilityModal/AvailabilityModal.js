@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import ScheduleModal from '../scheduleModal/ScheduleModal';
 import FormGroup from '~/components/formGroup/FormGroup';
 import Button from '~/components/button/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faClock, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
 import styles from './AvailabilityModal.module.scss';
 
 function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabilities = [] }) {
