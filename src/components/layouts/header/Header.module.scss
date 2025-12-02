@@ -88,7 +88,7 @@
     right: -100%;
     width: 320px;
     height: calc(100vh - 80px);
-    background-color: var(--bgr-header-c);
+    background-color: var(--bgr-menu-c);
     backdrop-filter: blur(12px);
     box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
     transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -103,7 +103,7 @@
 .mobileMenuContent {
     display: flex;
     flex-direction: column;
-    padding: 2rem;
+    padding: 12px;
     gap: 2rem;
 }
 
@@ -246,7 +246,7 @@
     }
 
     // Keep desktopActions visible for tutor on mobile
-    .header.tutorHeader {
+    .header.showActions {
         .desktopActions {
             display: flex;
         }

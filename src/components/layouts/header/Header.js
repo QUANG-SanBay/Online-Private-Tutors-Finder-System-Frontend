@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import clsx from 'clsx';
 import { Logo, Notification, Avata, Navbar, Action } from './headerComp'
 import styles from './Header.module.scss'
 
@@ -56,7 +57,7 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
     };
 
     return (
-        <header className={`${styles.header} ${userType === 'tutor' ? styles.tutorHeader : ''}`}>
+        <header className={clsx(styles.header, {[styles.showActions]: userType === 'tutor' || userType === 'admin' })}>
             <div className={styles.headerCtn}>
                 <div className={styles.headerTop}>
                     {/* Logo */}
@@ -68,8 +69,8 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
                         )
                     ))}
 
-                    {/* Desktop Navigation - Hidden for tutor */}
-                    {userType !== 'tutor' && (
+                    {/* Desktop Navigation - Hidden for tutor and admin */}
+                    {userType !== 'tutor' && userType !== 'admin' && (
                         <div className={styles.desktopNav}>
                             {showNavbar && <Navbar userType={userType} />}
                         </div>
@@ -89,8 +90,8 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
                         )}
                     </div>
 
-                    {/* Mobile Right Section - Hidden for tutor */}
-                    {userType !== 'tutor' && (
+                    {/* Mobile Right Section - Hidden for tutor and admin */}
+                    {userType !== 'tutor' && userType !== 'admin' && (
                         <div className={styles.mobileRight}>
                             {/* Notification - visible on mobile for logged-in users */}
                             {userType !== false && showHeaderUser && (
@@ -114,8 +115,8 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
             </div>
 
             {/* Mobile Slide-in Menu - Hidden for tutor */}
-            {userType !== 'tutor' && (
-                <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}>
+            {userType !== 'tutor' && userType !== 'admin' && (
+                <div className={clsx(styles.mobileMenu, { [styles.open]: isMobileMenuOpen })}>
                     <div className={styles.mobileMenuContent}>
                         {/* Navigation Items */}
                         {showNavbar && (

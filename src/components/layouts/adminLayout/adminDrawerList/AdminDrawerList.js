@@ -3,6 +3,7 @@ import { Box, List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemTex
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import SchoolIcon from '@mui/icons-material/School';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import styles from "./AdminDrawerList.module.scss";
 
 function AdminDrawerList({ onClick }) {
@@ -23,8 +24,14 @@ function AdminDrawerList({ onClick }) {
             link: '/admin/tutor-management',
 
         },
+        {
+            text: 'EBooks',
+            icon: <MenuBookIcon className={styles.icon} />, // Add appropriate icon here
+            link: '/admin/e-books',
+
+        },
     ];
-    return ( 
+    return (
         <Box
             sx={{ width: 250 }}
             padding={'40px 0'}
@@ -38,14 +45,13 @@ function AdminDrawerList({ onClick }) {
                             <ListItemIcon className={styles.listItemIcon}>
                                 {item.icon}
                             </ListItemIcon>
-                            <ListItemText primary={item.text} className={styles.listItemText}/>
+                            <ListItemText primary={item.text} className={styles.listItemText} />
                         </ListItemButton>
-                        <Divider />
                     </ListItem>
                 ))}
             </List>
         </Box>
-     );
+    );
 }
 
 export default AdminDrawerList;

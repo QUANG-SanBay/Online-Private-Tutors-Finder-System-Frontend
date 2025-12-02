@@ -1,5 +1,10 @@
 .learnerManagement {
-    padding: 2.4rem;
+    padding: 0 var(--padding-left-right);
+    display: flex;
+    width: 100%;
+    margin-bottom: 24px;
+}
+.container {
     max-width: var(--max-width);
     width: 100%;
     margin: 0 auto;
