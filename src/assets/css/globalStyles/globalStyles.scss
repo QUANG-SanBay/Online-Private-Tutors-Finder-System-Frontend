@@ -5,13 +5,14 @@
     --primary-c-01: rgba(69, 130, 255, 0.1);
     --bgr-c: #F7F6F5;
     --bgr-header-c: rgba(247, 246, 245,0.7);
+    --bgr-menu-c: #e1e1e1;
     --text-c:#342d47;
     --text-red-c: #ff5757;
     --text-c-light:#f1f1f1;
     --yellow-c:#ffb800;
     --section-bgr:#FCFCFC;
     --border-c: #545454;
-    --border-c-04: #bebebe;
+    --border-c-04: rgba(120, 120, 120, 0.4);
     --hover-c: #E4E4E4;
     --hover-c-pmr: #1f6aff;
     --input-bgr: #f0f0f0;
@@ -107,4 +108,26 @@ input,
 button{
     outline: none;
     border: none;
+}
+
+/* Thanh cuộn tổng thể */
+::-webkit-scrollbar {
+  width: 4px;       /* Độ rộng */
+}
+
+/* Kênh chứa thanh kéo */
+::-webkit-scrollbar-track {
+  background: #f2f2f2;
+  border-radius: 20px;
+}
+
+/* Thanh kéo */
+::-webkit-scrollbar-thumb {
+  background: var(--primary-c);
+  border-radius: 20px;
+}
+
+/* Hover thanh kéo */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-c-pmr);
 }

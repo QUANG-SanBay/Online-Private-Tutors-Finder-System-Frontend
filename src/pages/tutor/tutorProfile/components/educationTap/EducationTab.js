@@ -1,5 +1,4 @@
 import FormGroup from '~/components/formGroup/FormGroup';
-import Button from '~/components/button/Button';
 import { faGraduationCap } from '@fortawesome/free-solid-svg-icons';
 import styles from './EducationTab.module.scss';
 

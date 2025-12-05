@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styles from './ScheduleTabs.module.scss';
 
 function ScheduleTabs({ activeTab, onTabChange }) {

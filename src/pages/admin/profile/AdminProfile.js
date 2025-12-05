@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEnvelope, faPhone, faEdit, faSave, faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import clsx from 'clsx';
+import {  faEdit, faSave, faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import Button from '~/components/button/Button';
 import AvatarSection from './avataSection/AvatarSection';
-import FormGroup from '~/components/formGroup/FormGroup';
 import styles from './AdminProfile.module.scss';
 import InforSection from './inforSection/InforSection';
 

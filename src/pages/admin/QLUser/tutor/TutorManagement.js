@@ -8,26 +8,28 @@ function TutorManagement() {
 
     return (
         <div className={styles.tutorManagement}>
-            <div className={styles.header}>
-                <h1 className={styles.title}>Quản lý Gia sư</h1>
-                <div className={styles.tabNav}>
-                    <button
-                        className={`${styles.tabButton} ${activeTab === 'list' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('list')}
-                    >
-                        Danh sách Gia sư
-                    </button>
-                    <button
-                        className={`${styles.tabButton} ${activeTab === 'pending' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('pending')}
-                    >
-                        Phê duyệt Hồ sơ
-                    </button>
+            <div className={styles.container}>
+                <div className={styles.header}>
+                    <h1 className={styles.title}>Quản lý Gia sư</h1>
+                    <div className={styles.tabNav}>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'list' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('list')}
+                        >
+                            Danh sách Gia sư
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'pending' ? styles.active : ''}`}
+                            onClick={() => setActiveTab('pending')}
+                        >
+                            Phê duyệt Hồ sơ
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div className={styles.content}>
-                {activeTab === 'list' ? <ListTutor /> : <PendingApprovals />}
+                <div className={styles.content}>
+                    {activeTab === 'list' ? <ListTutor /> : <PendingApprovals />}
+                </div>
             </div>
         </div>
     );

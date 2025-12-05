@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "../../../components/Learner/profile/Profile.module.scss";
 import ProfileTab from "~/components/Learner/profile/info";
 

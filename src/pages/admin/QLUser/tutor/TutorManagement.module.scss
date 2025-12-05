@@ -1,8 +1,14 @@
 .tutorManagement {
-    padding: 2.4rem;
+    width: 100%;
+    padding: 0 var(--padding-left-right);
+    display: flex;
+    margin-bottom: 24px;
+}
+.container {
     max-width: var(--max-width);
     width: 100%;
     margin: 0 auto;
+    border-radius: 8px;
 }
 
 .header {
