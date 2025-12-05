@@ -56,4 +56,4 @@ const tutorRouter = [
     {path: '/tutor/profile', element: <TutorProfile/>}
 ];
 
-export {learnerRouter, publicRouter, tutorRouter };
+export {learnerRouter, publicRouter, tutorRouter};
