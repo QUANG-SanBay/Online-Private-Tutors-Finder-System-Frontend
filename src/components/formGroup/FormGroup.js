@@ -27,6 +27,7 @@ function FormGroup({
 
     // Xử lý khi chọn option trong multiple select
     const handleMultipleSelect = (selectedValue) => {
+        if (disabled) return;
         const currentValues = Array.isArray(value) ? value : [];
         if (!currentValues.includes(selectedValue)) {
             const newValues = [...currentValues, selectedValue];
@@ -36,6 +37,7 @@ function FormGroup({
 
     // Xử lý khi xóa một giá trị đã chọn
     const handleRemoveValue = (valueToRemove) => {
+        if (disabled) return;
         const currentValues = Array.isArray(value) ? value : [];
         const newValues = currentValues.filter(val => val !== valueToRemove);
         onChange({ target: { name, value: newValues } });
@@ -84,7 +86,9 @@ function FormGroup({
                         value=""
                         onChange={(e) => handleMultipleSelect(e.target.value)}
                         className={clsx(styles.input, { [styles.invalid]: !!error })}
+                        disabled={disabled}
                     >
+                        
                         <option value="" disabled>
                             {placeholder || 'Chọn thêm...'}
                         </option>

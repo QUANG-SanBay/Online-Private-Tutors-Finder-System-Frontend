@@ -15,6 +15,7 @@ function RegisterForm() {
         address: '',
         subjects: [],
         currentLevel: '',
+        university: '',
         certifications: '',
         introduction: '',
         tuition: '',
@@ -230,6 +231,16 @@ function RegisterForm() {
                 value={formData.currentLevel}
                 onChange={handleChange}
                 options={levelOptions}
+                required
+            />
+            <FormGroup
+                className={clsx(styles.currentLevel, styles.inputField)}
+                label="Trường đào tạo"
+                type="text"
+                id="university"
+                name="university"
+                value={formData.university}
+                onChange={handleChange}
                 required
             />
             <FormGroup
