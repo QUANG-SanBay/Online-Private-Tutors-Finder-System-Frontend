@@ -302,10 +302,7 @@ function RegisterForm() {
                 certificateNames: certificatePairs.map(c => c.name.trim())
             };
 
-            console.log('📤 Submitting registration:', submitData);
             const response = await registerTutor(submitData);
-
-            console.log('✅ Registration success:', response);
             setSuccess('✅ Đăng ký thành công!  Đang chuyển hướng.. .');
             setTimeout(() => navigate('/login'), 2000);
 

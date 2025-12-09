@@ -8,14 +8,17 @@ function BodyMiniProfile({ tutorData = null }) {
         fullName: "Đang tải...",
         email: "N/A",
         gender: "N/A",
-        phone: "N/A",
+        phoneNumber: "N/A",
         address: "N/A",
         subjects: "N/A",
-        currentLevel: "N/A",
-        certifications: "N/A",
+        educationalLevel: "N/A",
+        certificates: "N/A",
         introduction: "Đang tải thông tin gia sư...",
         avatarUrl: avt,
     };
+
+
+
 
     return ( 
         <Grid container className={styles.bodyMiniProfile}>
@@ -40,7 +43,7 @@ function BodyMiniProfile({ tutorData = null }) {
                     </li>
                     <li>
                         <strong>Số điện thoại:</strong>
-                        <span>{userData.phone}</span>
+                        <span>{userData.phoneNumber}</span>
                     </li>
                     <li>
                         <strong>Địa chỉ:</strong>
@@ -52,11 +55,11 @@ function BodyMiniProfile({ tutorData = null }) {
                     </li>
                     <li>
                         <strong>Trình độ:</strong>
-                        <span>{userData.currentLevel}</span>
+                        <span>{userData.educationalLevel}</span>
                     </li>
                     <li>
                         <strong>Chứng chỉ:</strong>
-                        <span>{userData.certifications || 'Không'}</span>
+                        <span>{userData.certificates || 'Không'}</span>
                     </li>
                     <li className={styles.introduction}>
                         <strong>Giới thiệu:</strong>

@@ -52,7 +52,7 @@ function MiniProfile({ className }) {
             </div>
         );
     }
-
+    console.log('Tutor Data:', tutorData);
     return (
         <div className={clsx(styles.miniProfile, className)}>
             <div className={styles.miniProfileCtn}>
