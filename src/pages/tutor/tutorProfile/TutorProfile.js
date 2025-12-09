@@ -47,6 +47,13 @@ function TutorProfile() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        if (e.target.type === 'file') {
+            setFormData(prev => ({
+                ...prev,
+                [name]: e.target.files[0] ? e.target.files[0].name : ''
+            }));
+            return;
+        }
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -96,7 +103,6 @@ function TutorProfile() {
             // TODO: Upload to server and get URL
         }
     };
-
     return (
         <div className={styles.tutorProfile}>
             <div className={styles.container}>

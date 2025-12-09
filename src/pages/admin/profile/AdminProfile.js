@@ -14,7 +14,6 @@ function AdminProfile() {
     const fileInputRef = useRef(null);
 
     const [adminData, setAdminData] = useState({
-        id: 'ADM001',
         fullName: 'Nguyễn Văn Admin',
         email: 'admin@tutorfinder.com',
         phone: '0912345678',

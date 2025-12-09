@@ -3,9 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faUser } from '@fortawesome/free-solid-svg-icons';
 import FormGroup from '~/components/formGroup/FormGroup';
 import Button from '~/components/button/Button';
-import styles from './AddEditTutorModal.module.scss';
+import styles from './TutorInfoModal.module.scss';
 
-function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
+
+function TutorInfoModal({ isOpen, onClose, tutorData = null }) {
     const [formData, setFormData] = useState({
         id: '',
         fullName: '',
@@ -95,59 +96,58 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
         { value: 'Khác', label: 'Khác' }
     ];
 
-    const handleChange = (e) => {
-        const { name, value, files, selectedOptions } = e.target;
+    // const handleChange = (e) => {
+    //     const { name, value, files, selectedOptions } = e.target;
 
-        if (name === 'profileImage') {
-            const file = files?.[0] || null;
-            setFormData(prev => ({ ...prev, [name]: file }));
-            setAvatarPreview(prevUrl => {
-                if (prevUrl && typeof prevUrl === 'string' && prevUrl.startsWith('blob:')) {
-                    URL.revokeObjectURL(prevUrl);
-                }
-                return file ? URL.createObjectURL(file) : null;
-            });
-            return;
-        }
+    //     if (name === 'profileImage') {
+    //         const file = files?.[0] || null;
+    //         setFormData(prev => ({ ...prev, [name]: file }));
+    //         setAvatarPreview(prevUrl => {
+    //             if (prevUrl && typeof prevUrl === 'string' && prevUrl.startsWith('blob:')) {
+    //                 URL.revokeObjectURL(prevUrl);
+    //             }
+    //             return file ? URL.createObjectURL(file) : null;
+    //         });
+    //         return;
+    //     }
 
-        if (name === 'subjects') {
-            if (Array.isArray(value)) {
-                setFormData({ ...formData, subjects: value });
-            } else if (selectedOptions) {
-                const selected = Array.from(selectedOptions, (opt) => opt.value);
-                setFormData({ ...formData, subjects: selected });
-            } else {
-                setFormData({ ...formData, subjects: value });
-            }
-            return;
-        }
+    //     if (name === 'subjects') {
+    //         if (Array.isArray(value)) {
+    //             setFormData({ ...formData, subjects: value });
+    //         } else if (selectedOptions) {
+    //             const selected = Array.from(selectedOptions, (opt) => opt.value);
+    //             setFormData({ ...formData, subjects: selected });
+    //         } else {
+    //             setFormData({ ...formData, subjects: value });
+    //         }
+    //         return;
+    //     }
 
-        setFormData({ ...formData, [name]: value });
-    };
+    //     setFormData({ ...formData, [name]: value });
+    // };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
         
-        // Validation
-        if (!formData.fullName.trim()) {
-            alert('Vui lòng nhập họ và tên!');
-            return;
-        }
-        if (!formData.email.trim()) {
-            alert('Vui lòng nhập email!');
-            return;
-        }
-        if (!formData.phone.trim()) {
-            alert('Vui lòng nhập số điện thoại!');
-            return;
-        }
+    //     // Validation
+    //     if (!formData.fullName.trim()) {
+    //         alert('Vui lòng nhập họ và tên!');
+    //         return;
+    //     }
+    //     if (!formData.email.trim()) {
+    //         alert('Vui lòng nhập email!');
+    //         return;
+    //     }
+    //     if (!formData.phone.trim()) {
+    //         alert('Vui lòng nhập số điện thoại!');
+    //         return;
+    //     }
 
-        onSave(formData);
-        onClose();
-    };
+    //     onSave(formData);
+    //     onClose();
+    // };
 
     const handleClose = () => {
-        resetForm();
         onClose();
     };
 
@@ -165,13 +165,13 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
         <div className={styles.modalOverlay} onClick={handleClose}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.modalHeader}>
-                    <h2>{tutorData ? 'Chỉnh sửa Gia sư' : 'Thêm Gia sư mới'}</h2>
+                    <h2>Thông tin gia sư</h2>
                     <button className={styles.closeButton} onClick={handleClose}>
                         <FontAwesomeIcon icon={faTimes} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className={styles.modalBody}>
+                <form  className={styles.modalBody}>
                     <div className={styles.topRow}>
                         <div className={styles.leftCol}>
                             <FormGroup
@@ -182,8 +182,8 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                                 name="fullName"
                                 placeholder="Nhập họ và tên"
                                 value={formData.fullName}
-                                onChange={handleChange}
-                                required
+                                // onChange={handleChange}
+                                disabled={true}
                             />
                             <FormGroup
                                 className={styles.inputField}
@@ -192,9 +192,9 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                                 id="gender"
                                 name="gender"
                                 value={formData.gender}
-                                onChange={handleChange}
+                                // onChange={handleChange}
                                 options={genderOptions}
-                                required
+                                disabled={true}
                             />
                         </div>
                         <div className={styles.avatarCol}>
@@ -216,19 +216,19 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                                 ) : (
                                     <div className={styles.avatarPlaceholder}>
                                         <FontAwesomeIcon icon={faUser} />
-                                        <span>Chọn ảnh</span>
+                                        <span>Chưa có ảnh</span>
                                     </div>
                                 )}
                             </button>
-                            <input
+                            {/* <input
                                 ref={fileInputRef}
                                 id="profileImage"
                                 name="profileImage"
                                 type="file"
                                 accept="image/*"
-                                onChange={handleChange}
+                                // onChange={handleChange}
                                 className={styles.avatarInput}
-                            />
+                            /> */}
                         </div>
                     </div>
 
@@ -241,8 +241,8 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             name="email"
                             placeholder="Nhập email"
                             value={formData.email}
-                            onChange={handleChange}
-                            required
+                            // onChange={handleChange}
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -252,8 +252,8 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             name="phone"
                             placeholder="Nhập số điện thoại"
                             value={formData.phone}
-                            onChange={handleChange}
-                            required
+                            // onChange={handleChange}
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -262,9 +262,9 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             id="address"
                             name="address"
                             value={formData.address}
-                            onChange={handleChange}
+                            // onChange={handleChange}
                             options={locationOptions}
-                            required
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -273,10 +273,10 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             id="subjects"
                             name="subjects"
                             value={formData.subjects}
-                            onChange={handleChange}
+                            // onChange={handleChange}
                             options={subjectOptions}
                             multiple={true}
-                            required
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -285,9 +285,9 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             id="currentLevel"
                             name="currentLevel"
                             value={formData.currentLevel}
-                            onChange={handleChange}
+                            // onChange={handleChange}
                             options={levelOptions}
-                            required
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -297,8 +297,8 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             name="university"
                             placeholder="Nhập tên trường"
                             value={formData.university}
-                            onChange={handleChange}
-                            required
+                            // onChange={handleChange}
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -308,7 +308,8 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             name="certifications"
                             placeholder="Nhập chứng chỉ"
                             value={formData.certifications}
-                            onChange={handleChange}
+                            // onChange={handleChange}
+                            disabled={true}
                         />
                         <FormGroup
                             className={styles.inputField}
@@ -318,8 +319,8 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                             name="pricePerHour"
                             placeholder="Nhập học phí"
                             value={formData.pricePerHour}
-                            onChange={handleChange}
-                            required
+                            // onChange={handleChange}
+                            disabled={true}
                         />
                     </div>
 
@@ -331,22 +332,22 @@ function AddEditTutorModal({ isOpen, onClose, onSave, tutorData = null }) {
                         name="introduction"
                         placeholder="Giới thiệu ngắn gọn"
                         value={formData.introduction}
-                        onChange={handleChange}
-                        required
+                        // onChange={handleChange}
+                        disabled={true}
                     />
 
-                    <div className={styles.modalFooter}>
+                    {/* <div className={styles.modalFooter}>
                         <Button type="button" variant="secondary" onClick={handleClose}>
                             Hủy
                         </Button>
                         <Button type="submit" variant="primary">
                             {tutorData ? 'Cập nhật' : 'Thêm mới'}
                         </Button>
-                    </div>
+                    </div> */}
                 </form>
             </div>
         </div>
     );
 }
 
-export default AddEditTutorModal;
+export default TutorInfoModal;

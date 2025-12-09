@@ -13,17 +13,17 @@
 .header{
     border-bottom: 1px solid var(--border-c-04);
     .title{
-        margin-left: 8px;
         font-size: 2rem;
         font-weight: 600;
         color: var(--primary-c);
-        padding-bottom: 8px;
+        padding: 4px 12px;
     }
 }
 .body{
     display: flex;
     flex-wrap: wrap;
-    padding: 0 8px;
+    padding: 4px 12px;
+
 }
 .cardItem{
     width: 100%;

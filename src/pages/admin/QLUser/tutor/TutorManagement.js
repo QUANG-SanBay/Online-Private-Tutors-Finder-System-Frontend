@@ -1,7 +1,9 @@
-import { useState } from 'react';
+ import { useState } from 'react';
+import clsx from 'clsx';
 import ListTutor from './listTutor/ListTutor';
 import PendingApprovals from './pendingApprovals/PendingApprovals';
 import styles from './TutorManagement.module.scss';
+import HeaderPage from '~/components/headerPage/HeaderPage';
 
 function TutorManagement() {
     const [activeTab, setActiveTab] = useState('list'); // 'list' or 'pending'
@@ -10,16 +12,16 @@ function TutorManagement() {
         <div className={styles.tutorManagement}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h1 className={styles.title}>Quản lý Gia sư</h1>
+                    <HeaderPage title="Quản lý Gia sư" />
                     <div className={styles.tabNav}>
                         <button
-                            className={`${styles.tabButton} ${activeTab === 'list' ? styles.active : ''}`}
+                            className={clsx(styles.tabButton, { [styles.active]: activeTab === 'list' })}
                             onClick={() => setActiveTab('list')}
                         >
                             Danh sách Gia sư
                         </button>
                         <button
-                            className={`${styles.tabButton} ${activeTab === 'pending' ? styles.active : ''}`}
+                            className={clsx(styles.tabButton, { [styles.active]: activeTab === 'pending' })}
                             onClick={() => setActiveTab('pending')}
                         >
                             Phê duyệt Hồ sơ

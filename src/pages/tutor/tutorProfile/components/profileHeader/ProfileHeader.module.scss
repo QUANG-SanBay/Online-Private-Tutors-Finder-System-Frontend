@@ -34,6 +34,7 @@
         }
 
         .changeAvatarBtn {
+            visibility: hidden;
             padding: 0.6rem 1.2rem;
             background-color: transparent;
             border: 2px solid var(--primary-c);
@@ -44,6 +45,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
 
+            &.editing{
+                visibility: visible;
+            }
             &:hover {
                 background-color: var(--primary-c);
                 color: white;

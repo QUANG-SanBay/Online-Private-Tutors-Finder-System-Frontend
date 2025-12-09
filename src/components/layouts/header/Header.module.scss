@@ -8,6 +8,13 @@
     position: fixed;
     top: 0;
     z-index: 999;
+    .hide {
+    transform: translateY(-100%);
+    }
+
+    .show {
+    transform: translateY(0);
+    }
 }
 
 .headerCtn{
