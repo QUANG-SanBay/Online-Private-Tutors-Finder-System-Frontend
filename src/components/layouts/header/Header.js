@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +8,10 @@ import styles from './Header.module.scss'
 
 function Header({ showNavbar = true, showHeaderUser = true, userType = false }) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const [visible, setVisible] = useState(true);
+    const lastScroll = useRef(0);
+    const timeoutRef = useRef(null);
     const navigate = useNavigate();
 
     // Mock user data - replace with actual data from context/Redux
@@ -56,8 +60,44 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
         return '/';
     };
 
+    // Scroll behavior for header visibility
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScroll = window.scrollY;
+
+            // Xóa timer khi đang cuộn
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+            // --- Logic xuất hiện / biến mất ---
+            if (currentScroll <= 0) {
+                setVisible(true); // đầu trang
+            } else if (currentScroll > lastScroll.current) {
+                setVisible(false); // cuộn xuống
+            } else {
+                setVisible(true); // cuộn lên
+            }
+
+            lastScroll.current = currentScroll;
+
+            // --- Nếu dừng cuộn 3 giây ---
+            timeoutRef.current = setTimeout(() => {
+                if (window.scrollY > 50) {
+                    setVisible(false);
+                }
+            }, 3000);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <header className={clsx(styles.header, {[styles.showActions]: userType === 'tutor' })}>
+        <header className={clsx(styles.header, { 
+            [styles.showActions]: userType === 'tutor',
+            [styles.show]: visible,
+            [styles.hide]: !visible
+        })}>
             <div className={styles.headerCtn}>
                 <div className={styles.headerTop}>
                     {/* Logo */}
