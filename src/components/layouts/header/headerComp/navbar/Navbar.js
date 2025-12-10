@@ -19,9 +19,17 @@ function Navbar({userType, onLinkClick, isMobile = false}) {
     { title: "Liên hệ", path: "/Contact" },
   ];
 
+  const adminMenu = [
+    { title: "Dashboard", path: "/admin/dashboard" },
+    { title: "Người học", path: "/admin/learner-management" },
+    { title: "Gia sư", path: "/admin/tutor-management" },
+    { title: "E-Books", path: "/admin/e-books" },
+  ];
   let menu = defaultMenu;
   if (userType === "learner") {
     menu = learnerMenu;
+  } else if (userType === "admin") {
+    menu = adminMenu;
   }
 
   return (

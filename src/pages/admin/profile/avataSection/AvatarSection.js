@@ -41,7 +41,6 @@ function AvatarSection({onChange, onClick, fileInputRef, avatarPreview, adminDat
             <div className={styles.roleInfo}>
                 <h2 className={styles.name}>{isEditing ? editData.fullName : adminData.fullName}</h2>
                 <span className={styles.role}>{adminData.role}</span>
-                <span className={styles.userId}>ID: {adminData.id}</span>
             </div>
         </div>
     );

@@ -17,7 +17,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 function PendingApprovals() {
     const [pendingTutors, setPendingTutors] = useState([
         {
-            id: 'PEND001',
+            index: '1',
             fullName: 'Nguyễn Thị Mai',
             gender: 'Nữ',
             email: 'nguyenthimai@email.com',
@@ -34,7 +34,7 @@ function PendingApprovals() {
             submittedDate: '2024-11-20'
         },
         {
-            id: 'PEND002',
+            index: '2',
             fullName: 'Trần Văn Nam',
             gender: 'Nam',
             email: 'tranvannam@email.com',
@@ -51,7 +51,7 @@ function PendingApprovals() {
             submittedDate: '2024-11-21'
         },
         {
-            id: 'PEND003',
+            index: '3',
             fullName: 'Lê Thị Hương',
             gender: 'Nữ',
             email: 'lethihuong@email.com',
@@ -109,7 +109,7 @@ function PendingApprovals() {
 
     const handleApprove = () => {
         if (window.confirm(`Xác nhận phê duyệt hồ sơ của ${selectedTutor.name}?`)) {
-            setPendingTutors(prev => prev.filter(t => t.id !== selectedTutor.id));
+            setPendingTutors(prev => prev.filter(t => t.index !== selectedTutor.index));
             alert('Đã phê duyệt hồ sơ thành công!');
             setSelectedTutor(null);
         }
@@ -122,7 +122,7 @@ function PendingApprovals() {
         }
 
         if (window.confirm(`Xác nhận từ chối hồ sơ của ${selectedTutor.name}?`)) {
-            setPendingTutors(prev => prev.filter(t => t.id !== selectedTutor.id));
+            setPendingTutors(prev => prev.filter(t => t.index !== selectedTutor.index));
             alert('Đã từ chối hồ sơ!');
             setSelectedTutor(null);
             setShowRejectForm(false);
@@ -152,10 +152,10 @@ function PendingApprovals() {
                 {pendingTutors.length > 0 ? (
                     <div className={styles.cardGrid}>
                         {pendingTutors.map((tutor) => (
-                            <div key={tutor.id} className={styles.tutorCard}>
+                            <div key={tutor.index} className={styles.tutorCard}>
                                 <div className={styles.cardHeader}>
                                     <h3 className={styles.tutorName}>{tutor.fullName}</h3>
-                                    <span className={styles.tutorId}>{tutor.id}</span>
+                                    <span className={styles.tutorId}>STT: {tutor.index}</span>
                                 </div>
                                 <div className={styles.cardBody}>
                                     <div className={styles.infoRow}>
@@ -175,7 +175,7 @@ function PendingApprovals() {
                                         <span className={styles.infoValue}>{tutor.currentLevel}</span>
                                     </div>
                                     <div className={styles.infoRow}>
-                                        <span className={styles.infoLabel}>Ngày nộp:</span>
+                                        <span className={styles.infoLabel}>Ngày tạo hồ sơ:</span>
                                         <span className={styles.infoValue}>{tutor.submittedDate}</span>
                                     </div>
                                 </div>
@@ -285,8 +285,8 @@ function PendingApprovals() {
                                     <h3 className={styles.sectionTitle}>Thông tin khai báo</h3>
                                     <div className={styles.detailsList}>
                                         <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>ID:</span>
-                                            <span className={styles.detailValue}>{selectedTutor.id}</span>
+                                            <span className={styles.detailLabel}>STT:</span>
+                                            <span className={styles.detailValue}>{selectedTutor.index}</span>
                                         </div>
                                         <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Họ và Tên:</span>
@@ -333,7 +333,7 @@ function PendingApprovals() {
                                             <span className={styles.detailValue}>{selectedTutor.introduction}</span>
                                         </div>
                                         <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Ngày nộp:</span>
+                                            <span className={styles.detailLabel}>Ngày tạo hồ sơ:</span>
                                             <span className={styles.detailValue}>{selectedTutor.submittedDate}</span>
                                         </div>
                                     </div>

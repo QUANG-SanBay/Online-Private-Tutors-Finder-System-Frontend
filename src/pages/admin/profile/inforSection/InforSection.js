@@ -28,8 +28,8 @@ function InforSection({ adminData, isEditing, editData, onChange }) {
                     placeholder="Nhập email"
                     value={isEditing ? editData.email : adminData.email}
                     onChange={onChange}
-                    disabled={!isEditing}
-                    required
+                    disabled={true}
+                    // required
                 />
                 <FormGroup
                     className={styles.inputField}

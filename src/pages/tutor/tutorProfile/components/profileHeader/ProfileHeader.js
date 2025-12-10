@@ -10,6 +10,7 @@ import {
     faTimes,
     faLock
 } from '@fortawesome/free-solid-svg-icons';
+import clsx from 'clsx';
 import Button from '~/components/button/Button';
 import styles from './ProfileHeader.module.scss';
 
@@ -44,7 +45,7 @@ function ProfileHeader({
                     style={{ display: 'none' }}
                 />
                 <button 
-                    className={styles.changeAvatarBtn}
+                    className={clsx(styles.changeAvatarBtn, {[styles.editing]: isEditing})}
                     onClick={handleAvatarClick}
                 >
                     Đổi ảnh đại diện

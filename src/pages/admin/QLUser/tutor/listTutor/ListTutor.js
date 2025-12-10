@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUnlock, faEye, faSearch, faPlus, faEdit } from '@fortawesome/free-solid-svg-icons';
 import Button from '~/components/button/Button';
-import AddEditTutorModal from '../addEditTutorModal/AddEditTutorModal';
+import TutorInfoModal from '../tutorInfoModal/TutorInfoModal';
 import styles from './ListTutor.module.scss';
 
 function ListTutor() {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [dateFilter, setDateFilter] = useState({ from: '', to: '' });
-    const [showAddEditModal, setShowAddEditModal] = useState(false);
+    const [showTutorInfoModal, setShowTutorInfoModal] = useState(false);
     const [editingTutor, setEditingTutor] = useState(null);
     const [tutors, setTutors] = useState([
         {
-            id: 'TUT001',
+            index: '1',
             fullName: 'Nguyễn Văn An',
             gender: 'Nam',
             subjects: ['Toán', 'Lý'],
@@ -30,7 +30,7 @@ function ListTutor() {
             joinDate: '2024-01-15'
         },
         {
-            id: 'TUT002',
+            index: '2',
             fullName: 'Trần Thị Bình',
             gender: 'Nữ',
             subjects: ['Tiếng Anh', 'Văn'],
@@ -47,7 +47,7 @@ function ListTutor() {
             joinDate: '2024-03-20'
         },
         {
-            id: 'TUT003',
+            index: '3',
             fullName: 'Lê Văn Công',
             gender: 'Nam',
             subjects: ['Hóa', 'Sinh'],
@@ -64,7 +64,7 @@ function ListTutor() {
             joinDate: '2024-02-10'
         },
         {
-            id: 'TUT004',
+            index: '4',
             fullName: 'Phạm Thị Dung',
             gender: 'Nữ',
             subjects: ['Toán', 'Tiếng Anh'],
@@ -84,51 +84,50 @@ function ListTutor() {
 
     const [selectedTutor, setSelectedTutor] = useState(null);
 
-    const handleLockToggle = (tutorId) => {
+    const handleLockToggle = (tutorindex) => {
         setTutors(prevTutors =>
             prevTutors.map(tutor =>
-                tutor.id === tutorId
+                tutor.index === tutorindex
                     ? { ...tutor, status: tutor.status === 'Active' ? 'Locked' : 'Active' }
                     : tutor
             )
         );
     };
 
-    const handleAddTutor = () => {
-        setEditingTutor(null);
-        setShowAddEditModal(true);
+    // const handleAddTutor = () => {
+    //     setEditingTutor(null);
+    //     setShowTutorInfoModal(true);
+    // };
+
+    const handleViewDetail = () => {
+        setShowTutorInfoModal(true);
     };
 
-    const handleEditTutor = (tutor) => {
-        setEditingTutor(tutor);
-        setShowAddEditModal(true);
-    };
+    // const handleSaveTutor = (tutorData) => {
+    //     if (editingTutor) {
+    //         // Update existing tutor
+    //         setTutors(prevTutors =>
+    //             prevTutors.map(tutor =>
+    //                 tutor.index === editingTutor.index ? { ...tutorData, index: tutor.index, rating: tutor.rating } : tutor
+    //             )
+    //         );
+    //         alert('Đã cập nhật thông tin gia sư!');
+    //     } else {
+    //         // Add new tutor
+    //         const newTutor = {
+    //             ...tutorData,
+    //             index: `TUT${(tutors.length + 1).toString().padStart(3, '0')}`,
+    //             rating: 0,
+    //             joinDate: new Date().toISOString().split('T')[0]
+    //         };
+    //         setTutors(prevTutors => [...prevTutors, newTutor]);
+    //         alert('Đã thêm gia sư mới!');
+    //     }
+    // };
 
-    const handleSaveTutor = (tutorData) => {
-        if (editingTutor) {
-            // Update existing tutor
-            setTutors(prevTutors =>
-                prevTutors.map(tutor =>
-                    tutor.id === editingTutor.id ? { ...tutorData, id: tutor.id, rating: tutor.rating } : tutor
-                )
-            );
-            alert('Đã cập nhật thông tin gia sư!');
-        } else {
-            // Add new tutor
-            const newTutor = {
-                ...tutorData,
-                id: `TUT${(tutors.length + 1).toString().padStart(3, '0')}`,
-                rating: 0,
-                joinDate: new Date().toISOString().split('T')[0]
-            };
-            setTutors(prevTutors => [...prevTutors, newTutor]);
-            alert('Đã thêm gia sư mới!');
-        }
-    };
-
-    const handleViewDetail = (tutor) => {
-        setSelectedTutor(tutor);
-    };
+    // const handleViewDetail = (tutor) => {
+    //     setSelectedTutor(tutor);
+    // };
 
     const closeDetailModal = () => {
         setSelectedTutor(null);
@@ -137,7 +136,7 @@ function ListTutor() {
     const filteredTutors = tutors.filter(tutor => {
         // Text search
         const matchesSearch = tutor.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            tutor.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            tutor.index.toLowerCase().includes(searchTerm.toLowerCase()) ||
             tutor.subjects.some(subject => subject.toLowerCase().includes(searchTerm.toLowerCase()));
         
         // Status filter
@@ -163,15 +162,15 @@ function ListTutor() {
                         <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
                         <input
                             type="text"
-                            placeholder="Tìm kiếm theo tên, ID hoặc môn học..."
+                            placeholder="Tìm kiếm theo tên, môn dạy,..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className={styles.searchInput}
                         />
                     </div>
-                    <Button variant="primary" onClick={handleAddTutor}>
+                    {/* <Button variant="primary" onClick={handleAddTutor}>
                         <FontAwesomeIcon icon={faPlus} /> Thêm Gia sư
-                    </Button>
+                    </Button> */}
                 </div>
                 
                 <div className={styles.filters}>
@@ -214,7 +213,7 @@ function ListTutor() {
                 <table className={styles.table}>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>STT</th>
                             <th>Họ và Tên</th>
                             <th>Môn Dạy</th>
                             <th>Đánh Giá</th>
@@ -226,8 +225,8 @@ function ListTutor() {
                     <tbody>
                         {filteredTutors.length > 0 ? (
                             filteredTutors.map((tutor) => (
-                                <tr key={tutor.id}>
-                                    <td>{tutor.id}</td>
+                                <tr key={tutor.index}>
+                                    <td>{tutor.index}</td>
                                     <td className={styles.nameCell}>{tutor.fullName}</td>
                                     <td>
                                         <div className={styles.subjects}>
@@ -257,23 +256,17 @@ function ListTutor() {
                                         <div className={styles.actions}>
                                             <button
                                                 className={styles.iconButton}
-                                                onClick={() => handleEditTutor(tutor)}
-                                                title="Chỉnh sửa"
-                                            >
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                            <button
-                                                className={styles.iconButton}
                                                 onClick={() => handleViewDetail(tutor)}
-                                                title="Xem chi tiết"
+                                                title="xem chi tiết"
                                             >
                                                 <FontAwesomeIcon icon={faEye} />
                                             </button>
+
                                             <button
                                                 className={`${styles.iconButton} ${
                                                     tutor.status === 'Locked' ? styles.unlock : styles.lock
                                                 }`}
-                                                onClick={() => handleLockToggle(tutor.id)}
+                                                onClick={() => handleLockToggle(tutor.index)}
                                                 title={tutor.status === 'Active' ? 'Khóa tài khoản' : 'Mở khóa'}
                                             >
                                                 <FontAwesomeIcon
@@ -306,8 +299,8 @@ function ListTutor() {
                         </div>
                         <div className={styles.modalBody}>
                             <div className={styles.detailRow}>
-                                <span className={styles.label}>ID:</span>
-                                <span className={styles.value}>{selectedTutor.id}</span>
+                                <span className={styles.label}>index:</span>
+                                <span className={styles.value}>{selectedTutor.index}</span>
                             </div>
                             <div className={styles.detailRow}>
                                 <span className={styles.label}>Họ và Tên:</span>
@@ -349,10 +342,9 @@ function ListTutor() {
                 </div>
             )}
 
-            <AddEditTutorModal
-                isOpen={showAddEditModal}
-                onClose={() => setShowAddEditModal(false)}
-                onSave={handleSaveTutor}
+            <TutorInfoModal
+                isOpen={showTutorInfoModal}
+                onClose={() => setShowTutorInfoModal(false)}
                 tutorData={editingTutor}
             />
         </div>
