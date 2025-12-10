@@ -34,7 +34,7 @@ export const getWeeklyClassCount = async () => {
 // ========================
 export const getNewRequestsCount = async () => {
   try {
-    const response = await axiosInstance.get('/tutors/home/requests');
+    const response = await axiosInstance.get('/tutors/home/requests/count');
     return response.data.result;
   } catch (error) {
     console.error('Error fetching new requests:', error);
@@ -57,17 +57,3 @@ export const getActiveClasses = async (page = 0, size = 5) => {
   }
 };
 
-// ========================
-// 5. Lấy ratings trung bình (Average Rating)
-// ========================
-// export const getTutorRating = async () => {
-//   try {
-//     const info = await getTutorInfo();
-//     return {
-//       averageRating: info.averageRating || 0,
-//     };
-//   } catch (error) {
-//     console.error('Error fetching tutor rating:', error);
-//     throw error;
-//   }
-// };
