@@ -1,6 +1,5 @@
 import avt from "~/assets/imgs/img.jpg";
 import styles from "./BodyMiniProfile.module.scss";
-import clsx from "clsx";
 import { Grid } from "@mui/material";
 
 function BodyMiniProfile() {

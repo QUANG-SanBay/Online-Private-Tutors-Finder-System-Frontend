@@ -18,7 +18,7 @@ function SubjectsTab({ subjects, availability }) {
                 ))}
             </div>
 
-            <h2 className={styles.sectionTitle}>Lịch rảnh</h2>
+            {/* <h2 className={styles.sectionTitle}>Lịch rảnh</h2>
             <div className={styles.availabilityList}>
                 {availability.map((slot, index) => (
                     <div key={index} className={styles.availabilityCard}>
@@ -27,7 +27,7 @@ function SubjectsTab({ subjects, availability }) {
                         <span className={styles.statusBadge}>{slot.status}</span>
                     </div>
                 ))}
-            </div>
+            </div> */}
         </div>
     );
 }

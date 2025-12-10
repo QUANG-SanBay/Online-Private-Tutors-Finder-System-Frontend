@@ -24,6 +24,10 @@ import ParentRequest from '~/pages/tutor/parentRequest/ParentRequest';
 import TutorProfile from '~/pages/tutor/tutorProfile/TutorProfile';
 import { Classed, Request } from '~/pages/learner';
 
+//admin pages
+import TutorManagement from '~/pages/admin/QLUser/tutor/TutorManagement';
+import LearnerManagement from '~/pages/admin/QLUser/learner/LearnerManagement';
+import AdminProfile from '~/pages/admin/profile/AdminProfile';
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
@@ -56,4 +60,9 @@ const tutorRouter = [
     {path: '/tutor/profile', element: <TutorProfile/>}
 ];
 
-export {learnerRouter, publicRouter, tutorRouter};
+const adminRouter = [
+    {path: '/admin/profile', element: <AdminProfile/>},
+    {path: '/admin/tutor-management', element: <TutorManagement/>},
+    {path: '/admin/learner-management', element: <LearnerManagement/>}
+];
+export {learnerRouter, publicRouter, tutorRouter, adminRouter};

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styles from './ScheduleTabs.module.scss';
 
 function ScheduleTabs({ activeTab, onTabChange }) {
@@ -16,7 +15,7 @@ function ScheduleTabs({ activeTab, onTabChange }) {
                         className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}
                         onClick={() => onTabChange(tab.id)}
                     >
-                        <span className={styles.icon}>{tab.icon}</span>
+                        {/* <span className={styles.icon}>{tab.icon}</span> */}
                         <span className={styles.label}>{tab.label}</span>
                     </button>
                 ))}

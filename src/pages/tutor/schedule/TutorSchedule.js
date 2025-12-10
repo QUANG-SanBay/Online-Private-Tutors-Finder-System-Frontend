@@ -3,10 +3,12 @@ import styles from "./TutorSchedule.module.scss";
 import { format } from "date-fns";
 import { FiChevronLeft, FiChevronRight, FiCalendar } from "react-icons/fi";
 import TutorEventCard from "~/components/schedule/TutorEventCard";
-import AvailabilityModal from "./AvailabilityModal";
-import AvailabilityList from "./AvailabilityList";
-import ConfirmDialog from "./ConfirmDialog";
-import ScheduleTabs from "./ScheduleTabs";
+import AvailabilityModal from "./components/AvailabilityModal/AvailabilityModal";
+import AvailabilityList from "./components/availabilityList/AvailabilityList";
+import ConfirmDialog from "./components/confirmDialog/ConfirmDialog";
+import ScheduleTabs from "./components/scheduleTabs/ScheduleTabs";
+
+import HeaderPage from "~/components/headerPage/HeaderPage";
 
 // Mock schedule data for tutor - showing students instead of tutors
 const scheduleData = [
@@ -77,10 +79,10 @@ export default function TutorSchedule() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [deletingIndex, setDeletingIndex] = useState(null);
   const [availabilities, setAvailabilities] = useState([
-    { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '12:00', status: 'Available' },
-    { dayOfWeek: 'Thứ 2', startTime: '14:00', endTime: '18:00', status: 'Available' },
-    { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
-    { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
+    { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '09:30', status: 'Available' },
+    { dayOfWeek: 'Thứ 2', startTime: '14:30', endTime: '16:00', status: 'Available' },
+    // { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
+    // { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
   ]);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
@@ -137,6 +139,7 @@ export default function TutorSchedule() {
   return (
     <div className={styles.tutorSchedule}>
       <div className={styles.container}>
+        <HeaderPage title="Quản lý lịch dạy" />
         <ScheduleTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         {activeTab === 'availability' && (

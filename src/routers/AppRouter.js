@@ -1,7 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
-import { learnerRouter, publicRouter, tutorRouter } from './routes'
+import { learnerRouter, publicRouter, tutorRouter, adminRouter } from './routes'
 import { DefaultLayout } from '~/components/layouts/';
 import TutorLayout from '~/components/layouts/tutorLayout/TutorLayout';
+import AdminLayout from '~/components/layouts/adminLayout/AdminLayout';
 
 function AppRouter() {
     let userType = 'learner'; // 'learner', 'tutor', 'admin', or null for public
@@ -39,6 +40,14 @@ function AppRouter() {
                     <TutorLayout>
                         {item.element}
                     </TutorLayout>
+                }></Route>
+            ))}
+            {/* admin chỉ được vào */}
+            {adminRouter.map((item, index) => (
+                <Route key={index} path={item.path} element={
+                    <AdminLayout>
+                        {item.element}
+                    </AdminLayout>
                 }></Route>
             ))}
         </Routes>

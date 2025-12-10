@@ -28,7 +28,7 @@ function TutorProfile() {
         verificationStatus: 'Approved',
         rating: 4.9,
         totalReviews: 127,
-        proofFiles: ['Bằng Đại học Sư phạm', 'Chứng chỉ giảng dạy'],
+        proofFile: 'BangTotNghiep.pdf',
         avatarUrl: '', // Empty for default icon display
     });
 
@@ -113,6 +113,7 @@ function TutorProfile() {
                 <ProfileTabs
                     activeTab={activeTab}
                     onTabChange={setActiveTab}
+                    isEditing={isEditing}
                 />
 
                 <div className={styles.tabContent}>

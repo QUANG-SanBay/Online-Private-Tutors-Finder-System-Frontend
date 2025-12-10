@@ -1,8 +1,11 @@
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
+    border-radius: 8px;
     margin-bottom: 2rem;
+    background-color: var(--section-bgr);
+    padding: 12px;
     
     h1 {
         font-size: 2.8rem;

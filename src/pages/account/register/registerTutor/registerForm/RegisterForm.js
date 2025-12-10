@@ -7,23 +7,23 @@ function RegisterForm() {
     const [formData, setFormData] = useState({
         fullName: '',
         avatar: null,
-        gender: '',
         email: '',
+        gender: '',
         phone: '',
         password: '',
         confirmPassword: '',
-        location: '',
+        address: '',
         subjects: [],
         currentLevel: '',
         certifications: '',
         introduction: '',
         tuition: '',
-        proofDocument: null
+        proofFile: null
     });
     const [avatarPreview, setAvatarPreview] = useState(null);
     const fileInputRef = useRef(null);
 
-    const locationOptions = [
+    const addressOptions = [
         { value: '', label: 'Chọn tỉnh thành phố' },
         { value: 'hanoi', label: 'Hà Nội' },
         { value: 'hcm', label: 'TP. Hồ Chí Minh' },
@@ -211,14 +211,14 @@ function RegisterForm() {
                 required
             />
             <FormGroup
-                className={clsx(styles.location, styles.inputField)}
+                className={clsx(styles.address, styles.inputField)}
                 label="Tỉnh thành phố"
                 type="select"
-                id="location"
-                name="location"
-                value={formData.location}
+                id="address"
+                name="address"
+                value={formData.address}
                 onChange={handleChange}
-                options={locationOptions}
+                options={addressOptions}
                 required
             />
             <FormGroup
@@ -265,11 +265,11 @@ function RegisterForm() {
                 required
             />
             <FormGroup
-                className={clsx(styles.proofDocument, styles.inputField)}
+                className={clsx(styles.proofFile, styles.inputField)}
                 label="Giấy tờ chứng minh (nếu có)"
                 type="file"
-                id="proofDocument"
-                name="proofDocument"
+                id="proofFile"
+                name="proofFile"
                 placeholder="Chọn giấy tờ chứng minh"
                 accept=".pdf"
                 onChange={handleChange}

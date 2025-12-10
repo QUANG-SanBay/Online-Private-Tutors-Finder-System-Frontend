@@ -7,7 +7,7 @@ function Dropdown({ arr, className }) {
         <div className={clsx(styles.Dropdown, className)}>
             <ul className={clsx(styles.List)}>
                 {arr.map((item, index) => (
-                    <li className={clsx(styles.ListItem)}>
+                    <li  key={index} className={clsx(styles.ListItem)}>
                         <Link to={item.path} className={clsx(styles.ListItemLink)} key={index}>
                             <FontAwesomeIcon icon={item.icon} className={clsx(styles.ListItemIcon)} />
                             <div>{item.label}</div>

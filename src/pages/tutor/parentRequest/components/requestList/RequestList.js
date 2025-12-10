@@ -1,4 +1,4 @@
-import RequestCard from './RequestCard';
+import RequestCard from '../requestCard/RequestCard';
 import styles from './RequestList.module.scss';
 
 function RequestList({ requests, onAccept, onReject }) {

@@ -1,5 +1,4 @@
 import FormGroup from '~/components/formGroup/FormGroup';
-import Button from '~/components/button/Button';
 import { faGraduationCap } from '@fortawesome/free-solid-svg-icons';
 import styles from './EducationTab.module.scss';
 
@@ -39,17 +38,22 @@ function EducationTab({ formData, tutorData, isEditing, onChange }) {
                 />
             </div>
 
-            <div className={styles.proofFiles}>
+            <div className={styles.proofFile}>
                 <h3>Chứng chỉ & Bằng cấp</h3>
                 <ul>
-                    {tutorData.proofFiles.map((file, index) => (
-                        <li key={index}>{file}</li>
-                    ))}
+                    {tutorData.proofFile && (
+                        <li>{tutorData.proofFile}</li>
+                    )}
                 </ul>
                 {isEditing && (
-                    <Button variant="outline" size="small">
-                        Tải lên chứng chỉ mới
-                    </Button>
+                    <FormGroup
+                        label="Thêm chứng chỉ/Bằng cấp"
+                        name="proofFile"
+                        id="newProofFile"
+                        accept='.pdf'
+                        type='file'
+                        onChange={onChange}
+                    />
                 )}
             </div>
         </div>
