@@ -2,19 +2,43 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Login.scss";
+import { resetPassword } from "../../api/services/loginAPI";
 
 const NewPassword = () => {
   const navigate = useNavigate();
+
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleResetPassword = () => {
-    if (!newPass || !confirmPass) return alert("Nhập mật khẩu mới!");
-    if (newPass !== confirmPass) return alert("Mật khẩu không khớp!");
-    alert("Đổi mật khẩu thành công!");
-    navigate("/login");
+  const email = localStorage.getItem("otpEmail"); // email đang reset
+
+  const handleResetPassword = async () => {
+    if (!email) return alert("Không tìm thấy email cần đặt lại mật khẩu!");
+
+    if (!newPass || !confirmPass)
+      return alert("Vui lòng nhập đầy đủ mật khẩu!");
+
+    if (newPass !== confirmPass)
+      return alert("Mật khẩu xác nhận không trùng khớp!");
+
+    try {
+      const res = await resetPassword({
+        email,
+        password: newPass,
+        confirmPassword: confirmPass,
+      });
+
+      alert("Đổi mật khẩu thành công!");
+      localStorage.removeItem("otpEmail"); // dọn sạch
+      navigate("/login");
+
+    } catch (err) {
+      console.log("DEBUG ERROR:", err.response?.data);
+      console.log("STATUS:", err.response?.status);
+      throw err;
+    }
   };
 
   return (

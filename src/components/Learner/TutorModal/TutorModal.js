@@ -15,6 +15,9 @@ const TutorModal = ({ isOpen, onClose, onSubmit }) => {
   const [phone, setPhone] = useState("");
   const [type, setType] = useState("");
   const [notes, setNotes] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
 
   const [selectedSlots, setSelectedSlots] = useState([]);
 
@@ -118,22 +121,68 @@ const TutorModal = ({ isOpen, onClose, onSubmit }) => {
 
           {type !== "" && (
             <>
+              {/* Gợi ý */}
               <div className="tfm-hint">
                 {type === "trial"
                   ? "Chọn 1 buổi bất kỳ trong tuần."
-                  : "Chọn từ 2 đến 5 buổi mỗi tuần. Lịch sẽ lặp trong 3 tháng."}
+                  : "Chọn từ 2 đến 5 buổi mỗi tuần. Lịch sẽ lặp trong khoảng thời gian bạn chọn."}
               </div>
 
+              {/* Nếu chọn Học chính thức -> thêm chọn ngày */}
+              {type === "official" && (
+                <div className="tfm-row tfm-date-range">
+                  <div>
+                    <label> Ngày bắt đầu </label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label> Ngày kết thúc </label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      min={startDate || undefined}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {type === "trial" && (
+                <div className="tfm-row tfm-date-range">
+                  <div>
+                    <label> Ngày học thử </label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Picker lịch */}
               <SchedulePicker
                 busySlots={busySlots}
                 selected={selectedSlots}
                 onToggleSlot={handleToggleSlot}
               />
 
+              {/* Chú thích */}
               <div className="tfm-legend">
-                <span><div className="leg-box leg-free"></div> Rảnh</span>
-                <span><div className="leg-box leg-busy"></div> Bận</span>
-                <span><div className="leg-box leg-selected"></div> Đang chọn</span>
+                <span>
+                  <div className="leg-box leg-free"></div> Rảnh
+                </span>
+                <span>
+                  <div className="leg-box leg-busy"></div> Bận
+                </span>
+                <span>
+                  <div className="leg-box leg-selected"></div> Đang chọn
+                </span>
               </div>
             </>
           )}
