@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./TutorSchedule.module.scss";
 import { format } from "date-fns";
 import { FiChevronLeft, FiChevronRight, FiCalendar } from "react-icons/fi";
@@ -9,6 +9,29 @@ import ConfirmDialog from "./components/confirmDialog/ConfirmDialog";
 import ScheduleTabs from "./components/scheduleTabs/ScheduleTabs";
 
 import HeaderPage from "~/components/headerPage/HeaderPage";
+import { fetchAvailabilities, createAvailability, updateAvailability, deleteAvailability } from "~/api/services/tutorService";
+
+const dayViToEnum = {
+  "Thứ 2": "MONDAY",
+  "Thứ 3": "TUESDAY",
+  "Thứ 4": "WEDNESDAY",
+  "Thứ 5": "THURSDAY",
+  "Thứ 6": "FRIDAY",
+  "Thứ 7": "SATURDAY",
+  "Chủ nhật": "SUNDAY",
+};
+
+const enumToDayVi = {
+  MONDAY: "Thứ 2",
+  TUESDAY: "Thứ 3",
+  WEDNESDAY: "Thứ 4",
+  THURSDAY: "Thứ 5",
+  FRIDAY: "Thứ 6",
+  SATURDAY: "Thứ 7",
+  SUNDAY: "Chủ nhật",
+};
+
+const statusLabel = { AVAILABLE: "Rảnh", CANCELLED: "Không rảnh", BOOKED: "Đã đặt" };
 
 // Mock schedule data for tutor - showing students instead of tutors
 const scheduleData = [
@@ -78,12 +101,8 @@ export default function TutorSchedule() {
   const [editingAvailability, setEditingAvailability] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [deletingIndex, setDeletingIndex] = useState(null);
-  const [availabilities, setAvailabilities] = useState([
-    { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '09:30', status: 'Available' },
-    { dayOfWeek: 'Thứ 2', startTime: '14:30', endTime: '16:00', status: 'Available' },
-    // { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
-    // { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
-  ]);
+  const [availabilities, setAvailabilities] = useState([]);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(currentDate);
@@ -92,6 +111,45 @@ export default function TutorSchedule() {
     d.setDate(currentDate.getDate() - day + 1 + i); // Monday is day 1
     return d;
   });
+
+  const mapApiToUi = (list = []) => {
+    const dedup = new Map();
+
+    list.forEach((item) => {
+      const timeRange = (item.timeRange || '').trim();
+      const [rawStartR, rawEndR] = timeRange.split('-');
+      const rawStart = rawStartR || item.startTime || '';
+      const rawEnd = rawEndR || item.endTime || '';
+      const isoToHm = (s) => (s.includes('T') ? s.split('T')[1].slice(0, 5) : s);
+      const startTime = isoToHm(rawStart.trim());
+      const endTime = isoToHm(rawEnd.trim());
+      const id = item.availabilityId || item.id;
+      const dayOfWeek = enumToDayVi[item.dayOfWeek] || item.dayOfWeek;
+      const status = item.status || 'AVAILABLE';
+
+      const key = `${id || ''}-${dayOfWeek}-${startTime}-${endTime}-${status}`;
+      dedup.set(key, { id, dayOfWeek, startTime, endTime, status });
+    });
+
+    return Array.from(dedup.values());
+  };
+
+  const refreshAvailabilities = async () => {
+    try {
+      setLoadingAvailability(true);
+      const list = await fetchAvailabilities();
+      setAvailabilities(mapApiToUi(list || []));
+    } catch (e) {
+      console.error(e);
+      alert('Tải lịch rảnh thất bại');
+    } finally {
+      setLoadingAvailability(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshAvailabilities();
+  }, []);
 
   const go = (days) => {
     const d = new Date(currentDate);
@@ -115,24 +173,47 @@ export default function TutorSchedule() {
   };
 
   const confirmDelete = () => {
-    if (deletingIndex !== null) {
-      setAvailabilities(prev => prev.filter((_, i) => i !== deletingIndex));
-      // TODO: Call API to delete
-      setDeletingIndex(null);
-    }
+    const performDelete = async () => {
+      if (deletingIndex !== null) {
+        const id = availabilities[deletingIndex]?.id;
+        try {
+          if (id) {
+            await deleteAvailability(id);
+          }
+          await refreshAvailabilities();
+        } catch (e) {
+          console.error(e);
+          alert('Xóa lịch rảnh thất bại');
+        } finally {
+          setDeletingIndex(null);
+          setShowConfirmDialog(false);
+        }
+      }
+    };
+
+    performDelete();
   };
 
-  const handleSaveAvailability = (data) => {
-    if (editingAvailability !== null && editingAvailability.index !== undefined) {
-      // Edit existing
-      setAvailabilities(prev => 
-        prev.map((item, i) => i === editingAvailability.index ? data : item)
-      );
-      // TODO: Call API to update
-    } else {
-      // Add new
-      setAvailabilities(prev => [...prev, data]);
-      // TODO: Call API to create
+  const handleSaveAvailability = async (data) => {
+    const payload = {
+      dayOfWeek: dayViToEnum[data.dayOfWeek] || data.dayOfWeek,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      status: data.status || 'AVAILABLE',
+    };
+
+    try {
+      if (editingAvailability?.id) {
+        await updateAvailability(editingAvailability.id, payload);
+      } else {
+        await createAvailability(payload);
+      }
+      await refreshAvailabilities();
+      setShowAvailabilityModal(false);
+      setEditingAvailability(null);
+    } catch (e) {
+      console.error(e);
+      alert('Lưu lịch rảnh thất bại');
     }
   };
 

@@ -9,7 +9,7 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
     const [formData, setFormData] = useState({
         dayOfWeek: '',
         timeSlot: '',
-        status: 'Available'
+        status: 'AVAILABLE'
     });
 
     const [errors, setErrors] = useState({
@@ -43,13 +43,13 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
             setFormData({
                 dayOfWeek: editData.dayOfWeek,
                 timeSlot: timeSlotValue,
-                status: editData.status
+                status: editData.status || 'AVAILABLE'
             });
         } else {
             setFormData({
                 dayOfWeek: '',
                 timeSlot: '',
-                status: 'Available'
+                status: 'AVAILABLE'
             });
         }
         setErrors({
@@ -138,7 +138,7 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
         setFormData({
             dayOfWeek: '',
             timeSlot: '',
-            status: 'Available'
+            status: 'AVAILABLE'
         });
         setErrors({
             dayOfWeek: '',
@@ -191,8 +191,8 @@ function AvailabilityModal({ isOpen, onClose, onSave, editData, existingAvailabi
                     value={formData.status}
                     onChange={handleChange}
                     options={[
-                        { value: 'Available', label: 'Rảnh' },
-                        { value: 'Unavailable', label: 'Không rảnh' }
+                        { value: 'AVAILABLE', label: 'Rảnh' },
+                        { value: 'CANCELLED', label: 'Không rảnh' }
                     ]}
                 />
 

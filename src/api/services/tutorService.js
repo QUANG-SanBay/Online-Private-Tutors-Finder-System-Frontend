@@ -158,3 +158,153 @@ export const updateTutorAvatar = async (avatarFile) => {
     throw error;
   }
 };
+
+// Quản lý lịch rảnh TUTOR
+// ========================
+// 13. xem lịch rảnh (Get Tutor Availability Schedule)
+export const getTutorAvailability = async () => {
+  try {
+    const response = await axiosInstance.get('/tutors/profile/availability');
+    return response.data.result;
+  } catch (error) {
+    console.error('Error fetching tutor availability:', error);
+    throw error;
+  }
+};
+//=======================
+// 13. thêm lịch rảnh (Add Tutor Availability Slot)
+export const addTutorAvailabilitySlot = async (slotData) => {
+  try {
+    const response = await axiosInstance.post('/tutors/profile/availability', slotData);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error adding tutor availability slot:', error);
+    throw error;
+  }
+};
+// ========================
+// 14. cập nhật lịch rảnh (Update Tutor Availability Schedule)
+// ========================
+export const updateTutorAvailability = async (availabilitySlots) => {
+  try {
+    const response = await axiosInstance.put('/tutors/profile/availability', { slots: availabilitySlots });
+    return response.data.result;
+  } catch (error) {
+    console.error('Error updating tutor availability:', error);
+    throw error;
+  }
+};
+// ========================
+// 15. Xóa lịch rảnh (Delete Tutor Availability Slot)
+// ========================
+export const deleteTutorAvailabilitySlot = async (slotId) => {
+  try {
+    const response = await axiosInstance.delete(`/tutors/profile/availability/${slotId}`);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error deleting tutor availability slot:', error);
+    throw error;
+  }
+};
+
+// ========================
+// Lịch rảnh - API chuẩn hóa dùng trong UI
+// ========================
+export const fetchAvailabilities = async () => {
+  try {
+    const response = await axiosInstance.get('/tutors/schedule/availability');
+    return response.data.result;
+  } catch (error) {
+    console.error('Error fetching tutor availability list:', error);
+    throw error;
+  }
+};
+
+export const createAvailability = async ({ dayOfWeek, startTime, endTime, status }) => {
+  try {
+    const payload = { dayOfWeek, timeRange: `${startTime}-${endTime}`, status };
+    const response = await axiosInstance.post('/tutors/schedule/availability', payload);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error creating tutor availability:', error);
+    throw error;
+  }
+};
+
+export const updateAvailability = async (slotId, { dayOfWeek, startTime, endTime, status }) => {
+  try {
+    const payload = { dayOfWeek, timeRange: `${startTime}-${endTime}`, status };
+    const response = await axiosInstance.put(`/tutors/schedule/availability/${slotId}`, payload);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error updating tutor availability:', error);
+    throw error;
+  }
+};
+
+export const deleteAvailability = async (slotId) => {
+  try {
+    const response = await axiosInstance.delete(`/tutors/schedule/availability/${slotId}`);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error deleting tutor availability:', error);
+    throw error;
+  }
+};
+
+// ========================
+// Yêu cầu từ người học gửi cho tutor
+// ========================
+const mapStatus = (status) => {
+  if (!status || status === 'all') return undefined;
+  const s = String(status).toLowerCase();
+  if (s === 'pending') return 'PENDING';
+  if (s === 'accepted') return 'CONFIRMED';
+  if (s === 'rejected') return 'CANCELLED';
+  return s.toUpperCase();
+};
+
+const mapType = (type) => {
+  if (!type || type === 'all') return undefined;
+  const t = String(type).toLowerCase();
+  if (t === 'trial') return 'TRIAL';
+  if (t === 'official') return 'OFFICIAL';
+  return t.toUpperCase();
+};
+
+export const fetchTutorRequests = async ({ status, type, keyword, page = 0, size = 10 } = {}) => {
+  try {
+    const params = { page, size };
+    const beStatus = mapStatus(status);
+    const beType = mapType(type);
+    if (beStatus) params.status = beStatus;
+    if (beType) params.type = beType;
+    if (keyword) params.keyword = keyword;
+
+    const response = await axiosInstance.get('/tutors/requests', { params });
+    return response.data.result; // Spring Page
+  } catch (error) {
+    console.error('Error fetching tutor requests:', error);
+    throw error;
+  }
+};
+
+export const acceptTutorRequest = async (requestId) => {
+  try {
+    const response = await axiosInstance.patch(`/tutors/requests/${requestId}/accept`);
+    return response.data.result; // { requestStatus, classStatus, requestId, classId }
+  } catch (error) {
+    console.error('Error accepting tutor request:', error);
+    throw error;
+  }
+};
+
+export const rejectTutorRequest = async (requestId) => {
+  try {
+    const response = await axiosInstance.patch(`/tutors/requests/${requestId}/reject`);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error rejecting tutor request:', error);
+    throw error;
+  }
+};
