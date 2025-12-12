@@ -59,7 +59,7 @@ function BodyMiniProfile({ tutorData = null }) {
                     </li>
                     <li>
                         <strong>Chứng chỉ:</strong>
-                        <span>{userData.certificates || 'Không'}</span>
+                        <span>{`${userData.certificates.length} chứng chỉ` || 'Không'}</span>
                     </li>
                     <li className={styles.introduction}>
                         <strong>Giới thiệu:</strong>

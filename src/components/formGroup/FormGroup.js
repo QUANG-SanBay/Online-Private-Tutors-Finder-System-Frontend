@@ -120,7 +120,7 @@ function FormGroup({
             onChange={onChange}
             required={required}
             disabled={disabled}
-            className={clsx(styles.input, { [styles.invalid]: !!error })}
+            className={clsx(styles.input, styles.select, { [styles.invalid]: !!error })}
         >
             {placeholder && (
                 <option value="" disabled hidden>

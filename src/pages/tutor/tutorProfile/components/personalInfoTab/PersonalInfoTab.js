@@ -5,6 +5,8 @@ import {
     faPhone, 
     faMapMarkerAlt
 } from '@fortawesome/free-solid-svg-icons';
+import { genderOptions } from '~/constants/options/gender';
+import { addressOptions } from '~/constants/options/address';
 import styles from './PersonalInfoTab.module.scss';
 
 function PersonalInfoTab({ formData, isEditing, onChange }) {
@@ -47,20 +49,18 @@ function PersonalInfoTab({ formData, isEditing, onChange }) {
                     value={formData.gender}
                     onChange={onChange}
                     disabled={!isEditing}
-                    options={[
-                        { value: 'Nam', label: 'Nam' },
-                        { value: 'Nữ', label: 'Nữ' },
-                        { value: 'Khác', label: 'Khác' }
-                    ]}
+                    options={genderOptions}
                 />
                 <div className={styles.fullWidth}>
                     <FormGroup
                         label="Địa chỉ"
                         icon={faMapMarkerAlt}
+                        type="select"
                         name="address"
                         value={formData.address}
                         onChange={onChange}
                         disabled={!isEditing}
+                        options={addressOptions}
                     />
                 </div>
             </div>

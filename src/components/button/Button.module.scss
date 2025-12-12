@@ -71,12 +71,12 @@
     background-color: var(--hover-c-pmr);
     border-color: var(--hover-c-pmr);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--primary-c-01);
+    // box-shadow: 0 4px 12px var(--primary-c-01);
   }
 
   &:active:not(.btn--disabled):not(.btn--loading) {
     transform: translateY(0);
-    box-shadow: 0 2px 6px var(--primary-c-01);
+    // box-shadow: 0 2px 6px var(--primary-c-01);
   }
 }
 
@@ -90,7 +90,7 @@
     background-color: var(--hover-c);
     border-color: var(--border-c);
     transform: translateY(-1px);
-    box-shadow: var(--box-shadow);
+    // box-shadow: var(--box-shadow);
   }
 
   &:active:not(.btn--disabled):not(.btn--loading) {
@@ -109,12 +109,12 @@
     background-color: var(--primary-c);
     color: var(--text-c-light);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px var(--primary-c-01);
+    // box-shadow: 0 4px 12px var(--primary-c-01);
   }
 
   &:active:not(.btn--disabled):not(.btn--loading) {
     transform: translateY(0);
-    box-shadow: 0 2px 6px var(--primary-c-01);
+    // box-shadow: 0 2px 6px var(--primary-c-01);
   }
 }
 
@@ -143,12 +143,12 @@
     background-color: #e04545;
     border-color: #e04545;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 87, 87, 0.3);
+    // box-shadow: 0 4px 12px rgba(255, 87, 87, 0.3);
   }
 
   &:active:not(.btn--disabled):not(.btn--loading) {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(255, 87, 87, 0.3);
+    // box-shadow: 0 2px 6px rgba(255, 87, 87, 0.3);
   }
 }
 
