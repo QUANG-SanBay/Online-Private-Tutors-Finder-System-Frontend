@@ -33,6 +33,7 @@ function RegisterForm() {
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -40,6 +41,11 @@ function RegisterForm() {
 
     const handleChange = (e) => {
         const { name, value, files, selectedOptions } = e.target;
+
+        // Clear field-level error when user edits
+        if (name) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
+        }
 
         if (name === 'avatar') {
             const file = files?.[0] || null;
@@ -114,128 +120,123 @@ function RegisterForm() {
         }));
     };
 
+    const translateError = (err) => {
+        const code = err?.response?.data?.code;
+        const msg = err?.response?.data?.message || '';
+        const normalized = msg.toLowerCase();
+
+        if (code === 409 || msg === 'USER_EXISTED' || normalized.includes('exist')) return 'Email đã được sử dụng';
+        if (msg === 'PASSWORDS_DO_NOT_MATCH') return 'Mật khẩu xác nhận không khớp';
+        if (msg === 'EMAIL_INVALID') return 'Email không hợp lệ';
+        if (msg === 'PASSWORD_TOO_SHORT') return 'Mật khẩu quá ngắn';
+
+        return msg || 'Đăng ký thất bại';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setSuccess(null);
+        setErrors({});
+
+        const newErrors = {};
 
         // ✅ Validation fullName
         if (!formData.fullName.trim()) {
-            setError('Vui lòng nhập họ và tên');
-            return;
+            newErrors.fullName = 'Vui lòng nhập họ và tên';
         }
 
         if (formData.fullName.trim().length < 2 || formData.fullName.trim().length > 50) {
-            setError('Họ và tên phải từ 2-50 ký tự');
-            return;
+            newErrors.fullName = 'Họ và tên phải từ 2-50 ký tự';
         }
 
         // ✅ Validation email
         if (!formData.email.trim()) {
-            setError('Vui lòng nhập email');
-            return;
+            newErrors.email = 'Vui lòng nhập email';
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email.trim())) {
-            setError('Email không hợp lệ');
-            return;
+            newErrors.email = 'Email không hợp lệ';
         }
 
         // ✅ Validation password
         if (!formData.password) {
-            setError('Vui lòng nhập mật khẩu');
-            return;
+            newErrors.password = 'Vui lòng nhập mật khẩu';
         }
 
         if (formData.password.length < 6 || formData.password.length > 30) {
-            setError('Mật khẩu phải từ 6-30 ký tự');
-            return;
+            newErrors.password = 'Mật khẩu phải từ 6-30 ký tự';
         }
 
         if (formData.password !== formData.confirmPassword) {
-            setError('Mật khẩu không khớp');
-            return;
+            newErrors.confirmPassword = 'Mật khẩu không khớp';
         }
 
         // ✅ Validation gender
         if (!formData.gender) {
-            setError('Vui lòng chọn giới tính');
-            return;
+            newErrors.gender = 'Vui lòng chọn giới tính';
         }
 
         // ✅ Validation phone
         if (!formData.phone.trim()) {
-            setError('Vui lòng nhập số điện thoại');
-            return;
+            newErrors.phone = 'Vui lòng nhập số điện thoại';
         }
 
         if (!/^0[0-9]{9}$/.test(formData.phone)) {
-            setError('Số điện thoại không hợp lệ (0 + 9 chữ số)');
-            return;
+            newErrors.phone = 'Số điện thoại không hợp lệ (0 + 9 chữ số)';
         }
 
         // ✅ Validation avatar (bắt buộc)
         if (!formData.avatar) {
-            setError('Vui lòng chọn ảnh chân dung');
-            return;
+            newErrors.avatar = 'Vui lòng chọn ảnh chân dung';
         }
 
         if (!formData.avatar.type.startsWith('image/')) {
-            setError('Avatar phải là file ảnh (JPG, PNG, ...)');
-            return;
+            newErrors.avatar = 'Avatar phải là file ảnh (JPG, PNG, ...)';
         }
 
         // ✅ Validation address
         if (!formData.address.trim()) {
-            setError('Vui lòng chọn tỉnh thành phố');
-            return;
+            newErrors.address = 'Vui lòng chọn tỉnh thành phố';
         }
 
         // ✅ Validation subjects
         if (formData.subjects.length === 0) {
-            setError('Vui lòng chọn ít nhất 1 môn dạy');
-            return;
+            newErrors.subjects = 'Vui lòng chọn ít nhất 1 môn dạy';
         }
 
         // ✅ Validation currentLevel
         if (!formData.currentLevel) {
-            setError('Vui lòng chọn trình độ hiện tại');
-            return;
+            newErrors.currentLevel = 'Vui lòng chọn trình độ hiện tại';
         }
 
         // ✅ Validation university
         if (!formData.university.trim()) {
-            setError('Vui lòng nhập trường đào tạo');
-            return;
+            newErrors.university = 'Vui lòng nhập trường đào tạo';
         }
 
         if (formData.university.trim().length > 100) {
-            setError('Trường đào tạo không được vượt quá 100 ký tự');
-            return;
+            newErrors.university = 'Trường đào tạo không được vượt quá 100 ký tự';
         }
 
         // ✅ Validation introduction
         if (!formData.introduction.trim()) {
-            setError('Vui lòng nhập giới thiệu bản thân');
-            return;
+            newErrors.introduction = 'Vui lòng nhập giới thiệu bản thân';
         }
 
         if (formData.introduction.trim().length < 10) {
-            setError('Giới thiệu bản thân phải có ít nhất 10 ký tự');
-            return;
+            newErrors.introduction = 'Giới thiệu bản thân phải có ít nhất 10 ký tự';
         }
 
         // ✅ Validation tuition
         if (!formData.tuition) {
-            setError('Vui lòng nhập học phí');
-            return;
+            newErrors.tuition = 'Vui lòng nhập học phí';
         }
 
         const tuitionNum = parseInt(formData.tuition);
         if (tuitionNum < 50000 || tuitionNum > 1000000) {
-            setError('Học phí phải từ 50,000 - 1,000,000 VND/giờ');
-            return;
+            newErrors.tuition = 'Học phí phải từ 50,000 - 1,000,000 VND/giờ';
         }
 
         // ✅ Validation certificate files - Phải có cặp tên/file hợp lệ
@@ -249,13 +250,18 @@ function RegisterForm() {
         // Kiểm tra tất cả cặp phải đầy đủ (có tên và file)
         for (let cert of certificatePairs) {
             if (!cert.file || !cert.name.trim()) {
-                setError('Mỗi chứng chỉ phải có cả tên và file PDF');
-                return;
+                newErrors.certificate = 'Mỗi chứng chỉ phải có cả tên và file PDF';
+                break;
             }
             if (cert.file.type !== 'application/pdf') {
-                setError('Tất cả file chứng chỉ phải là PDF');
-                return;
+                newErrors.certificate = 'Tất cả file chứng chỉ phải là PDF';
+                break;
             }
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
         }
 
         try {
@@ -289,11 +295,26 @@ function RegisterForm() {
 
         } catch (err) {
             console.error('❌ Registration error:', err);
-            const errorMsg = err.response?.data?.message ||
-                err.response?.data?.error ||
-                err.message ||
-                'Đăng ký thất bại.  Vui lòng thử lại.';
-            setError(errorMsg);
+            const friendly = translateError(err);
+            const code = err?.response?.data?.code;
+            const msg = err?.response?.data?.message || '';
+            const normalized = msg.toLowerCase();
+
+            if (code === 409 || msg === 'USER_EXISTED' || normalized.includes('exist')) {
+                setErrors(prev => ({ ...prev, email: friendly }));
+                setError(null);
+            } else if (msg === 'PASSWORDS_DO_NOT_MATCH') {
+                setErrors(prev => ({ ...prev, confirmPassword: friendly }));
+                setError(null);
+            } else if (msg === 'EMAIL_INVALID') {
+                setErrors(prev => ({ ...prev, email: friendly }));
+                setError(null);
+            } else if (msg === 'PASSWORD_TOO_SHORT') {
+                setErrors(prev => ({ ...prev, password: friendly }));
+                setError(null);
+            } else {
+                setError(friendly);
+            }
         } finally {
             setLoading(false);
         }
@@ -330,6 +351,7 @@ function RegisterForm() {
                         placeholder="Nhập họ và tên"
                         value={formData.fullName}
                         onChange={handleChange}
+                        error={errors.fullName}
                         required
                     />
                     <FormGroup
@@ -341,6 +363,7 @@ function RegisterForm() {
                         value={formData.gender}
                         onChange={handleChange}
                         options={genderOptions}
+                        error={errors.gender}
                         required
                     />
                 </div>
@@ -383,6 +406,7 @@ function RegisterForm() {
                 placeholder="Nhập email"
                 value={formData.email}
                 onChange={handleChange}
+                        error={errors.email}
                 required
             />
             <FormGroup
@@ -394,6 +418,7 @@ function RegisterForm() {
                 placeholder="Nhập số điện thoại (0xxxxxxxxx)"
                 value={formData.phone}
                 onChange={handleChange}
+                        error={errors.phone}
                 required
             />
             <FormGroup
@@ -405,6 +430,7 @@ function RegisterForm() {
                 placeholder="Nhập mật khẩu (6-30 ký tự)"
                 value={formData.password}
                 onChange={handleChange}
+                        error={errors.password}
                 required
             />
             <FormGroup
@@ -416,6 +442,7 @@ function RegisterForm() {
                 placeholder="Nhập xác nhận mật khẩu"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                        error={errors.confirmPassword}
                 required
             />
 
@@ -429,6 +456,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 options={subjectOptions}
                 multiple={true}
+                        error={errors.subjects}
                 required
             />
 
@@ -441,6 +469,7 @@ function RegisterForm() {
                 value={formData.address}
                 onChange={handleChange}
                 options={addressOptions}
+                        error={errors.address}
                 required
             />
             <FormGroup
@@ -452,6 +481,7 @@ function RegisterForm() {
                 value={formData.currentLevel}
                 onChange={handleChange}
                 options={levelOptions}
+                        error={errors.currentLevel}
                 required
             />
             <FormGroup
@@ -463,6 +493,7 @@ function RegisterForm() {
                 placeholder="Nhập trường đào tạo"
                 value={formData.university}
                 onChange={handleChange}
+                        error={errors.university}
                 required
             />
 
@@ -475,6 +506,7 @@ function RegisterForm() {
                 placeholder="Giới thiệu bản thân (tối thiểu 10 ký tự)"
                 value={formData.introduction}
                 onChange={handleChange}
+                        error={errors.introduction}
                 required
             />
 
@@ -487,6 +519,7 @@ function RegisterForm() {
                 placeholder="Nhập học phí"
                 value={formData.tuition}
                 onChange={handleChange}
+                        error={errors.tuition}
                 required
                 min="50000"
                 max="1000000"

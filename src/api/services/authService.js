@@ -67,6 +67,26 @@ export const registerTutor = async (data) => {
 };
 
 // ========================
+// Đăng ký learner
+// ========================
+export const registerLearner = async (data) => {
+  try {
+  const payload = {
+    fullName: data.fullName.trim(),
+    email: data.email.trim(),
+    passwordHash: data.password,
+    confirmPassword: data.confirmPassword,
+  };
+
+  const res = await axiosInstance.post('/auth/register/learner', payload);
+  return res.data;
+  } catch (error) {
+    console.error('Register learner failed:', error.message);
+    throw error;
+  }
+};
+
+// ========================
 // đổi mật khẩu gia sư (Tutor Change Password)
 // ========================
 export const changeTutorPassword = async (payload) => {

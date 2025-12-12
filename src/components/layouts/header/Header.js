@@ -39,6 +39,22 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
         };
     }, [isMobileMenuOpen]);
 
+    const clearHideTimer = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
+    const scheduleHide = () => {
+        clearHideTimer();
+        if (window.scrollY > 50) {
+            timeoutRef.current = setTimeout(() => {
+                setVisible(false);
+            }, 3000);
+        }
+    };
+
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
@@ -65,8 +81,8 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
         const handleScroll = () => {
             const currentScroll = window.scrollY;
 
-            // Xóa timer khi đang cuộn
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            // Xóa timer khi đang cuộn nếu ngươuì dùng di chuyện sẽ không ẩn header
+            clearHideTimer();
 
             // --- Logic xuất hiện / biến mất ---
             if (currentScroll <= 80) {
@@ -80,16 +96,15 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
             lastScroll.current = currentScroll;
 
             // --- Nếu dừng cuộn 3 giây ---
-            timeoutRef.current = setTimeout(() => {
-                if (window.scrollY > 50) {
-                    setVisible(false);
-                }
-            }, 3000);
+            scheduleHide();
         };
 
         window.addEventListener("scroll", handleScroll);
 
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            clearHideTimer();
+        };
     }, []);
 
     return (
@@ -97,7 +112,13 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
             [styles.showActions]: userType === 'tutor',
             [styles.show]: visible,
             [styles.hide]: !visible
-        })}>
+        })}
+            onMouseEnter={() => {
+                clearHideTimer();
+                setVisible(true);
+            }}
+            onMouseLeave={scheduleHide}
+        >
             <div className={styles.headerCtn}>
                 <div className={styles.headerTop}>
                     {/* Logo */}

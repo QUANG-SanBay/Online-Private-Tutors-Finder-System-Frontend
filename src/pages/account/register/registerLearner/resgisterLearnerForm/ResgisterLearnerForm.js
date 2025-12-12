@@ -1,15 +1,20 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./ResgisterLearnerForm.module.scss";
 import FormGroup from "~/components/formGroup/FormGroup";
 import { useGoogleLogin } from "@react-oauth/google";
+import { registerLearner } from "~/api/services/authService";
 
 function ReisterFormLearner() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         password: '',
         confirmPassword: ''
     });
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({});
 
     const login = useGoogleLogin({
         scope: 'openid profile email',
@@ -35,14 +40,75 @@ function ReisterFormLearner() {
         },
     });
 
+    const handleFieldChange = (field, value) => {
+        setFormData((prev) => ({ ...prev, [field]: value }));
+        setErrors((prev) => ({ ...prev, [field]: '' }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const fullName = formData.fullName.trim();
+        const email = formData.email.trim();
+        const password = formData.password;
+        const confirmPassword = formData.confirmPassword;
+
+        const newErrors = {};
+        if (!fullName) newErrors.fullName = 'Vui lòng nhập họ và tên';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) newErrors.email = 'Vui lòng nhập email';
+        else if (!emailRegex.test(email)) newErrors.email = 'Email không hợp lệ';
+
+        if (!password) newErrors.password = 'Vui lòng nhập mật khẩu';
+        else if (password.length < 6) newErrors.password = 'Mật khẩu phải tối thiểu 6 ký tự';
+
+        if (!confirmPassword) newErrors.confirmPassword = 'Vui lòng nhập lại mật khẩu';
+        else if (password !== confirmPassword) newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+
+        if (Object.keys(newErrors).length) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
+
+        try {
+            //đăng ký thành công và điều hướng qua trang login
+            setLoading(true);
+            await registerLearner({ fullName, email, password, confirmPassword });
+            alert('Đăng ký thành công. chúng tôi sẽ chuyển bạn đến trang đăng nhập');
+            setFormData({ fullName: '', email: '', password: '', confirmPassword: '' });
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (err) {
+            const apiMsg = err.response?.data?.message;
+            const apiCode = err.response?.data?.code;
+            const normalizedMsg = (apiMsg || '').toLowerCase();
+            if (apiCode === 409 || normalizedMsg.includes('user') && normalizedMsg.includes('exist')) {
+                setErrors((prev) => ({ ...prev, email: 'Email đã được sử dụng' }));
+                return;
+            }
+
+            if (normalizedMsg.includes('email')) {
+                setErrors((prev) => ({ ...prev, email: 'Email không hợp lệ' }));
+                return;
+            }
+
+            alert(apiMsg || 'Đăng ký thất bại');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <FormGroup
                 label="Họ và tên"
                 name="fullName"
                 type="text"
                 value={formData.fullName}
-                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                onChange={(e) => handleFieldChange('fullName', e.target.value)}
+                placeholder="Nhập họ và tên"
+                error={errors.fullName}
                 required
             />
             <FormGroup
@@ -50,7 +116,9 @@ function ReisterFormLearner() {
                 name="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) => handleFieldChange('email', e.target.value)}
+                placeholder="Nhập địa chỉ email"
+                error={errors.email}
                 required
             />
             <FormGroup
@@ -58,7 +126,9 @@ function ReisterFormLearner() {
                 name="password"
                 type="password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={(e) => handleFieldChange('password', e.target.value)}
+                placeholder="Nhập mật khẩu"
+                error={errors.password}
                 required
             />
             <FormGroup
@@ -66,12 +136,15 @@ function ReisterFormLearner() {
                 name="confirmPassword"
                 type="password"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
+                placeholder="Nhập lại mật khẩu"
+                error={errors.confirmPassword}
                 required
             />
 
-
-            <button type="submit" className={styles.submit}>Đăng ký</button>
+            <button type="submit" className={styles.submit} disabled={loading}>
+                {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+            </button>
             <div className={styles.dividerWrap}>
                 <span className={styles.divider} />
                 <span className={styles.dividerText}>hoặc</span>
