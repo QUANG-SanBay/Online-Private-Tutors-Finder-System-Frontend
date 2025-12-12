@@ -3,6 +3,7 @@ import { courseImages } from '~/assets/imgs';
 
 import { getActiveClasses } from '~/api/services/tutorService';
 import CardItem from '../cardItem/CardItem';
+import Button from '~/components/button/Button';
 import styles from './ListClasses.module.scss';
 
 function ListClasses() {
@@ -10,11 +11,13 @@ function ListClasses() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const pageSize = 5;
+
   const fetchData = async (page = 0) => {
     try {
       setLoading(true);
       setError('');
-      const result = await getActiveClasses(page, 5);
+      const result = await getActiveClasses(page, pageSize);
       setData({
         items: result.items || result.content || [],
         page: result.page,
@@ -28,6 +31,18 @@ function ListClasses() {
   };
 
   useEffect(() => { fetchData(0); }, []);
+
+  const handlePrev = () => {
+    if (data.page > 0 && !loading) {
+      fetchData(data.page - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (data.page < data.totalPages - 1 && !loading) {
+      fetchData(data.page + 1);
+    }
+  };
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
@@ -43,7 +58,7 @@ function ListClasses() {
             <div>Chưa có lớp đang dạy</div>
           ) : (
             data.items.map((c, idx) => {
-              const imgIndex = Math.floor(Math.random() * 15); //random từ 0-14
+              const imgIndex = idx % courseImages.length; //index
               const courseImg = courseImages[imgIndex] || '';
               return (
                 <CardItem
@@ -60,6 +75,29 @@ function ListClasses() {
             })
           )}
         </div>
+        {data.totalPages > 1 && (
+          <div className={styles.pagination}>
+            <Button
+              variant="secondary"
+              size="small"
+              onClick={handlePrev}
+              disabled={loading || data.page === 0}
+            >
+              Trang trước
+            </Button>
+            <span>
+              Trang {data.page + 1} / {data.totalPages}
+            </span>
+            <Button
+              variant="secondary"
+              size="small"
+              onClick={handleNext}
+              disabled={loading || data.page >= data.totalPages - 1}
+            >
+              Trang tiếp
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

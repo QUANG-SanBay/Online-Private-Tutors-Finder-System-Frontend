@@ -2,6 +2,7 @@ import FormGroup from '~/components/formGroup/FormGroup';
 import { faGraduationCap, faFileAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './EducationTab.module.scss';
+import Button from '~/components/button/Button';
 
 function EducationTab({
     formData,
@@ -50,7 +51,7 @@ function EducationTab({
             </div>
 
             <div className={styles.proofFile}>
-                <h3>Chứng chỉ & Bằng cấp</h3>
+                <h3>Chứng chỉ & Bằng cấp <span>{isEditing ? "(Lưu ý: Không thêm file mới vào nếu không có thay đổi)" : ""}</span></h3>
                 <div className={styles.certList}>
                     {certificates.length === 0 && <p className={styles.empty}>Chưa có chứng chỉ</p>}
                     {certificates.map((cert, idx) => (
@@ -58,22 +59,28 @@ function EducationTab({
                             <div className={styles.certInfo}>
                                 <FormGroup
                                     label="Tên chứng chỉ"
+                                    placeholder='Ví dụ: Bằng cử nhân Toán học'
                                     icon={faFileAlt}
                                     name={`certificate-${idx}`}
                                     value={cert.name}
                                     onChange={(e) => onCertificateNameChange(idx, e.target.value)}
                                     disabled={!isEditing}
                                     required
+                                    className={styles.formGroup}
                                 />
                                 {cert.fileUrl && !cert.file && (
-                                    <a
-                                        href={cert.fileUrl}
+                                    <Button
+                                        size="small"
+                                        type="button"
+                                        variant="link"
                                         target="_blank"
                                         rel="noreferrer"
-                                        className={styles.certLink}
+                                        className={styles.certLinkBtn}
                                     >
-                                        Xem file hiện tại
-                                    </a>
+                                        <a href={cert.fileUrl} target="_blank" rel="noreferrer" className={styles.certLink}>
+                                            Xem file hiện tại
+                                        </a>
+                                    </Button>
                                 )}
                             </div>
                             {isEditing && (
@@ -84,23 +91,31 @@ function EducationTab({
                                         onChange={(e) => onCertificateFileChange(idx, e.target.files?.[0] || null)}
                                         className={styles.fileInput}
                                     />
-                                    <button
+                                    <Button
                                         type="button"
-                                        className={styles.removeBtn}
+                                        size="small"
+                                        className={styles.removeCertBtn}
                                         onClick={() => onRemoveCertificate(idx)}
                                         title="Xóa chứng chỉ"
+                                        variant="danger"
                                     >
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </button>
+                                        <FontAwesomeIcon icon={faTrash} /> Xóa chứng chỉ
+                                    </Button>
                                 </div>
                             )}
                         </div>
                     ))}
                 </div>
                 {isEditing && (
-                    <button type="button" className={styles.addCertBtn} onClick={onAddCertificate}>
+                    <Button 
+                        type="button" 
+                        className={styles.addCertBtn} 
+                        onClick={onAddCertificate}
+                        variant="primary"
+                        size= 'small'
+                    >
                         <FontAwesomeIcon icon={faPlus} /> Thêm chứng chỉ
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>
