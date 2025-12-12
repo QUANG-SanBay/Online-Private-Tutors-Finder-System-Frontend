@@ -3,13 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import "./Login.scss";
 import { FaUser, FaLock, FaGoogle } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {login} from '../../api/services/loginAPI';
 
 const Login = () => {
   const navigate = useNavigate();
   const [showNew, setShowNew] = useState(false);
 
   const [form, setForm] = useState({
-    username: "",
+    email: "",
     password: "",
     remember: false,
   });
@@ -24,25 +25,30 @@ const Login = () => {
   };
 
   // Xử lý đăng nhập
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra đơn giản (vì form tĩnh)
-    if (form.username.trim() === "" || form.password.trim() === "") {
-      alert("Vui lòng nhập đầy đủ thông tin đăng nhập!");
-      return;
-    }
+    try {
+      const res = await login({
+        email: form.email,
+        password: form.password,
+      });
 
-    // Nếu có "remember", lưu thông tin vào localStorage
-    if (form.remember) {
-      localStorage.setItem("rememberUser", form.username);
-    } else {
-      localStorage.removeItem("rememberUser");
-    }
+      // Lưu token (tùy backend bạn trả)
+      if (res.access) localStorage.setItem("accessToken", res.access);
+      if (res.token) localStorage.setItem("accessToken", res.token);
 
-    // Điều hướng về trang chủ
-    navigate("/");
+      navigate("/");
+
+    } catch (err) {
+      alert(
+        err.response?.data?.message ||
+        err.response?.data?.detail ||
+        "Email hoặc mật khẩu không đúng!"
+      );
+    }
   };
+
 
   return (
     <div className="login-page">
@@ -54,10 +60,10 @@ const Login = () => {
             <FaUser className="icon" />
             <input
               type="text"
-              name="username"
-              value={form.username}
+              name="email"
+              value={form.email}
               onChange={handleChange}
-              placeholder="Tên đăng nhập"
+              placeholder="Email"
               required
             />
           </div>
