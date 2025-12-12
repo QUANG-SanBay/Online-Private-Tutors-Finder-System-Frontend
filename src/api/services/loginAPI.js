@@ -4,18 +4,25 @@ import axiosInstance from "../client/axios";
 //login
 export const login = async (credentials) => {
   try {
-    const data = {
+    const payload = {
       email: credentials.email.trim(),
       password: credentials.password,
     };
 
     const response = await axiosInstance.post(
       "/auth/login",
-      data,
+      payload,
       { timeout: 15000 }
     );
 
-    return response.data;
+    const result = response.data?.result;
+
+    if (result?.accessToken && result?.scope) {
+      localStorage.setItem("token", result.accessToken);
+      localStorage.setItem("scope", result.scope);
+    }
+
+    return result;
 
   } catch (error) {
     console.error("Đăng nhập thất bại:", error.message);

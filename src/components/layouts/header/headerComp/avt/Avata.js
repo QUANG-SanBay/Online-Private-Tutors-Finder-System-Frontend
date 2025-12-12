@@ -15,18 +15,18 @@ function Avata({ className, userType = 'learner' }) {
     
     let menuArr = [];
     const menuLearnerArr = [
-        { label: 'Hồ sơ của bạn', path: '/Profile', icon: faUser },
-        { label: 'Lớp đã học', path: '/Classed', icon: faBook},
-        { label: 'Yêu cầu đã gửi', path: '/Request', icon: faCheck},
+        { label: 'Hồ sơ của bạn', action: 'Profile', icon: faUser },
+        { label: 'Lớp đã học', action: 'Classed', icon: faBook},
+        { label: 'Yêu cầu đã gửi', action: 'Request', icon: faCheck},
         { label: 'Đăng xuất', action: 'logout', icon: faRightFromBracket },
     ];
     const menuArrTutor = [
-        { label: 'Hồ sơ của bạn', path: '/tutor/Profile', icon: faUser },
+        { label: 'Hồ sơ của bạn', action: 'tutor/Profile', icon: faUser },
         { label: 'Đăng xuất', action: 'logout', icon: faRightFromBracket },
     ];
     
     const menuArrAdmin = [
-        { label: 'Hồ sơ của bạn', path: '/admin/Profile', icon: faUser },
+        { label: 'Hồ sơ của bạn', action: 'admin/Profile', icon: faUser },
         { label: 'Đăng xuất', action: 'logout', icon: faRightFromBracket },
     ];
     if (userType === 'learner') {

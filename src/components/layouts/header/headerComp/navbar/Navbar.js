@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 function Navbar({userType, onLinkClick, isMobile = false}) {
   const location = useLocation();
-  const defaultMenu = [
+  const publicMenu = [
     { title: "Trang chủ", path: "/" },
     { title: "Gia sư", path: "/Tutor" },
     { title: "E-Books", path: "/EBooks" },
@@ -25,12 +25,18 @@ function Navbar({userType, onLinkClick, isMobile = false}) {
     { title: "Gia sư", path: "/admin/tutor-management" },
     { title: "E-Books", path: "/admin/e-books" },
   ];
-  let menu = defaultMenu;
-  if (userType === "learner") {
-    menu = learnerMenu;
-  } else if (userType === "admin") {
-    menu = adminMenu;
+  let menu;
+  switch(userType) {
+    case "learner":
+      menu = learnerMenu;
+      break;
+    case "admin":
+      menu = adminMenu;
+      break;
+    default:
+      menu = publicMenu; // public nếu chưa login
   }
+
 
   return (
     <nav className={clsx(styles.navbar, { [styles.mobile]: isMobile })}>
@@ -50,6 +56,7 @@ function Navbar({userType, onLinkClick, isMobile = false}) {
         ))}
       </ul>
     </nav>
+
   );
 }
 

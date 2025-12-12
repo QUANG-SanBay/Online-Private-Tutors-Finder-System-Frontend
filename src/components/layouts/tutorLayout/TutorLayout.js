@@ -1,16 +1,14 @@
 import Footer from "../footer/Footer";
 import Header from "../header/Header";
 
-function TutorLayout({children}) {
-    return ( 
-        <>
-            <Header showNavbar={false} userType="tutor" showNotification={false} />
-            <main style={{marginTop: '100px', display: 'flex'}}>
-                {children}
-            </main>
-            <Footer />
-        </>
-     );
+function TutorLayout({ children, userType = "tutor", showNavbar = true }) {
+  return (
+    <>
+      <Header userType={userType} showNavbar={showNavbar} showNotification={true} />
+      <main style={{ marginTop: "100px", display: "flex" }}>{children}</main>
+      <Footer />
+    </>
+  );
 }
 
 export default TutorLayout;

@@ -25,29 +25,41 @@ const Login = () => {
   };
 
   // Xử lý đăng nhập
-  const handleLogin = async (e) => {
-    e.preventDefault();
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await login({
-        email: form.email,
-        password: form.password,
-      });
+  try {
+    const result = await login({
+      email: form.email,
+      password: form.password,
+    });
 
-      // Lưu token (tùy backend bạn trả)
-      if (res.access) localStorage.setItem("accessToken", res.access);
-      if (res.token) localStorage.setItem("accessToken", res.token);
-
-      navigate("/");
-
-    } catch (err) {
-      alert(
-        err.response?.data?.message ||
-        err.response?.data?.detail ||
-        "Email hoặc mật khẩu không đúng!"
-      );
+    if(result.token){
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("role", result.scope.toLowerCase());
     }
-  };
+
+    const role = result.scope;
+
+    switch (role) {
+      case "TUTOR":
+        navigate("/tutor/home");
+        break;
+      case "LEARNER":
+        navigate("/");
+        break;
+      case "ADMIN":
+        navigate("/admin/dashboard");
+        break;
+      default:
+        navigate("/");
+    }
+
+  } catch (error) {
+    alert("Sai email hoặc mật khẩu!");
+  }
+};
+
 
 
   return (
@@ -59,7 +71,7 @@ const Login = () => {
           <div className="input-box">
             <FaUser className="icon" />
             <input
-              type="text"
+              type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
@@ -93,7 +105,7 @@ const Login = () => {
               />{" "}
               Ghi nhớ đăng nhập
             </label>
-            <a href="/ForgotPassword">Quên mật khẩu?</a>
+            <Link to="/ForgotPassword">Quên mật khẩu?</Link>
           </div>
           <button type="submit" className="btn-login">
             Đăng nhập
