@@ -65,3 +65,16 @@ export const registerTutor = async (data) => {
     throw error;
   }
 };
+
+// ========================
+// đổi mật khẩu gia sư (Tutor Change Password)
+// ========================
+export const changeTutorPassword = async (payload) => {
+  try {
+    const response = await axiosInstance.post('/tutors/profile/change-password', payload);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error changing tutor password:', error);
+    throw error;
+  }
+};

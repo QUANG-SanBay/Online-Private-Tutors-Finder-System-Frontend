@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { courseImages } from '~/assets/imgs';
+
 import { getActiveClasses } from '~/api/services/tutorService';
 import CardItem from '../cardItem/CardItem';
 import styles from './ListClasses.module.scss';
@@ -40,18 +42,22 @@ function ListClasses() {
           {data.items.length === 0 ? (
             <div>Chưa có lớp đang dạy</div>
           ) : (
-            data.items.map((c, idx) => (
-              <CardItem
-                key={idx}
-                imgSrc={c.learnerAvatar || ''} // tùy theo field mapper trả về
-                fullNameLearner={c.learnerName}
-                address={c.learnerAddress}
-                subject={c.subjectName}
-                startDate={c.startDate}
-                endDate={c.endDate}
-                className={styles.cardItem}
-              />
-            ))
+            data.items.map((c, idx) => {
+              const imgIndex = Math.floor(Math.random() * 15); //random từ 0-14
+              const courseImg = courseImages[imgIndex] || '';
+              return (
+                <CardItem
+                  key={idx}
+                  imgSrc={courseImg}
+                  fullNameLearner={c.learnerName}
+                  address={c.learnerAddress}
+                  subject={c.subjectName}
+                  startDate={c.startDate}
+                  endDate={c.endDate}
+                  className={styles.cardItem}
+                />
+              );
+            })
           )}
         </div>
       </div>
