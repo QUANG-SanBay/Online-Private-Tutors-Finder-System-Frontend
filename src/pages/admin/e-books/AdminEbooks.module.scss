@@ -43,9 +43,10 @@
 
 .eContent {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  // 3 cột
+  grid-template-columns: repeat(3, 4fr);  // 3 cột
   gap: 15px;                               // khoảng cách giữa các thẻ
-  padding: 20px;
+  padding: 10px;
+  margin: 0 auto;
 }
 
 .eCard {
