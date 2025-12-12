@@ -4,6 +4,12 @@ import Button from '~/components/button/Button';
 import styles from './AvailabilityList.module.scss';
 
 function AvailabilityList({ availabilities, onAdd, onEdit, onDelete }) {
+    const statusLabel = { AVAILABLE: 'Rảnh', CANCELLED: 'Không rảnh', BOOKED: 'Đã đặt' };
+    const statusClass = {
+        AVAILABLE: '',
+        CANCELLED: styles.unavailable,
+        BOOKED: styles.booked,
+    };
     const groupedByDay = availabilities.reduce((acc, item, index) => {
         const day = item.dayOfWeek;
         if (!acc[day]) {
@@ -14,7 +20,7 @@ function AvailabilityList({ availabilities, onAdd, onEdit, onDelete }) {
     }, {});
 
     const daysOrder = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
-
+    console.log('Grouped Availabilities:', availabilities);
     return (
         <div className={styles.availabilityList}>
             <div className={styles.header}>
@@ -53,18 +59,16 @@ function AvailabilityList({ availabilities, onAdd, onEdit, onDelete }) {
                                     {daySlots.map(slot => (
                                         <div 
                                             key={slot.index} 
-                                            className={`${styles.slotCard} ${
-                                                slot.status === 'Unavailable' ? styles.unavailable : ''
-                                            }`}
+                                            className={`${styles.slotCard} ${statusClass[slot.status] || ''}`}
                                         >
                                             <div className={styles.slotInfo}>
                                                 <span className={styles.time}>
                                                     {slot.startTime} - {slot.endTime}
                                                 </span>
                                                 <span className={`${styles.status} ${
-                                                    slot.status === 'Available' ? styles.available : ''
+                                                    slot.status === 'AVAILABLE' ? styles.available : ''
                                                 }`}>
-                                                    {slot.status === 'Available' ? 'Rảnh' : 'Không rảnh'}
+                                                    {statusLabel[slot.status] || slot.status}
                                                 </span>
                                             </div>
                                             <div className={styles.actions}>
