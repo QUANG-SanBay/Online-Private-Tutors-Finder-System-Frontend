@@ -1,33 +1,33 @@
 import axiosInstance from "../client/axios";
+import { decodeToken } from "./decodeToken";
 
+// Login
+export const login = async ({ email, password }) => {
+  const response = await axiosInstance.post("/auth/login", { email, password });
 
-//login
-export const login = async (credentials) => {
-  try {
-    const data = {
-      email: credentials.email.trim(),
-      password: credentials.password,
-    };
+  const result = response.data?.result;
+  if (!result?.token) throw new Error("Không có token");
 
-    const response = await axiosInstance.post(
-      "/auth/login",
-      data,
-      { timeout: 15000 }
-    );
+  const token = result.token;
 
-    return response.data;
+  // Lưu token
+  localStorage.setItem("token", token);
 
-  } catch (error) {
-    console.error("Đăng nhập thất bại:", error.message);
+  // Giải mã token để lấy scope
+  const decoded = decodeToken(token);
 
-    if (error.response) {
-      console.error("Trạng thái:", error.response.status);
-      console.error("Dữ liệu phản hồi:", error.response.data);
-    }
+  if (decoded?.scope) {
+    // Chuẩn hóa role: ROLE_ADMIN → ADMIN
+    const rawRole = decoded.scope;
+    const cleanedRole = rawRole.replace("ROLE_", "").toUpperCase();
 
-    throw error;
+    localStorage.setItem("role", cleanedRole);
   }
+
+  return result;
 };
+
+
 
 //forget password 
 export const forgotPassword = async (email) => {

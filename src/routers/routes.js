@@ -28,6 +28,8 @@ import { Classed, Request } from '~/pages/learner';
 import TutorManagement from '~/pages/admin/QLUser/tutor/TutorManagement';
 import LearnerManagement from '~/pages/admin/QLUser/learner/LearnerManagement';
 import AdminProfile from '~/pages/admin/profile/AdminProfile';
+import AdminDashboard from '~/pages/admin/dashboard/AdminDashboard';
+import AdminEBooks from '~/pages/admin/e-books/AdminEbooks';
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
@@ -61,8 +63,10 @@ const tutorRouter = [
 ];
 
 const adminRouter = [
+    {path: '/admin/dashboard', element: <AdminDashboard/>},
     {path: '/admin/profile', element: <AdminProfile/>},
     {path: '/admin/tutor-management', element: <TutorManagement/>},
-    {path: '/admin/learner-management', element: <LearnerManagement/>}
+    {path: '/admin/learner-management', element: <LearnerManagement/>},
+    {path: '/admin/e-books', element: <AdminEBooks/>}
 ];
 export {learnerRouter, publicRouter, tutorRouter, adminRouter};

@@ -1,18 +1,14 @@
 import Footer from "../footer/Footer";
 import Header from "../header/Header";
-// import DrawerLayout from "../drawer/DrawerLayout";
-// import AdminDrawerList from "./adminDrawerList/AdminDrawerList";
 
-function AdminLayout({children}) {
-    return ( 
-        <>
-            <Header userType="admin" showNotification={false} />
-            <main style={{marginTop: '100px', display: 'flex'}}>
-                {children}
-            </main>
-            <Footer />
-        </>
-     );
+function DefaultLayout({ children, userType = "admin", showNavbar = true }) {
+  return (
+    <>
+      <Header userType={userType} showNavbar={showNavbar} showNotification={true} />
+      <main style={{ marginTop: "100px" }}>{children}</main>
+      <Footer />
+    </>
+  );
 }
 
-export default AdminLayout;
+export default DefaultLayout;

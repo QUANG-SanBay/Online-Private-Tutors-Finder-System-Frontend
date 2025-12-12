@@ -1,4 +1,7 @@
-
+.title{
+  max-width: 1200px;
+  margin: auto;
+}
 .eRoot {
   display: flex;
   gap: 2rem;
@@ -40,9 +43,10 @@
 
 .eContent {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  // 3 cột
-  gap: 20px;                               // khoảng cách giữa các thẻ
-  padding: 20px;
+  grid-template-columns: repeat(3, 4fr);  // 3 cột
+  gap: 15px;                               // khoảng cách giữa các thẻ
+  padding: 10px;
+  margin: 0 auto;
 }
 
 .eCard {
