@@ -43,6 +43,17 @@ function RegisterForm() {
 
         if (name === 'avatar') {
             const file = files?.[0] || null;
+            // Giới hạn dung lượng ảnh (5MB)
+            const MAX_SIZE = 5 * 1024 * 1024;
+            if (file && file.size > MAX_SIZE) {
+                setError('Ảnh chân dung vượt quá 5MB, vui lòng chọn ảnh nhỏ hơn.');
+                setFormData(prev => ({ ...prev, [name]: null }));
+                setAvatarPreview(prevUrl => {
+                    if (prevUrl) URL.revokeObjectURL(prevUrl);
+                    return null;
+                });
+                return;
+            }
             setFormData(prev => ({ ...prev, [name]: file }));
             setAvatarPreview(prevUrl => {
                 if (prevUrl) URL.revokeObjectURL(prevUrl);
