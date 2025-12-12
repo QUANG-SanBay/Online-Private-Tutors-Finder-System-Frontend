@@ -64,7 +64,7 @@ function ProfileHeader({
                 
                 <div className={styles.ratingSection}>
                     <FontAwesomeIcon icon={faStar} className={styles.starIcon} />
-                    <span className={styles.rating}>{tutorData.rating}</span>
+                    <span className={styles.rating}>{Math.round(tutorData.rating * 10) / 10}</span>
                     <span className={styles.reviews}>({tutorData.totalReviews} đánh giá)</span>
                 </div>
 

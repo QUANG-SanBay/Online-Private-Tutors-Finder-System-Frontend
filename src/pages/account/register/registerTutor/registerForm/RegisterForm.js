@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import styles from './RegisterForm.module.scss';
 import clsx from "clsx";
 import { registerTutor } from "~/api/services/authService";
+import { subjectOptions } from "~/constants/options/subjects";
+import { genderOptions } from "~/constants/options/gender";
+import { addressOptions } from "~/constants/options/address";
+import { educationLevelOptions } from "~/constants/options/educationLevel";
 
 function RegisterForm() {
     const navigate = useNavigate();
@@ -32,41 +36,7 @@ function RegisterForm() {
     const [success, setSuccess] = useState(null);
     const fileInputRef = useRef(null);
 
-    const addressOptions = [
-        { value: '', label: 'Chọn tỉnh thành phố' },
-        { value: 'Hà Nội', label: 'Hà Nội' },
-        { value: 'TP.HCM', label: 'TP. Hồ Chí Minh' },
-        { value: 'Đà Nẵng', label: 'Đà Nẵng' },
-        { value: 'Hải Phòng', label: 'Hải Phòng' },
-        { value: 'Cần Thơ', label: 'Cần Thơ' }
-    ];
-
-    const subjectOptions = [
-        { value: '1', label: 'Toán' },
-        { value: '2', label: 'Vật lý' },
-        { value: '3', label: 'Hóa học' },
-        { value: '4', label: 'Sinh học' },
-        { value: '5', label: 'Ngữ văn' },
-        { value: '9', label: 'Tiếng Anh' },
-        { value: '7', label: 'Lịch sử' },
-        { value: '8', label: 'Địa lý' }
-    ];
-
-    const levelOptions = [
-        { value: '', label: 'Chọn trình độ' },
-        { value: 'Sinh viên', label: 'Sinh viên' },
-        { value: 'BACHELOR', label: 'Cử nhân' },
-        { value: 'Thạc sĩ', label: 'Thạc sĩ' },
-        { value: 'Tiến sĩ', label: 'Tiến sĩ' },
-        { value: 'Giáo viên', label: 'Giáo viên' }
-    ];
-
-    // ✅ Chỉ MALE và FEMALE
-    const genderOptions = [
-        { value: '', label: 'Chọn giới tính' },
-        { value: 'MALE', label: 'Nam' },
-        { value: 'FEMALE', label: 'Nữ' }
-    ];
+    const levelOptions = educationLevelOptions;
 
     const handleChange = (e) => {
         const { name, value, files, selectedOptions } = e.target;
@@ -97,8 +67,8 @@ function RegisterForm() {
             return;
         }
 
-        const trimmedValue = typeof value === 'string' ? value.trim() : value;
-        setFormData({ ...formData, [name]: trimmedValue });
+        const rawValue = typeof value === 'string' ? value : value;
+        setFormData({ ...formData, [name]: rawValue });
     };
 
     const handleAddCertificate = () => {

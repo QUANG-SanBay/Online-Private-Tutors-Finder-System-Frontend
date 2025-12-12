@@ -69,10 +69,10 @@ function Header({ showNavbar = true, showHeaderUser = true, userType = false }) 
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
             // --- Logic xuất hiện / biến mất ---
-            if (currentScroll <= 0) {
-                setVisible(true); // đầu trang
-            } else if (currentScroll > lastScroll.current) {
-                setVisible(false); // cuộn xuống
+            if (currentScroll <= 80) {
+                setVisible(true); // đầu trang từ 0 -80px
+            } else if (currentScroll > lastScroll.current && currentScroll > 80) {
+                setVisible(false); // cuộn xuống > 80px
             } else {
                 setVisible(true); // cuộn lên
             }

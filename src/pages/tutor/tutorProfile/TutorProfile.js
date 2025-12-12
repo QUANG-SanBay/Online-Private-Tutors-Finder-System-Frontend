@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './TutorProfile.module.scss';
 import {
     ProfileHeader,
@@ -8,50 +8,119 @@ import {
     SubjectsTab,
     PasswordModal
 } from './components';
+import {
+    fetchPersonalInfo,
+    fetchEducationInfo,
+    fetchSubjectsInfo,
+    fetchTutorRatings,
+    updatePersonalInfo,
+    updateEducationInfo,
+    updateSubjectsInfo,
+    updateTutorAvatar,
+} from '~/api/services/tutorService';
+import { subjectOptions } from '~/constants/options/subjects';
 
 function TutorProfile() {
     const [isEditing, setIsEditing] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [activeTab, setActiveTab] = useState('info'); // 'info', 'education', 'subjects'
-    
-    // Mock tutor data
-    const [tutorData, setTutorData] = useState({
-        id: 1,
-        fullName: 'Nguyễn Văn An',
-        email: 'nguyenvanan@gmail.com',
-        phone: '0901234567',
-        gender: 'Nam',
-        address: '123 Đường ABC, Quận 1, TP.HCM',
-        university: 'Đại học Sư phạm TP.HCM',
-        introduction: 'Tôi là giáo viên Toán với 5 năm kinh nghiệm giảng dạy. Đam mê giúp học sinh hiểu sâu kiến thức và đạt kết quả cao.',
-        pricePerHour: 250000,
-        verificationStatus: 'Approved',
-        rating: 4.9,
-        totalReviews: 127,
-        proofFile: 'BangTotNghiep.pdf',
-        avatarUrl: '', // Empty for default icon display
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [info, setInfo] = useState('');
+
+    const emptyProfile = {
+        id: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        gender: '',
+        address: '',
+        university: '',
+        introduction: '',
+        pricePerHour: '',
+        verificationStatus: '',
+        rating: 0,
+        totalReviews: 0,
+        avatarUrl: '',
+    };
+
+    const [tutorData, setTutorData] = useState(emptyProfile);
+
+    const [subjects, setSubjects] = useState([]);
+    const [initialSubjects, setInitialSubjects] = useState([]);
+    const [availability] = useState([]);
+    const [certificates, setCertificates] = useState([]); // {id,name,fileUrl,file?}
+
+    const [formData, setFormData] = useState(emptyProfile);
+
+    const mapTutorData = (personal = {}, education = {}, ratings = {}) => ({
+        id: personal.id ?? '',
+        fullName: personal.fullName ?? '',
+        email: personal.email ?? '',
+        phone: personal.phoneNumber ?? '',
+        gender: personal.gender ?? '',
+        address: personal.address ?? '',
+        university: education.university ?? '',
+        introduction: education.introduction ?? '',
+        pricePerHour: education.pricePerHour ?? '',
+        verificationStatus: personal.verificationStatus ?? '',
+        rating: ratings.averageRating ?? 0,
+        totalReviews: ratings.totalReviews ?? 0,
+        avatarUrl: personal.avatarUrl ?? '',
     });
 
-    const [subjects, setSubjects] = useState([
-        { id: 1, name: 'Toán học', grade: 'Lớp 10-12' },
-        { id: 2, name: 'Toán nâng cao', grade: 'Lớp 11-12' },
-    ]);
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                setError('');
+                setInfo('');
+                const [personal, education, subjectsRes, ratings] = await Promise.all([
+                    fetchPersonalInfo(),
+                    fetchEducationInfo(),
+                    fetchSubjectsInfo(),
+                    fetchTutorRatings(),
+                ]);
 
-    const [availability, setAvailability] = useState([
-        { dayOfWeek: 'Thứ 2', startTime: '08:00', endTime: '17:00', status: 'Available' },
-        { dayOfWeek: 'Thứ 3', startTime: '08:00', endTime: '17:00', status: 'Available' },
-        { dayOfWeek: 'Thứ 4', startTime: '08:00', endTime: '17:00', status: 'Available' },
-    ]);
+                const mapped = mapTutorData(personal, education, ratings);
+                setTutorData(mapped);
+                setFormData(mapped);
 
-    const [formData, setFormData] = useState({ ...tutorData });
+                const subjectsArr = subjectsRes?.subjects || [];
+                const normalizedSubjects = subjectsArr.map((s, idx) => ({
+                    id: s.subjectId ?? s.id ?? idx,
+                    name: s.subjectName ?? s.name ?? 'Môn học',
+                    grade: s.grade ?? s.gradeLevel ?? '',
+                }));
+                setSubjects(normalizedSubjects);
+                setInitialSubjects(normalizedSubjects);
+
+                const certsArr = education?.certificates || [];
+                const normalizedCerts = certsArr.map((c, idx) => {
+                    const files = c.files || [];
+                    const activeFile = files.find(f => f.isActive) || files[0];
+                    return {
+                        id: c.certificateId ?? idx,
+                        name: c.certificateName ?? 'Chứng chỉ',
+                        fileUrl: activeFile?.fileUrl || '',
+                        status: activeFile?.status,
+                        file: null,
+                    };
+                });
+                setCertificates(normalizedCerts);
+            } catch (e) {
+                setError(e.response?.data?.message || e.message || 'Lỗi tải hồ sơ');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (e.target.type === 'file') {
-            setFormData(prev => ({
-                ...prev,
-                [name]: e.target.files[0] ? e.target.files[0].name : ''
-            }));
             return;
         }
         setFormData(prev => ({
@@ -60,10 +129,130 @@ function TutorProfile() {
         }));
     };
 
-    const handleSave = () => {
-        setTutorData(formData);
-        setIsEditing(false);
-        // TODO: Call API to update profile
+    const handleAddCertificate = () => {
+        setCertificates(prev => [...prev, { id: Date.now(), name: '', fileUrl: '', file: null }]);
+    };
+
+    const handleCertificateNameChange = (index, value) => {
+        setCertificates(prev => prev.map((c, idx) => idx === index ? { ...c, name: value } : c));
+    };
+
+    const handleCertificateFileChange = (index, file) => {
+        setCertificates(prev => prev.map((c, idx) => idx === index ? { ...c, file, fileUrl: file ? '' : c.fileUrl } : c));
+    };
+
+    const handleRemoveCertificate = (index) => {
+        setCertificates(prev => prev.filter((_, idx) => idx !== index));
+    };
+
+    const handleAddSubject = (subjectId) => {
+        if (!subjectId) return;
+        const idNum = Number(subjectId);
+        if (subjects.some(s => Number(s.id) === idNum)) {
+            setInfo('Môn học đã tồn tại');
+            return;
+        }
+        const option = subjectOptions.find(opt => Number(opt.value) === idNum);
+        setSubjects(prev => ([
+            ...prev,
+            { id: idNum, name: option?.label || 'Môn học', grade: '' }
+        ]));
+    };
+
+    const handleRemoveSubject = (subjectId) => {
+        setSubjects(prev => prev.filter(s => Number(s.id) !== Number(subjectId)));
+    };
+
+    const handleSave = async () => {
+        const personalChanged = (
+            formData.fullName !== tutorData.fullName ||
+            formData.email !== tutorData.email ||
+            formData.phone !== tutorData.phone ||
+            formData.gender !== tutorData.gender ||
+            formData.address !== tutorData.address
+        );
+
+        const educationChanged = (
+            formData.university !== tutorData.university ||
+            formData.introduction !== tutorData.introduction ||
+            formData.pricePerHour !== tutorData.pricePerHour ||
+            certificates.some(c => c.file)
+        );
+
+        const currentSubjectIds = subjects.map(s => Number(s.id)).sort((a, b) => a - b);
+        const initialSubjectIds = initialSubjects.map(s => Number(s.id)).sort((a, b) => a - b);
+        const subjectsChanged = (
+            currentSubjectIds.length !== initialSubjectIds.length ||
+            currentSubjectIds.some((id, idx) => id !== initialSubjectIds[idx])
+        );
+
+        if (!personalChanged && !educationChanged && !subjectsChanged) {
+            setInfo('Không có thay đổi để lưu');
+            setIsEditing(false);
+            return;
+        }
+
+        try {
+            setLoading(true);
+            setError('');
+            setInfo('');
+            let updatedTutor = { ...tutorData };
+
+            if (personalChanged) {
+                await updatePersonalInfo({
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    phoneNumber: formData.phone,
+                    gender: formData.gender?.toUpperCase(),
+                    address: formData.address,
+                });
+                updatedTutor = {
+                    ...updatedTutor,
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    gender: formData.gender,
+                    address: formData.address,
+                };
+            }
+
+            if (educationChanged) {
+                const firstCertFile = certificates[0]?.file;
+                if (!firstCertFile) {
+                    setError('Vui lòng chọn file PDF chứng chỉ');
+                    setLoading(false);
+                    return;
+                }
+
+                const eduForm = new FormData();
+                eduForm.append('data', JSON.stringify({
+                    university: formData.university,
+                    introduction: formData.introduction,
+                    pricePerHour: formData.pricePerHour,
+                }));
+                eduForm.append('proofFile', firstCertFile);
+                await updateEducationInfo(eduForm);
+                updatedTutor = {
+                    ...updatedTutor,
+                    university: formData.university,
+                    introduction: formData.introduction,
+                    pricePerHour: formData.pricePerHour,
+                };
+            }
+
+            if (subjectsChanged && subjects.length) {
+                await updateSubjectsInfo({ subjectIds: subjects.map(s => s.id) });
+            }
+
+            setTutorData(updatedTutor);
+            setInitialSubjects(subjects);
+            setIsEditing(false);
+            setInfo('Đã lưu thay đổi');
+        } catch (e) {
+            setError(e.response?.data?.message || e.message || 'Lưu hồ sơ thất bại');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleCancel = () => {
@@ -71,41 +260,40 @@ function TutorProfile() {
         setIsEditing(false);
     };
 
-    const handleAvatarChange = (e) => {
+    const handleAvatarChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            // Validate file type
-            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-            if (!validTypes.includes(file.type)) {
-                alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
-                return;
-            }
+        if (!file) return;
 
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Kích thước ảnh không được vượt quá 5MB');
-                return;
-            }
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            alert('Vui lòng chọn file ảnh (JPG, PNG, GIF)');
+            return;
+        }
 
-            // Create preview URL
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData(prev => ({
-                    ...prev,
-                    avatarUrl: reader.result
-                }));
-                setTutorData(prev => ({
-                    ...prev,
-                    avatarUrl: reader.result
-                }));
-            };
-            reader.readAsDataURL(file);
-            // TODO: Upload to server and get URL
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Kích thước ảnh không được vượt quá 5MB');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const result = await updateTutorAvatar(file);
+            const url = result?.avatarUrl || result;
+            setFormData(prev => ({ ...prev, avatarUrl: url }));
+            setTutorData(prev => ({ ...prev, avatarUrl: url }));
+        } catch (err) {
+            setError(err.response?.data?.message || err.message || 'Cập nhật ảnh đại diện thất bại');
+        } finally {
+            setLoading(false);
         }
     };
+    console.log('Tutor Data:', tutorData, 'Form Data:', formData, 'Certificates:', certificates);
     return (
         <div className={styles.tutorProfile}>
             <div className={styles.container}>
+                {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
+                {info && <div style={{ color: '#2563eb', marginBottom: 8 }}>{info}</div>}
+                {loading && <div style={{ marginBottom: 8 }}>Đang tải...</div>}
                 <ProfileHeader
                     tutorData={tutorData}
                     isEditing={isEditing}
@@ -137,6 +325,11 @@ function TutorProfile() {
                             tutorData={tutorData}
                             isEditing={isEditing}
                             onChange={handleInputChange}
+                            certificates={certificates}
+                            onAddCertificate={handleAddCertificate}
+                            onCertificateNameChange={handleCertificateNameChange}
+                            onCertificateFileChange={handleCertificateFileChange}
+                            onRemoveCertificate={handleRemoveCertificate}
                         />
                     )}
 
@@ -144,6 +337,10 @@ function TutorProfile() {
                         <SubjectsTab
                             subjects={subjects}
                             availability={availability}
+                            isEditing={isEditing}
+                            onAddSubject={handleAddSubject}
+                            onRemoveSubject={handleRemoveSubject}
+                            availableSubjects={subjectOptions}
                         />
                     )}
                 </div>
