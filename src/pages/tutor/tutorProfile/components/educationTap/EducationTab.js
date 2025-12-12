@@ -1,11 +1,23 @@
 import FormGroup from '~/components/formGroup/FormGroup';
-import { faGraduationCap } from '@fortawesome/free-solid-svg-icons';
+import { faGraduationCap, faFileAlt, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './EducationTab.module.scss';
+import Button from '~/components/button/Button';
 
-function EducationTab({ formData, tutorData, isEditing, onChange }) {
+function EducationTab({
+    formData,
+    isEditing,
+    onChange,
+    certificates = [],
+    onAddCertificate,
+    onCertificateNameChange,
+    onCertificateFileChange,
+    onRemoveCertificate,
+}) {
     return (
         <div className={styles.section}>
             <h2 className={styles.sectionTitle}>Học vấn & Chứng chỉ</h2>
+
             <div className={styles.formGrid}>
                 <div className={styles.fullWidth}>
                     <FormGroup
@@ -39,21 +51,71 @@ function EducationTab({ formData, tutorData, isEditing, onChange }) {
             </div>
 
             <div className={styles.proofFile}>
-                <h3>Chứng chỉ & Bằng cấp</h3>
-                <ul>
-                    {tutorData.proofFile && (
-                        <li>{tutorData.proofFile}</li>
-                    )}
-                </ul>
+                <h3>Chứng chỉ & Bằng cấp <span>{isEditing ? "(Lưu ý: Không thêm file mới vào nếu không có thay đổi)" : ""}</span></h3>
+                <div className={styles.certList}>
+                    {certificates.length === 0 && <p className={styles.empty}>Chưa có chứng chỉ</p>}
+                    {certificates.map((cert, idx) => (
+                        <div key={cert.id || idx} className={styles.certRow}>
+                            <div className={styles.certInfo}>
+                                <FormGroup
+                                    label="Tên chứng chỉ"
+                                    placeholder='Ví dụ: Bằng cử nhân Toán học'
+                                    icon={faFileAlt}
+                                    name={`certificate-${idx}`}
+                                    value={cert.name}
+                                    onChange={(e) => onCertificateNameChange(idx, e.target.value)}
+                                    disabled={!isEditing}
+                                    required
+                                    className={styles.formGroup}
+                                />
+                                {cert.fileUrl && !cert.file && (
+                                    <Button
+                                        size="small"
+                                        type="button"
+                                        variant="link"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={styles.certLinkBtn}
+                                    >
+                                        <a href={cert.fileUrl} target="_blank" rel="noreferrer" className={styles.certLink}>
+                                            Xem file hiện tại
+                                        </a>
+                                    </Button>
+                                )}
+                            </div>
+                            {isEditing && (
+                                <div className={styles.certActions}>
+                                    <input
+                                        type="file"
+                                        accept=".pdf"
+                                        onChange={(e) => onCertificateFileChange(idx, e.target.files?.[0] || null)}
+                                        className={styles.fileInput}
+                                    />
+                                    <Button
+                                        type="button"
+                                        size="small"
+                                        className={styles.removeCertBtn}
+                                        onClick={() => onRemoveCertificate(idx)}
+                                        title="Xóa chứng chỉ"
+                                        variant="danger"
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} /> Xóa chứng chỉ
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
                 {isEditing && (
-                    <FormGroup
-                        label="Thêm chứng chỉ/Bằng cấp"
-                        name="proofFile"
-                        id="newProofFile"
-                        accept='.pdf'
-                        type='file'
-                        onChange={onChange}
-                    />
+                    <Button 
+                        type="button" 
+                        className={styles.addCertBtn} 
+                        onClick={onAddCertificate}
+                        variant="primary"
+                        size= 'small'
+                    >
+                        <FontAwesomeIcon icon={faPlus} /> Thêm chứng chỉ
+                    </Button>
                 )}
             </div>
         </div>

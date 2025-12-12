@@ -23,7 +23,32 @@
     display: flex;
     flex-wrap: wrap;
     padding: 4px 12px;
+}
+.pagination {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
 
+    button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover:enabled {
+            background: #f5f7fb;
+            color: var(--primary-c);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
 }
 .cardItem{
     width: 100%;

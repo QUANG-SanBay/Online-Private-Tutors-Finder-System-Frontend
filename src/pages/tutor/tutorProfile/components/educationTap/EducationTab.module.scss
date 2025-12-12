@@ -30,6 +30,11 @@
             font-weight: 600;
             color: var(--text-c);
             margin-bottom: 1rem;
+            span{
+                font-size: 1.2rem;
+                font-weight: 400;
+                color: red;
+            }
         }
 
         ul {
@@ -54,7 +59,40 @@
         }
     }
 }
+.certInfo{
+    display: flex;
+    align-items: end;
+    .formGroup{
+        flex: 1;
+    }
+    .certLinkBtn{
+        margin-left: 12px;
+        margin-bottom: 8px;
+    }
+    .certLink{
+        display: inline-block;
+        font-size: 1.4rem;
+        text-decoration: underline;
+        color: var(--primary-c);
+        line-height: 24px;
+    }
+}
+.certActions{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
+    .fileInput{
+        margin-left: 12px;
+    }
+    .removeBtn{
+
+    }
+}
+.addCertBtn{
+    margin-left: 12px;
+    margin-top: 24px;
+}
 @media (max-width: 768px) {
     .section {
         .formGrid {

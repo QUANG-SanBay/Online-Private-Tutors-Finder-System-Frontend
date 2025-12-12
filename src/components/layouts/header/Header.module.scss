@@ -8,11 +8,13 @@
     position: fixed;
     top: 0;
     z-index: 999;
-    .hide {
+    transform: translateY(0);
+    transition: all 0.2s ease;
+    &.hide {
     transform: translateY(-100%);
     }
 
-    .show {
+    &.show {
     transform: translateY(0);
     }
 }
