@@ -1,26 +1,69 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../../components/Learner/profile/Profile.module.scss";
 import ProfileTab from "~/components/Learner/profile/info";
 
-export default function LearnerDashboard() {
+import {
+  getLearnerProfile,
+  updateLearnerProfile,
+} from "~/api/services/leanerService";
 
-  const user = { 
-    name: "Nguyễn Văn A", 
-    email: "a@email.com", 
-    phone: "0909221177", 
-    address: "Hanoi" 
+export default function LearnerDashboard() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // ============================
+  // Load profile khi vào trang
+  // ============================
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await getLearnerProfile();
+
+        setUser({
+          name: data.fullName,
+          email: data.email,
+          phone: data.phoneNumber,
+          address: data.address,
+        });
+      } catch (err) {
+        console.error("Load profile error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  // ============================
+  // Save profile
+  // ============================
+  const handleSaveProfile = async (form) => {
+    try {
+      await updateLearnerProfile({
+        fullName: form.fullName,
+        phoneNumber: form.phoneNumber,
+        address: form.address,
+      });
+
+      // cập nhật lại UI
+      setUser({ ...form });
+
+      alert("✅ Cập nhật thông tin thành công");
+    } catch (err) {
+      console.error("Update profile error:", err);
+      alert("❌ Cập nhật thất bại");
+    }
   };
 
-  function handleSaveProfile(data) {
-    console.log("Save profile", data);
+  if (loading) {
+    return <div className={styles["ld-root"]}>Đang tải thông tin...</div>;
   }
 
   return (
     <div className={styles["ld-root"]}>
-      {/* Main content */}
       <main className={styles["ld-main"]}>
-         <ProfileTab user={user} onSave={handleSaveProfile} />
-      
+        {user && <ProfileTab user={user} onSave={handleSaveProfile} />}
       </main>
     </div>
   );

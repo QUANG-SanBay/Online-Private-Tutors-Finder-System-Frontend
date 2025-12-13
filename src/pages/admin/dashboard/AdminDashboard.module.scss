@@ -1,10 +1,8 @@
 .dashboard {
-  padding: 30px;
   background: #deedefa2;
-  gap: 24px;
-  padding: 24px;
-  font-family: Inter, system-ui, Arial, sans-serif;
   color: #17202a;
+  gap: 2rem;
+  padding: 2rem;
   max-width: 1200px;
   margin: auto;
   
@@ -53,7 +51,7 @@
   /* ========== Charts ========== */
   .charts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 4fr);  // 3 cột
     gap: 30px;
     margin-bottom: 40px;
 
@@ -71,57 +69,77 @@
     }
   }
 
-  /* ========== Table ========== */
-  .tableContainer {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    font-size: 14px;
+  /* ============================= */
+  /* Advanced Analytics Charts    */
+  /* ============================= */
 
-    h3 {
-      margin-bottom: 15px;
-      color: #333;
+  .analyticsChart {
+    position: relative;
+    background: linear-gradient(180deg, #ffffff, #f9fbfd);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.25s ease;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        120deg,
+        rgba(76, 175, 80, 0.08),
+        rgba(33, 150, 243, 0.08),
+        rgba(255, 152, 0, 0.08)
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
 
-      th, td {
-        padding: 12px 15px;
-        text-align: left;
+      &::before {
+        opacity: 1;
       }
+    }
 
-      th {
-        background: #c4fae7;
-        color: #333;
-        font-weight: 600;
-        font-size: 16px;
-      }
-
-      tr:nth-child(even) {
-        background: #fafafa;
-      }
-
-      td {
-        color: #555;
-      }
-
-      td.pending {
-        color: #ff9800;
-        font-weight: bold;
-      }
-
-      td.confirmed {
-        color: #4caf50;
-        font-weight: bold;
-      }
-
-      td.cancelled {
-        color: #f44336;
-        font-weight: bold;
-      }
+    canvas {
+      position: relative;
+      z-index: 2;
     }
   }
+
+  /* ============================= */
+  /* Chart Titles (Phân biệt rõ)  */
+  /* ============================= */
+
+  .chartTitleGreen {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #2e7d32;
+    border-left: 5px solid #4caf50;
+    padding-left: 12px;
+  }
+
+  .chartTitleBlue {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #1565c0;
+    border-left: 5px solid #2196f3;
+    padding-left: 12px;
+  }
+
+  .chartTitleOrange {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #ef6c00;
+    border-left: 5px solid #ff9800;
+    padding-left: 12px;
+  }
+
 }

@@ -37,21 +37,23 @@ function Avata({ className, userType = 'learner' }) {
             ? menuArrTutor
             : menuArrAdmin;
 
-    const handleLogout = async () => {
-        try {
-            await logout(); // gọi API
+const handleLogout = async () => {
+  try {
+    await logout(); // gọi API logout
 
-            // Xóa token FE
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("user");
+  } catch (err) {
+    console.error("Logout error:", err);
+  } finally {
+    // ✅ LUÔN clear đúng key
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    
 
-            navigate("/login", { replace: true });
-        } catch (err) {
-            console.error("Logout error:", err);
-            navigate("/login", { replace: true });
-        }
-    };
+    navigate("/login", { replace: true });
+  }
+};
+
+
 
     return (
         <div className={clsx(styles.account, className)} onClick={() => setOpen(!open)}>

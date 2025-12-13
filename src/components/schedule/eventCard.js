@@ -14,3 +14,4 @@ function EventCard({ data }) {
 }
 
 export default EventCard;
+ 
