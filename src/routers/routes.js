@@ -39,20 +39,18 @@ const publicRouter = [
     {path: '/register/tutor', element: <RegisterTutor/> },
     {path: '/register/learner', element: <RegisterLearner/>},
     {path: '/', element: <Dashboard/>},
+    {path: '/EBooks', element: <EBooks/>},
+    {path: '/Tutor', element: <TutorList/>},
+    {path: '/Tutor/:tutorId', element: <TutorDetail/>},
+    {path: '/Contact', element: <ContactPage/>}
     // bổ xung trang dashboard chung cho tất cả người dùng
 ]
 
 const learnerRouter = [
-    // {path: '/', element: <Home/>},
-    {path: '/EBooks', element: <EBooks/>},
     {path: '/Profile', element: <Profile/>},
     {path: '/Classed', element: <Classed/>},
     {path: '/Request', element: <Request/>},
-    {path: '/Tutor', element: <TutorList/>},
-    {path: '/Tutor/:tutorId', element: <TutorDetail/>},
-    {path: '/Schedule', element: <Schedule/>},
-
-    {path: '/Contact', element: <ContactPage/>}
+    {path: '/Schedule', element: <Schedule/>}
 ]
 
 const tutorRouter = [

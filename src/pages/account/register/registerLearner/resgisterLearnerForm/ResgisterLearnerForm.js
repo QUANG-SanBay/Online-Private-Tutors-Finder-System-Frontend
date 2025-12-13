@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ResgisterLearnerForm.module.scss";
 import FormGroup from "~/components/formGroup/FormGroup";
-import { useGoogleLogin } from "@react-oauth/google";
+// import { useGoogleLogin } from "@react-oauth/google";
 import { registerLearner } from "~/api/services/authService";
 
 function ReisterFormLearner() {
@@ -16,29 +16,29 @@ function ReisterFormLearner() {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const login = useGoogleLogin({
-        scope: 'openid profile email',
-        onSuccess: async (tokenResponse) => {
-            try {
-                const accessToken = tokenResponse?.access_token;
-                if (!accessToken) return;
-                // Fetch profile from Google UserInfo endpoint
-                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                    headers: { Authorization: `Bearer ${accessToken}` }
-                });
-                const profile = await res.json();
-                const fullName = profile?.name || '';
-                const email = profile?.email || '';
-                setFormData((prev) => ({ ...prev, fullName, email }));
-                // TODO: Optionally send tokenResponse or profile to your backend for registration/login
-            } catch (err) {
-                console.error('Google userinfo error:', err);
-            }
-        },
-        onError: () => {
-            console.error('Google login failed');
-        },
-    });
+    // const login = useGoogleLogin({
+    //     scope: 'openid profile email',
+    //     onSuccess: async (tokenResponse) => {
+    //         try {
+    //             const accessToken = tokenResponse?.access_token;
+    //             if (!accessToken) return;
+    //             // Fetch profile from Google UserInfo endpoint
+    //             const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    //                 headers: { Authorization: `Bearer ${accessToken}` }
+    //             });
+    //             const profile = await res.json();
+    //             const fullName = profile?.name || '';
+    //             const email = profile?.email || '';
+    //             setFormData((prev) => ({ ...prev, fullName, email }));
+    //             // TODO: Optionally send tokenResponse or profile to your backend for registration/login
+    //         } catch (err) {
+    //             console.error('Google userinfo error:', err);
+    //         }
+    //     },
+    //     onError: () => {
+    //         console.error('Google login failed');
+    //     },
+    // });
 
     const handleFieldChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -145,7 +145,7 @@ function ReisterFormLearner() {
             <button type="submit" className={styles.submit} disabled={loading}>
                 {loading ? 'Đang đăng ký...' : 'Đăng ký'}
             </button>
-            <div className={styles.dividerWrap}>
+            {/* <div className={styles.dividerWrap}>
                 <span className={styles.divider} />
                 <span className={styles.dividerText}>hoặc</span>
                 <span className={styles.divider} />
@@ -164,7 +164,7 @@ function ReisterFormLearner() {
                     </svg>
                     Đăng ký bằng Google
                 </button>
-            </div>
+            </div> */}
         </form>
     );
 }

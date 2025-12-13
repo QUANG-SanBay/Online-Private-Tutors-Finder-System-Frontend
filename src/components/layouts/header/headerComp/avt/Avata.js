@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { faAngleDown, faBook, faCheck, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faBook, faCheck, faHome, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import clsx from 'clsx';
 import Dropdown from '../dropdown/Dropdown';
@@ -12,20 +12,22 @@ import { logout } from '~/api/services/logoutAPI';
 function Avata({ className, userType = 'learner' }) {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
-    
+
     const menuLearnerArr = [
         { label: 'Hồ sơ của bạn', path: '/Profile', icon: faUser },
-        { label: 'Lớp đã học', path: '/Classed', icon: faBook},
-        { label: 'Yêu cầu đã gửi', path: '/Request', icon: faCheck},
+        { label: 'Lớp đã học', path: '/Classed', icon: faBook },
+        { label: 'Yêu cầu đã gửi', path: '/Request', icon: faCheck },
         { label: 'Đăng xuất', action: 'logout', icon: faRightFromBracket },
     ];
     const menuArrTutor = [
         { label: 'Hồ sơ của bạn', path: '/tutor/profile', icon: faUser },
+        { label: 'Trang chủ gia sư', path: '/tutor/home', icon: faHome },
         { label: 'Đăng xuất', action: 'logout', icon: faRightFromBracket },
     ];
-    
+
     const menuArrAdmin = [
         { label: 'Hồ sơ của bạn', path: '/admin/profile', icon: faUser },
+        { label: 'Dashboard admin', path: '/admin/dashboard', icon: faHome },
         { label: 'Đăng xuất', action: 'logout', icon: faRightFromBracket },
     ];
 
@@ -64,12 +66,12 @@ function Avata({ className, userType = 'learner' }) {
                         </span>
                     </div>
                 </div>
-            
-                <Dropdown 
-                    arr={menuArr} 
+
+                <Dropdown
+                    arr={menuArr}
                     onLogout={handleLogout}
                     onSelect={() => setOpen(false)}
-                    className={clsx(styles.accountDropdown, open ? styles.show : '')} /> 
+                    className={clsx(styles.accountDropdown, open ? styles.show : '')} />
                 {open && <Modal type='default'></Modal>}
             </div>
         </div>
