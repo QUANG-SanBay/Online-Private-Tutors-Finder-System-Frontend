@@ -1,14 +1,16 @@
 import Footer from "../footer/Footer";
 import Header from "../header/Header";
 
-function DefaultLayout({ children, userType = "admin", showNavbar = true }) {
+function AdminLayout({ children }) {
   return (
     <>
-      <Header userType={userType} showNavbar={showNavbar} showNotification={true} />
-      <main style={{ marginTop: "100px" }}>{children}</main>
+      <Header userType="admin" showNotification={false} />
+      <main style={{ marginTop: '100px', display: 'flex' }}>
+        {children}
+      </main>
       <Footer />
     </>
   );
 }
 
-export default DefaultLayout;
+  export default AdminLayout;

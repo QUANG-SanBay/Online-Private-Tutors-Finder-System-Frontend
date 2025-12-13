@@ -3,7 +3,7 @@ import styles from "./Dropdown.module.scss";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-function Dropdown({ arr, className, onLogout }) {
+function Dropdown({ arr, className, onLogout, onSelect }) {
     return (
         <div className={clsx(styles.Dropdown, className)}>
             <ul className={clsx(styles.List)}>
@@ -14,7 +14,10 @@ function Dropdown({ arr, className, onLogout }) {
                         {item.action === "logout" ? (
                             <div
                                 className={clsx(styles.ListItemLink)}
-                                onClick={onLogout}
+                                onClick={() => {
+                                    if (onLogout) onLogout();
+                                    if (onSelect) onSelect();
+                                }}
                                 style={{ cursor: "pointer" }}
                             >
                                 <FontAwesomeIcon 
@@ -26,8 +29,11 @@ function Dropdown({ arr, className, onLogout }) {
                         ) : (
                             /* Các item bình thường → Link */
                             <Link 
-                                to={item.path} 
+                                to={item.path || '#'} 
                                 className={clsx(styles.ListItemLink)}
+                                onClick={() => {
+                                    if (onSelect) onSelect();
+                                }}
                             >
                                 <FontAwesomeIcon 
                                     icon={item.icon} 
