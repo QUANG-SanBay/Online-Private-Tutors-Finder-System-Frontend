@@ -58,7 +58,7 @@ function InforSection({ adminData, isEditing, editData, onChange }) {
                     type="text"
                     id="createdAt"
                     name="createdAt"
-                    value={new Date(adminData.createdAt).toLocaleDateString('vi-VN')}
+                    value={adminData.createdAt}
                     disabled
                 />
             </div>
