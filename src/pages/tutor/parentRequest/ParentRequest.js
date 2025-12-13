@@ -1,94 +1,83 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PageHeader, RequestFilters, RequestList, RejectModal } from './components';
 import styles from './ParentRequest.module.scss';
 import HeaderPage from '~/components/headerPage/HeaderPage';
-
-// Mock data
-const mockRequests = [
-    {
-        id: 1,
-        learnerName: 'Nguyễn Văn A',
-        learnerAge: 15,
-        subject: 'Toán học',
-        grade: 'Lớp 10',
-        type: 'trial', // trial or official
-        schedule: 'Thứ 2, 4, 6 - 19:00-20:30',
-        startDate: '2025-11-20',
-        duration: '3 tháng',
-        price: '200,000đ/buổi',
-        message: 'Con em cần ôn tập và nâng cao kiến thức toán học để chuẩn bị cho kỳ thi học kỳ.',
-        status: 'pending', // pending, accepted, rejected
-        createdAt: '2025-11-15'
-    },
-    {
-        id: 2,
-        learnerName: 'Trần Thị B',
-        learnerAge: 17,
-        subject: 'Toán nâng cao',
-        grade: 'Lớp 12',
-        type: 'official',
-        schedule: 'Thứ 3, 5, 7 - 18:00-19:30',
-        startDate: '2025-11-18',
-        duration: '6 tháng',
-        price: '250,000đ/buổi',
-        message: 'Em muốn học thêm để thi đại học. Em cần tập trung vào phần giải tích và hình học không gian.',
-        status: 'pending',
-        createdAt: '2025-11-14'
-    },
-    {
-        id: 3,
-        learnerName: 'Lê Văn C',
-        learnerAge: 14,
-        subject: 'Toán học',
-        grade: 'Lớp 9',
-        type: 'trial',
-        schedule: 'Thứ 2, 4 - 17:00-18:30',
-        startDate: '2025-11-22',
-        duration: '1 buổi',
-        price: '150,000đ/buổi',
-        message: 'Con em muốn học thử để xem có phù hợp không ạ.',
-        status: 'pending',
-        createdAt: '2025-11-16'
-    },
-    {
-        id: 4,
-        learnerName: 'Phạm Thị D',
-        learnerAge: 16,
-        subject: 'Toán học',
-        grade: 'Lớp 11',
-        type: 'official',
-        schedule: 'Thứ 3, 6 - 19:00-20:30',
-        startDate: '2025-11-25',
-        duration: '4 tháng',
-        price: '220,000đ/buổi',
-        message: 'Em cần học thêm phần đại số và lượng giác.',
-        status: 'accepted',
-        createdAt: '2025-11-13'
-    }
-];
+import Toast from '~/components/toast/Toast';
+import { fetchTutorRequests, acceptTutorRequest, rejectTutorRequest } from '~/api/services/tutorService';
 
 function ParentRequest() {
-    const [requests, setRequests] = useState(mockRequests);
+    const [requests, setRequests] = useState([]);
     const [filter, setFilter] = useState('all'); // all, pending, accepted, rejected
     const [typeFilter, setTypeFilter] = useState('all'); // all, trial, official
     const [searchTerm, setSearchTerm] = useState('');
+    const [pageInfo, setPageInfo] = useState({ page: 0, size: 8, totalPages: 0, totalElements: 0 });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [rejectReason, setRejectReason] = useState('');
+    const [toast, setToast] = useState({ message: '', type: '' });
 
-    const filteredRequests = requests.filter(req => {
-        const matchStatus = filter === 'all' || req.status === filter;
-        const matchType = typeFilter === 'all' || req.type === typeFilter;
-        const matchSearch = req.learnerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           req.subject.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchStatus && matchType && matchSearch;
-    });
+    const showToast = (message, type = 'info') => {
+        setToast({ message, type });
+    };
 
-    const handleAccept = (id) => {
-        setRequests(prev => prev.map(req => 
-            req.id === id ? { ...req, status: 'accepted' } : req
-        ));
-        // TODO: Call API to accept request
+    const loadRequests = async (page = 0) => {
+        try {
+            setLoading(true);
+            setError('');
+            const result = await fetchTutorRequests({
+                status: filter,
+                type: typeFilter,
+                keyword: searchTerm,
+                page,
+                size: pageInfo.size,
+            });
+
+            const content = (result?.content || []).map((item) => ({
+                id: item.requestId,
+                learnerName: item.fullName,
+                subject: item.subjectName,
+                grade: item.grade,
+                type: item.type === 'TRIAL' ? 'trial' : 'official',
+                schedule: item.scheduleDescription,
+                startDate: item.startDate,
+                duration: `${item.totalSessions || ''} buổi`,
+                price: item.pricePerHour ? `${item.pricePerHour.toLocaleString('vi-VN')} đ/giờ` : '',
+                message: item.additionalNotes || '',
+                status: item.status === 'CONFIRMED' ? 'accepted' : item.status === 'CANCELLED' ? 'rejected' : 'pending',
+                createdAt: item.createdAt,
+                requestStatus: item.status,
+                typeRaw: item.type,
+            }));
+            setRequests(content);
+            setPageInfo({
+                page: result?.number || 0,
+                size: result?.size || pageInfo.size,
+                totalPages: result?.totalPages || 0,
+                totalElements: result?.totalElements || 0,
+            });
+        } catch (err) {
+            setError('Tải yêu cầu thất bại');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadRequests(0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filter, typeFilter, searchTerm]);
+
+    const handleAccept = async (id) => {
+        try {
+            await acceptTutorRequest(id);
+            await loadRequests(pageInfo.page);
+            showToast('Chấp nhận yêu cầu thành công', 'success');
+        } catch (err) {
+            setError('Chấp nhận yêu cầu thất bại');
+            showToast('Chấp nhận yêu cầu thất bại', 'error');
+        }
     };
 
     const handleReject = (request) => {
@@ -96,12 +85,16 @@ function ParentRequest() {
         setShowRejectModal(true);
     };
 
-    const confirmReject = () => {
+    const confirmReject = async () => {
         if (selectedRequest) {
-            setRequests(prev => prev.map(req => 
-                req.id === selectedRequest.id ? { ...req, status: 'rejected' } : req
-            ));
-            // TODO: Call API to reject request with reason
+            try {
+                await rejectTutorRequest(selectedRequest.id);
+                await loadRequests(pageInfo.page);
+                showToast('Từ chối yêu cầu thành công', 'success');
+            } catch (err) {
+                setError('Từ chối yêu cầu thất bại');
+                showToast('Từ chối yêu cầu thất bại', 'error');
+            }
             setShowRejectModal(false);
             setRejectReason('');
             setSelectedRequest(null);
@@ -110,11 +103,31 @@ function ParentRequest() {
 
     const pendingCount = requests.filter(r => r.status === 'pending').length;
 
+    const filteredRequests = requests; // already filtered via API params
+
+    console.log('Requests Data:', requests);
+
+    const handlePageChange = (nextPage) => {
+        const target = Math.min(Math.max(nextPage, 0), Math.max((pageInfo.totalPages || 1) - 1, 0));
+        if (target !== pageInfo.page && !loading) {
+            loadRequests(target);
+        }
+    };
+
     return (
         <div className={styles.parentRequest}>
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                duration={3000}
+                onClose={() => setToast({ message: '', type: '' })}
+            />
             <div className={styles.container}>
                 <HeaderPage title="Quản lý yêu cầu" />
                 <PageHeader pendingCount={pendingCount} />
+
+                {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
+                {loading && <div style={{ marginBottom: 12 }}>Đang tải yêu cầu...</div>}
 
                 <RequestFilters
                     searchTerm={searchTerm}
@@ -130,6 +143,28 @@ function ParentRequest() {
                     onAccept={handleAccept}
                     onReject={handleReject}
                 />
+
+                { (pageInfo.totalPages || 0) > 1 && (
+                    <div className={styles.pagination}>
+                        <button
+                            className={styles.pageBtn}
+                            onClick={() => handlePageChange(pageInfo.page - 1)}
+                            disabled={loading || pageInfo.page <= 0}
+                        >
+                            Trang trước
+                        </button>
+                        <span className={styles.pageInfo}>
+                            Trang { (pageInfo.page || 0) + 1 } / { Math.max(pageInfo.totalPages || 1, 1) }
+                        </span>
+                        <button
+                            className={styles.pageBtn}
+                            onClick={() => handlePageChange(pageInfo.page + 1)}
+                            disabled={loading || (pageInfo.page + 1) >= (pageInfo.totalPages || 1)}
+                        >
+                            Trang sau
+                        </button>
+                    </div>
+                )}
             </div>
 
             <RejectModal

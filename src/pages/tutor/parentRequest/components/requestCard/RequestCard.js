@@ -73,10 +73,10 @@ function RequestCard({ request, onAccept, onReject }) {
                     </div>
 
                     {/* TODO: Uncomment when message feature is ready */}
-                    {/* <div className={styles.message}>
+                    <div className={styles.message}>
                         <strong>Tin nhắn:</strong>
                         <p>{request.message}</p>
-                    </div> */}
+                    </div>
                 </div>
 
                 {request.status === 'pending' && (
