@@ -125,12 +125,6 @@ const Login = () => {
             Đăng nhập
           </button>
 
-          <div className="divider">Hoặc</div>
-
-          <button type="button" className="btn-google">
-            <FaGoogle className="google-icon" /> Đăng nhập với Google
-          </button>
-
           <div className="redirect">
             <p className="text">
               Bạn chưa có tài khoản?

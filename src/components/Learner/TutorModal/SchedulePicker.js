@@ -1,72 +1,97 @@
 import React from "react";
 import "./TutorModal.scss";
+import { getWeekDates } from "../../../utils/dateUtils";
 
-export default function SchedulePicker({ busySlots = [], selected = [], onToggleSlot }) {
-  const sessions = [
-    {
-      name: "Sáng",
-      slots: [
-        { id: "morning1", label: "08:00 - 09:30" },
-        { id: "morning2", label: "09:30 - 11:00" },
-      ],
-    },
-    {
-      name: "Chiều",
-      slots: [
-        { id: "afternoon1", label: "14:00 - 15:30" },
-        { id: "afternoon2", label: "15:30 - 17:00" },
-      ],
-    },
-    {
-      name: "Tối",
-      slots: [
-        { id: "evening1", label: "18:00 - 19:30" },
-        { id: "evening2", label: "19:30 - 21:00" },
-      ],
-    },
+/* ============================
+   TIME SLOTS
+============================ */
+const TIME_SLOTS = [
+  { key: "morning1", label: "08:00 - 09:30" },
+  { key: "morning2", label: "09:30 - 11:00" },
+  { key: "afternoon1", label: "13:00 - 14:30" },
+  { key: "afternoon2", label: "14:30 - 16:00" },
+  { key: "evening1", label: "17:00 - 18:30" },
+  { key: "evening2", label: "18:30 - 20:00" },
+];
+
+/* ============================
+   FORMAT DAY HEADER
+============================ */
+const formatDayHeader = (dateStr) => {
+  const date = new Date(dateStr);
+
+  const dayMap = [
+    "Chủ nhật",
+    "Thứ 2",
+    "Thứ 3",
+    "Thứ 4",
+    "Thứ 5",
+    "Thứ 6",
+    "Thứ 7",
   ];
 
-  const weekDays = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+  return {
+    dayName: dayMap[date.getDay()],
+    dateText: `${String(date.getDate()).padStart(2, "0")}/${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}`,
+  };
+};
+
+/* ============================
+   COMPONENT
+============================ */
+export default function SchedulePicker({
+  baseDate,
+  busySlots = [],
+  selectedSlots = [],
+  onToggleSlot,
+}) {
+  const weekDates = getWeekDates(baseDate);
 
   return (
     <div className="tfm-schedule-grid">
-      <div className="tfm-col-head">Ca / Ngày</div>
+      {/* Empty corner */}
+      <div />
 
-      {weekDays.map((d) => (
-        <div key={d} className="tfm-day-head">{d}</div>
-      ))}
+      {/* ===== DAY HEADERS ===== */}
+      {weekDates.map((date) => {
+        const { dayName, dateText } = formatDayHeader(date);
 
-      {sessions.map((session) => (
-        <React.Fragment key={session.name}>
-          <div className="tfm-session-cell">{session.name}</div>
+        return (
+          <div key={date} className="tfm-day-head">
+            <div className="day-name">{dayName}</div>
+            <div className="day-date">{dateText}</div>
+          </div>
+        );
+      })}
 
-          {weekDays.map((day) => (
-            <div key={day + session.name} className="tfm-cell">
+      {/* ===== TIME SLOTS ===== */}
+      {TIME_SLOTS.map((slot) => (
+        <React.Fragment key={slot.key}>
+          <div className="tfm-session-cell">{slot.label}</div>
 
-              {session.slots.map((slot) => {
-                const slotId = `${day}-${slot.id}`;
-                const isBusy = busySlots.includes(slotId);
-                const isSelected = selected.includes(slotId);
+          {weekDates.map((date) => {
+            const slotId = `${date}|${slot.key}`;
+            const isBusy = busySlots.includes(slotId);
+            const isSelected = selectedSlots.includes(slotId);
 
-                return (
-                  <div
-                    key={slotId}
-                    className={[
-                      "tfm-slot",
-                      isBusy && "busy",
-                      isSelected && "selected",
-                    ].join(" ")}
-                    onClick={() => {
-                      if (!isBusy) onToggleSlot(slotId);
-                    }}
-                  >
-                    <span className="tfm-slot-label">{slot.label}</span>
-                  </div>
-                );
-              })}
-
-            </div>
-          ))}
+            return (
+              <div
+                key={slotId}
+                className={[
+                  "tfm-slot",
+                  isBusy && "busy",
+                  isSelected && "selected",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                onClick={() => !isBusy && onToggleSlot(slotId)}
+              >
+                {slot.label}
+              </div>
+            );
+          })}
         </React.Fragment>
       ))}
     </div>

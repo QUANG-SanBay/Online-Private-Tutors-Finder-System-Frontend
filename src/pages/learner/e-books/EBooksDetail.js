@@ -19,9 +19,8 @@ export default function EbookDetail({ data, onClose }) {
 
         <div className={styles["modal-info-grid"]}>
           <div><b>Môn học:</b> Công nghệ Web</div>
-          <div><b>Người đăng:</b> {data.author}</div>
-          <div><b>Ngày cập nhật:</b> {formatDate(data.date)}</div>
-          <div><b>Dung lượng:</b> {data.size}</div>
+          <div><b>Người đăng:</b> {data.uploadedByName}</div>
+          <div><b>Ngày cập nhật:</b> {formatDate(data.createdAt)}</div>
           <div><b>Loại:</b> {data.type}</div>
         </div>
 
