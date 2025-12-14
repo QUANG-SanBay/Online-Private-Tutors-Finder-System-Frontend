@@ -118,3 +118,93 @@ export const getLearnerCalendar = async (from, to) => {
   return res.data?.result || [];
 };
 
+// ========================
+// 7. Lấy dữ liệu filter gia sư
+// ========================
+
+export const getTutorFilters = async () => {
+  const res = await axiosInstance.get("/learner/tutors/filters");
+  return res.data.result;
+};
+
+// =====================
+// 8. Tìm kiếm gia sư (theo filter)
+// =====================
+export const searchTutorsByFilter = async (params) => {
+  const res = await axiosInstance.get("/learner/tutors/search-filters", { params });
+  return res.data.result;
+};
+
+// =====================
+// 9. Tìm kiếm gia sư (theo từ khóa)
+// =====================
+export const searchTutorsByKeyword = async (q) => {
+  const res = await axiosInstance.get("/learner/tutors/search", {
+    params: { q },
+  });
+  return res.data.result;
+};
+
+// ========================
+// 10. Ebooks
+// ========================
+export const getAllEbooks = async () => {
+  const res = await axiosInstance.get("/learner/ebooks");
+  return res.data.result;
+};
+
+// ========================
+// 11. Lọc ebooks theo type + phân trang
+// ========================
+export const searchEbooks = async ({ type, page = 0, size = 5 }) => {
+  const res = await axiosInstance.get(
+    "/learner/ebooks/search",
+    {
+      params: { type, page, size },
+    }
+  );
+  return res.data.result;
+};
+
+// =======================
+// 12. Lấy chi tiết gia sư
+// =======================
+export const getTutorDetail = (tutorId) => {
+  return axiosInstance.get(`/tutors/tutorDetail/${tutorId}`);
+};
+
+// ========================
+// 13. Đánh giá lớp đã học
+// ========================
+
+export const createRating = (payload) => {
+  return axiosInstance.post(
+    "/learner/ratings/create-rating",
+    payload
+  );
+};
+
+
+// ========================
+// 15. Lấy lịch trống của gia sư
+// ========================
+export const getTutorAvailabilities = (tutorId, fromDate, toDate) => {
+  return axiosInstance.get(
+    `/learner/tutor-avails/${tutorId}/availabilities`,
+    {
+      params: { fromDate, toDate }
+    }
+  );
+};
+
+// ========================
+// 16. Tạo yêu cầu học thử / chính thức
+// ========================
+export const createTrialRequest = (payload) =>
+  axiosInstance.post("/learner/class-requests/create-trial-request", payload);
+
+export const createOfficialRequest = (payload) =>
+  axiosInstance.post("/learner/class-requests/create-official-request", payload);
+
+
+

@@ -30,6 +30,7 @@ import LearnerManagement from '~/pages/admin/QLUser/learner/LearnerManagement';
 import AdminProfile from '~/pages/admin/profile/AdminProfile';
 import AdminDashboard from '~/pages/admin/dashboard/AdminDashboard';
 import AdminEBooks from '~/pages/admin/e-books/AdminEbooks';
+import ChatPage from '~/pages/chat/chat/ChatPage';
 
 const publicRouter = [
     {path: '/Login', element: <LoginPage/>},
@@ -42,7 +43,9 @@ const publicRouter = [
     {path: '/EBooks', element: <EBooks/>},
     {path: '/Tutor', element: <TutorList/>},
     {path: '/Tutor/:tutorId', element: <TutorDetail/>},
-    {path: '/Contact', element: <ContactPage/>}
+    {path: '/Contact', element: <ContactPage/>},
+    
+
     // bổ xung trang dashboard chung cho tất cả người dùng
 ]
 
@@ -50,14 +53,16 @@ const learnerRouter = [
     {path: '/Profile', element: <Profile/>},
     {path: '/Classed', element: <Classed/>},
     {path: '/Request', element: <Request/>},
-    {path: '/Schedule', element: <Schedule/>}
+    {path: '/Schedule', element: <Schedule/>},
+    {path: "/chat", element: <ChatPage /> },
 ]
 
 const tutorRouter = [
     {path: '/tutor/home', element: <TutorHome/>},// sửa lại profile tutor to lên,( xử lý điều hướng) 
     {path: '/tutor/schedule', element: <TutorSchedule/>},
     {path: '/tutor/parent-requests', element: <ParentRequest/>},
-    {path: '/tutor/profile', element: <TutorProfile/>}
+    {path: '/tutor/profile', element: <TutorProfile/>},
+    {path: '/chat', element: <ChatPage /> }
 ];
 
 const adminRouter = [

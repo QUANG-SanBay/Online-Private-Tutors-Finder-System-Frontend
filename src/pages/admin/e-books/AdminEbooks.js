@@ -1,124 +1,134 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./AdminEbooks.module.scss";
+import HeaderPage from "~/components/headerPage/HeaderPage";
 import EbookDetail from "../../learner/e-books/EBooksDetail";
-import HeaderPage from '~/components/headerPage/HeaderPage';
+import AdminEbookModal from "./AdminEbookModal";
+
+import {
+  getAdminEbooks,
+  createEbook,
+  updateEbook,
+  deleteEbook,
+} from "~/api/services/adminService";
 
 export default function AdminEBooks() {
+  const [ebooks, setEbooks] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [editing, setEditing] = useState(null);
 
-  // State filter
-  const [subjectFilter, setSubjectFilter] = useState("");
+  const [keyword, setKeyword] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
 
-  const ebooks = [
-    {
-      id: 1,
-      title: "Tài liệu Toán 12 – Hàm Số",
-      subject: "Toán học",
-      author: "Trần Văn A",
-      size: "2.4 MB",
-      date: "10-12-2025",
-      desc: "Tóm tắt kiến thức và bài tập chương Hàm Số",
-      type: "PDF",
-      img: "https://img.freepik.com/free-photo/handsome-young-student_23-2148865905.jpg"
-    },
-    {
-      id: 2,
-      title: "Ngữ Văn 11 – Tổng hợp nghị luận",
-      subject: "Ngữ văn",
-      author: "Nguyễn Thị B",
-      size: "1.2 MB",
-      date: "09-28-2025",
-      desc: "Các dạng bài nghị luận xã hội và nghị luận văn học",
-      type: "Docx",
-      img: "https://img.freepik.com/free-photo/handsome-young-student_23-2148865905.jpg"
-    },
-    {
-      id: 3,
-      title: "Tài liệu Toán 12 – Hàm Số",
-      subject: "Toán học",
-      author: "Trần Văn A",
-      size: "2.4 MB",
-      date: "10-12-2025",
-      desc: "Tóm tắt kiến thức và bài tập chương Hàm Số",
-      type: "PDF",
-      img: "https://img.freepik.com/free-photo/handsome-young-student_23-2148865905.jpg"
-    },
-    {
-      id: 4,
-      title: "Ngữ Văn 11 – Tổng hợp nghị luận",
-      subject: "Ngữ văn",
-      author: "Nguyễn Thị B",
-      size: "1.2 MB",
-      date: "09-28-2025",
-      desc: "Các dạng bài nghị luận xã hội và nghị luận văn học",
-      type: "Docx",
-      img: "https://img.freepik.com/free-photo/handsome-young-student_23-2148865905.jpg"
-    },
-    {
-      id: 5,
-      title: "Tài liệu Toán 12 – Hàm Số",
-      subject: "Toán học",
-      author: "Trần Văn A",
-      size: "2.4 MB",
-      date: "10-12-2025",
-      desc: "Tóm tắt kiến thức và bài tập chương Hàm Số",
-      type: "PDF",
-      img: "https://img.freepik.com/free-photo/handsome-young-student_23-2148865905.jpg"
-    },
-    {
-      id: 6,
-      title: "Ngữ Văn 11 – Tổng hợp nghị luận",
-      subject: "Ngữ văn",
-      author: "Nguyễn Thị B",
-      size: "1.2 MB",
-      date: "09-28-2025",
-      desc: "Các dạng bài nghị luận xã hội và nghị luận văn học",
-      type: "Docx",
-      img: "https://img.freepik.com/free-photo/handsome-young-student_23-2148865905.jpg"
+  const loadEbooks = async () => {
+    const res = await getAdminEbooks({ keyword, type: typeFilter });
+    const mapped = res.items.map((e) => ({
+      id: e.ebookId,
+      title: e.title,
+      author: e.uploadedByName,
+      date: e.createdAt,
+      type: e.type,
+      desc: e.title,
+    }));
+    setEbooks(mapped);
+  };
+
+  useEffect(() => {
+    loadEbooks();
+  }, [keyword, typeFilter]);
+
+  const handleSave = async (data) => {
+    if (editing) {
+      await updateEbook({ ebookId: editing.id, ...data });
+    } else {
+      await createEbook(data);
     }
-  ];
+    setOpenModal(false);
+    setEditing(null);
+    loadEbooks();
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Xoá ebook này?")) return;
+    await deleteEbook(id);
+    loadEbooks();
+  };
 
   return (
     <div className={styles.title}>
-        <HeaderPage title="Quản lý Tài liệu học tập" />
-        <div className={styles.eRoot}>
-        {/* LIST CONTENT */}
-        <main className={styles.eContent}>
-            {ebooks.map((e) => (
-            <div key={e.id} className={styles.eCard}>
-                <img src={e.img} alt="" />
+      <HeaderPage title="Quản lý Tài liệu học tập" />
 
-                <div className={styles.eInfo}>
+      <button
+        className={styles.btnPrimary}
+        onClick={() => setOpenModal(true)}
+      >
+        + Thêm Ebook
+      </button>
+
+      <div className={styles.eRoot}>
+        {/* FILTER */}
+        <aside className={styles.eSidebar}>
+          <input
+            placeholder="Tìm theo từ khoá"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="">Tất cả</option>
+            <option value="SACH_GIAO_KHOA">Sách giáo khoa</option>
+            <option value="TAI_LIEU">Tài liệu</option>
+            <option value="DE_THI_THAM_KHAO">Đề thi</option>
+          </select>
+        </aside>
+
+        {/* LIST */}
+        <main className={styles.eContent}>
+          {ebooks.map((e) => (
+            <div key={e.id} className={styles.eCard}>
+              <div className={styles.eInfo}>
                 <h3>{e.title}</h3>
-                <p className={styles.author}>
-                    {e.author} • {new Date(e.date).toLocaleDateString("vi-VN")}
-                </p>
-                <p className={styles.desc}>{e.desc}</p>
-                <p className={styles.size}>{e.size}</p>
+                <p>{e.author}</p>
 
                 <div className={styles.actions}>
-                    <button className={styles.btnPrimary}>Tải xuống</button>
-                    <button
-                    className={styles.btnLight}
-                    onClick={() => setSelected(e)}
-                    >
-                    Chi tiết
-                    </button>
+                  <button onClick={() => setSelected(e)}>Chi tiết</button>
+                  <button
+                    onClick={() => {
+                      setEditing(e);
+                      setOpenModal(true);
+                    }}
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    className={styles.btnDanger}
+                    onClick={() => handleDelete(e.id)}
+                  >
+                    Xoá
+                  </button>
                 </div>
-                </div>
+              </div>
             </div>
-            ))}
+          ))}
         </main>
+      </div>
 
-        {selected && (
-            <EbookDetail 
-            data={selected}
-            onClose={() => setSelected(null)}
-            />
-        )}
-        </div>
+      {selected && (
+        <EbookDetail data={selected} onClose={() => setSelected(null)} />
+      )}
+
+      <AdminEbookModal
+        open={openModal}
+        initial={editing}
+        onClose={() => {
+          setOpenModal(false);
+          setEditing(null);
+        }}
+        onSubmit={handleSave}
+      />
     </div>
   );
 }

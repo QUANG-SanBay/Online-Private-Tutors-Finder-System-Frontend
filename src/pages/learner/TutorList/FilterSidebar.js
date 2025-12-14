@@ -1,43 +1,98 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import {
+  getTutorFilters,
+  searchTutorsByFilter,
+  searchTutorsByKeyword,
+} from "~/api/services/leanerService";
 
-const FilterSidebar = () => {
+const FilterSidebar = ({ onResult }) => {
+  const [subjects, setSubjects] = useState([]);
+  const [levels, setLevels] = useState([]);
+
+  const [keyword, setKeyword] = useState("");
+  const [subjectId, setSubjectId] = useState("");
+  const [educationalLevel, setEducationalLevel] = useState("");
+
+  // ============================
+  // Load filter data
+  // ============================
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const data = await getTutorFilters();
+        setSubjects(data.subjects || []);
+        setLevels(data.educationalLevels || []);
+      } catch (err) {
+        console.error("Load filter error:", err);
+      }
+    };
+
+    loadFilters();
+  }, []);
+
+  // ============================
+  // Search by keyword
+  // ============================
+  const handleSearch = async () => {
+    try {
+      let data;
+
+      if (keyword.trim()) {
+        data = await searchTutorsByKeyword(keyword);
+      } else {
+        data = await searchTutorsByFilter({
+          subjectId,
+          educationalLevel,
+        });
+      }
+
+      onResult?.(data);
+    } catch (err) {
+      console.error("Search tutors error:", err);
+    }
+  };
+
   return (
     <aside className="filter-sidebar">
       <h2 className="sidebar-title">Tìm gia sư</h2>
-      <select>
-        <option>Chọn lớp</option>
+
+      {/* Search */}
+      <input
+        type="text"
+        placeholder="Tìm theo tên, môn, trình độ"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+      />
+
+      {/* Educational level */}
+      <select
+        value={educationalLevel}
+        onChange={(e) => setEducationalLevel(e.target.value)}
+      >
+        <option value="">Trình độ chuyên môn</option>
+        {levels.map((lv) => (
+          <option key={lv} value={lv}>
+            {lv}
+          </option>
+        ))}
       </select>
-      <select>
-        <option>Trình độ chuyên môn</option>
-        <option>Giáo viên</option>
-        <option>Sinh viên</option>
-        <option>Đại học</option>
-        <option>Cao đẳng</option>
+
+      {/* Subjects */}
+      <select
+        value={subjectId}
+        onChange={(e) => setSubjectId(e.target.value)}
+      >
+        <option value="">Chọn môn</option>
+        {subjects.map((s) => (
+          <option key={s.subjectId} value={s.subjectId}>
+            {s.subjectName}
+          </option>
+        ))}
       </select>
-      <select>
-        <option>Chọn môn</option>
-        <option>Toán học</option>
-        <option>Vật lý</option>
-        <option>Hóa học</option>  
-        <option>Sinh học</option>
-        <option>Ngữ văn</option>
-        <option>Tiếng Anh</option>
-        <option>Lịch sử</option>
-        <option>Địa lý</option>
-      </select>
-      <select>
-        <option>Chọn gia sư</option>
-        <option>Gia sư Tiểu học</option>
-        <option>Gia sư THCS</option>
-        <option>Gia sư THPT</option>
-        <option>Gia sư Tiếng Anh</option>
-      </select>
-      <select>
-        <option>Chọn giới tính</option>
-        <option>Nam</option>
-        <option>Nữ</option>
-      </select>
-      <button className="search-btn">Tìm kiếm</button>
+
+      <button className="search-btn" onClick={handleSearch}>
+        Tìm kiếm
+      </button>
     </aside>
   );
 };

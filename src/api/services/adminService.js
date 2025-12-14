@@ -52,4 +52,39 @@ export const approveTutor = async (tutorId) => {
 	return response.data;
 };
 
+// Danh sách ebook (có paging + keyword + type)
+export const getAdminEbooks = async ({ page = 0, size = 10, keyword, type }) => {
+  const params = { page, size };
+  if (keyword) params.keyword = keyword;
+  if (type) params.type = type;
+
+  const res = await axiosInstance.get("/admin/ebooks", { params });
+  return res.data.result;
+};
+
+// Chi tiết ebook
+export const getAdminEbookDetail = async (id) => {
+  const res = await axiosInstance.get(`/admin/ebooks/${id}`);
+  return res.data.result;
+};
+
+// Thêm ebook
+export const createEbook = async (data) => {
+  const res = await axiosInstance.post("/admin/ebooks", data);
+  return res.data;
+};
+
+// Cập nhật ebook
+export const updateEbook = async (data) => {
+  const res = await axiosInstance.put("/admin/ebooks", data);
+  return res.data;
+};
+
+// Xoá ebook
+export const deleteEbook = async (id) => {
+  const res = await axiosInstance.delete(`/admin/ebooks/${id}`);
+  return res.data;
+};
+
+
 
