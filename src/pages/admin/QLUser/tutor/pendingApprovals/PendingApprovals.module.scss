@@ -121,6 +121,48 @@
     color: var(--primary-c);
 }
 
+.error {
+    margin-bottom: 1.6rem;
+    padding: 1.2rem 1.4rem;
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    font-size: 1.4rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.6rem;
+}
+
+.pageButton {
+    padding: 0.8rem 1.6rem;
+    border: 1px solid var(--border-c-04);
+    border-radius: 6px;
+    background: var(--bg-light-c);
+    color: var(--text-c);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--bg-hover-c);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.pageInfo {
+    font-size: 1.4rem;
+    color: var(--text-c);
+}
+
 // Modal styles
 .modalOverlay {
     position: fixed;
@@ -330,6 +372,48 @@
     padding: 1.2rem;
     background: white;
     border-radius: 8px;
+}
+
+.fileList {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.fileButton {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--border-c-04);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 1.3rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--primary-c-01);
+        border-color: var(--primary-c);
+    }
+}
+
+.activeFile {
+    background: var(--primary-c);
+    color: white;
+    border-color: var(--primary-c);
+}
+
+.driveContainer {
+    width: 100%;
+    min-height: 500px;
+    background: #0000000d;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.driveFrame {
+    width: 100%;
+    height: 600px;
+    border: none;
 }
 
 .navButton {

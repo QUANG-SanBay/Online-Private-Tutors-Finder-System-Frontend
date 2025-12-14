@@ -78,6 +78,13 @@
     flex: 1;
 }
 
+.loadingMessage {
+    text-align: center;
+    color: var(--text-c);
+    padding: 1rem 0;
+    font-size: 1.4rem;
+}
+
 .formGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

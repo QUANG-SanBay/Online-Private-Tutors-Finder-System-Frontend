@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUnlock, faKey, faSearch, faPlus, faEdit, faEye, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
-import Button from '~/components/button/Button';
+import { faLock, faUnlock, faSearch, faEye, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
 import styles from './ListLearner.module.scss';
-import { set } from 'date-fns';
 import LearnerInfoModal from '../learnerInfoModal/LearnerInfoModal';
+import { getLearners, getLearnerDetail, getLearnerStats, toggleLearnerStatus } from '~/api/services/adminService';
 
 function ListLearner() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,140 +11,154 @@ function ListLearner() {
     const [dateFilter, setDateFilter] = useState({ from: '', to: '' });
     const [showLearnerInfoModal, setShowLearnerInfoModal] = useState(false);
     const [selectedLearner, setSelectedLearner] = useState(null);
-    const [learners, setLearners] = useState([
-        {
-            index: '1',
-            fullName: 'Nguyễn Văn A',
-            email: 'nguyenvana@email.com',
-            phone: '0901111111',
-            address: 'Hà Nội',
-            joinDate: '2024-01-15',
-            status: 'Active'
-        },
-        {
-            index: '2',
-            fullName: 'Trần Thị B',
-            email: 'tranthib@email.com',
-            phone: '0902222222',
-            address: 'TP. Hồ Chí Minh',
-            joinDate: '2024-02-20',
-            status: 'Active'
-        },
-        {
-            index: '3',
-            fullName: 'Lê Văn C',
-            email: 'levanc@email.com',
-            phone: '0903333333',
-            address: 'Đà Nẵng',
-            joinDate: '2024-03-10',
-            status: 'Locked'
-        },
-        {
-            index: '4',
-            fullName: 'Phạm Thị D',
-            email: 'phamthid@email.com',
-            phone: '0904444444',
-            address: 'Hải Phòng',
-            joinDate: '2024-04-05',
-            status: 'Active'
-        },
-        {
-            index: '5',
-            fullName: 'Hoàng Văn E',
-            email: 'hoangvane@email.com',
-            phone: '0905555555',
-            address: 'Cần Thơ',
-            joinDate: '2024-05-12',
-            status: 'Active'
+    const [learners, setLearners] = useState([]);
+    const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
+    const [pagination, setPagination] = useState({ size: 10, totalPages: 1, totalItems: 0 });
+    const [page, setPage] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const pageSize = 10;
+
+    const handleApiError = (err, fallbackMessage) => {
+        const message = err?.response?.data?.message || fallbackMessage;
+        setError(message);
+
+        if (err?.response?.status === 401 || err?.response?.status === 403) {
+            alert('Bạn không có quyền thực hiện chức năng này. Vui lòng đăng nhập bằng tài khoản quản trị.');
         }
-    ]);
+    };
 
-    // const [selectedLearner, setSelectedLearner] = useState(null);
-    // const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+    const fetchLearners = async (pageIndex = page) => {
+        setLoading(true);
+        setError('');
+        try {
+            const data = await getLearners(pageIndex, pageSize);
+            const items = data?.items || [];
 
-    const handleLockToggle = (learnerIndex) => {
-        const learner = learners.find(l => l.index === learnerIndex);
-        const action = learner.status === 'Active' ? 'khóa' : 'mở khóa';
-        
-        if (window.confirm(`Xác nhận ${action} tài khoản của ${learner.fullName}?`)) {
-            setLearners(prevLearners =>
-                prevLearners.map(learner =>
-                    learner.index === learnerIndex
-                        ? { ...learner, status: learner.status === 'Active' ? 'Locked' : 'Active' }
-                        : learner
-                )
+            setLearners(
+                items.map((item, idx) => ({
+                    id: item.user_id,
+                    fullName: item.full_name,
+                    email: item.email,
+                    phone: item.phone_number,
+                    address: item.address,
+                    status: item.status,
+                    createdAt: item.created_at,
+                    rowNumber: pageIndex * pageSize + idx + 1,
+                }))
             );
+
+            setPagination({
+                size: data?.size ?? pageSize,
+                totalPages: data?.totalPages ?? 1,
+                totalItems: data?.totalItems ?? items.length,
+            });
+        } catch (err) {
+            handleApiError(err, 'Không thể tải danh sách người học');
+        } finally {
+            setLoading(false);
         }
     };
 
-    // const handleAddLearner = () => {
-    //     setEditingLearner(null);
-    //     setShowAddEditModal(true);
-    // };
-
-    const handleViewLearner = (learner) => {
-        setSelectedLearner(learner);    
-        setShowLearnerInfoModal(true);
+    const fetchStats = async () => {
+        try {
+            const data = await getLearnerStats();
+            setStats({
+                total: data?.total ?? 0,
+                active: data?.active ?? 0,
+                inactive: data?.inactive ?? 0,
+            });
+        } catch (err) {
+            handleApiError(err, 'Không thể tải thống kê người học');
+        }
     };
 
-    // const handleSaveLearner = (learnerData) => {
-    //     if (editingLearner) {
-    //         // Update existing learner
-    //         setLearners(prevLearners =>
-    //             prevLearners.map(learner =>
-    //                 learner.index === editingLearner.index ? { ...learnerData, id: learner.index, joinDate: learner.joinDate } : learner
-    //             )
-    //         );
-    //         alert('Đã cập nhật thông tin người học!');
-    //     } else {
-    //         // Add new learner
-    //         const newLearner = {
-    //             ...learnerData,
-    //             id: `LRN${(learners.length + 1).toString().padStart(3, '0')}`,
-    //             joinDate: new Date().toISOString().split('T')[0]
-    //         };
-    //         setLearners(prevLearners => [...prevLearners, newLearner]);
-    //         alert('Đã thêm người học mới!');
-    //     }
-    // };
+    useEffect(() => {
+        fetchStats();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    // const handleResetPassword = (learner) => {
-    //     setSelectedLearner(learner);
-    //     setShowResetPasswordModal(true);
-    // };
+    useEffect(() => {
+        fetchLearners(page);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page]);
 
-    // const confirmResetPassword = () => {
-    //     alert(`Đã gửi email reset mật khẩu đến ${selectedLearner.email}`);
-    //     setShowResetPasswordModal(false);
-    //     setSelectedLearner(null);
-    // };
+    const handleLockToggle = async (learner) => {
+        const action = learner.status === 'ACTIVE' ? 'khóa' : 'mở khóa';
+        if (!window.confirm(`Xác nhận ${action} tài khoản của ${learner.fullName}?`)) return;
 
-    // const closeResetPasswordModal = () => {
-    //     setShowResetPasswordModal(false);
-    //     setSelectedLearner(null);
-    // };
+        try {
+            const result = await toggleLearnerStatus(learner.id);
+            const newStatus = result?.newStatus || (learner.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE');
+            setLearners((prev) =>
+                prev.map((item) => (item.id === learner.id ? { ...item, status: newStatus } : item))
+            );
+            fetchStats();
+        } catch (err) {
+            handleApiError(err, 'Không thể cập nhật trạng thái người học');
+        }
+    };
 
-    const filteredLearners = learners.filter(learner => {
-        // Text search
-        const matchesSearch = learner.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            learner.index.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            learner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            learner.phone.includes(searchTerm);
-        
-        // Status filter
+    const handleViewLearner = async (learner) => {
+        setSelectedLearner(null);
+        setDetailLoading(true);
+        setShowLearnerInfoModal(true);
+
+        try {
+            const detail = await getLearnerDetail(learner.id);
+            setSelectedLearner({
+                id: detail?.user_id,
+                fullName: detail?.full_name,
+                email: detail?.email,
+                phone: detail?.phone_number,
+                address: detail?.address,
+                status: detail?.status,
+                createdAt: detail?.created_at,
+                updatedAt: detail?.updated_at,
+            });
+        } catch (err) {
+            handleApiError(err, 'Không thể tải thông tin người học');
+            setShowLearnerInfoModal(false);
+        } finally {
+            setDetailLoading(false);
+        }
+    };
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        const parsed = new Date(dateStr);
+        if (Number.isNaN(parsed)) return dateStr;
+        return parsed.toLocaleDateString('vi-VN');
+    };
+
+    const filteredLearners = learners.filter((learner) => {
+        const matchesSearch =
+            learner.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            learner.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            learner.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            learner.phone?.includes(searchTerm);
+
         const matchesStatus = statusFilter === 'all' || learner.status === statusFilter;
-        
-        // Date filter
+
+        const createdAt = learner.createdAt ? new Date(learner.createdAt) : null;
+
         let matchesDate = true;
         if (dateFilter.from) {
-            matchesDate = matchesDate && new Date(learner.joinDate) >= new Date(dateFilter.from);
+            matchesDate = matchesDate && createdAt && createdAt >= new Date(dateFilter.from);
         }
         if (dateFilter.to) {
-            matchesDate = matchesDate && new Date(learner.joinDate) <= new Date(dateFilter.to);
+            matchesDate = matchesDate && createdAt && createdAt <= new Date(dateFilter.to);
         }
-        
+
         return matchesSearch && matchesStatus && matchesDate;
     });
+
+    const changePage = (nextPage) => {
+        if (nextPage < 0 || nextPage >= pagination.totalPages) return;
+        setPage(nextPage);
+    };
 
     return (
         <div className={styles.listLearner}>
@@ -175,8 +188,8 @@ function ListLearner() {
                             className={styles.filterSelect}
                         >
                             <option value="all">Tất cả</option>
-                            <option value="Active">Hoạt động</option>
-                            <option value="Locked">Bị khóa</option>
+                            <option value="ACTIVE">Hoạt động</option>
+                            <option value="INACTIVE">Bị khóa</option>
                         </select>
                     </div>
                     
@@ -202,22 +215,20 @@ function ListLearner() {
                 </div>
             </div>
 
+            {error && <div className={styles.error}>{error}</div>}
+
             <div className={styles.statsBar}>
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>Tổng số:</span>
-                    <span className={styles.statValue}>{learners.length}</span>
+                    <span className={styles.statValue}>{stats.total}</span>
                 </div>
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>Hoạt động:</span>
-                    <span className={styles.statValue}>
-                        {learners.filter(l => l.status === 'Active').length}
-                    </span>
+                    <span className={styles.statValue}>{stats.active}</span>
                 </div>
                 <div className={styles.statItem}>
                     <span className={styles.statLabel}>Bị khóa:</span>
-                    <span className={styles.statValue}>
-                        {learners.filter(l => l.status === 'Locked').length}
-                    </span>
+                    <span className={styles.statValue}>{stats.inactive}</span>
                 </div>
             </div>
 
@@ -235,10 +246,16 @@ function ListLearner() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredLearners.length > 0 ? (
+                        {loading ? (
+                            <tr>
+                                <td colSpan="7" className={styles.noData}>
+                                    Đang tải dữ liệu...
+                                </td>
+                            </tr>
+                        ) : filteredLearners.length > 0 ? (
                             filteredLearners.map((learner) => (
-                                <tr key={learner.index}>
-                                    <td>{learner.index}</td>
+                                <tr key={learner.id || learner.rowNumber}>
+                                    <td>{learner.rowNumber}</td>
                                     <td className={styles.nameCell}>{learner.fullName}</td>
                                     <td>
                                         <div className={styles.emailCell}>
@@ -252,41 +269,34 @@ function ListLearner() {
                                             {learner.phone}
                                         </div>
                                     </td>
-                                    <td>{learner.joinDate}</td>
+                                    <td>{formatDate(learner.createdAt)}</td>
                                     <td>
                                         <span
                                             className={`${styles.status} ${
-                                                learner.status === 'Active' ? styles.active : styles.locked
+                                                learner.status === 'ACTIVE' ? styles.active : styles.locked
                                             }`}
                                         >
-                                            {learner.status === 'Active' ? 'Hoạt động' : 'Bị khóa'}
+                                            {learner.status === 'ACTIVE' ? 'Hoạt động' : 'Bị khóa'}
                                         </span>
                                     </td>
                                     <td>
                                         <div className={styles.actions}>
-                                                <button
-                                                    className={styles.iconButton}
-                                                    onClick={() => handleViewLearner(learner)}
-                                                    title="Xem chi tiết"
-                                                >
-                                                    <FontAwesomeIcon icon={faEye} />
-                                                </button>
-                                            {/* <button
-                                                className={`${styles.iconButton} ${styles.resetPassword}`}
-                                                onClick={() => handleResetPassword(learner)}
-                                                title="Reset mật khẩu"
+                                            <button
+                                                className={styles.iconButton}
+                                                onClick={() => handleViewLearner(learner)}
+                                                title="Xem chi tiết"
                                             >
-                                                <FontAwesomeIcon icon={faKey} />
-                                            </button> */}
+                                                <FontAwesomeIcon icon={faEye} />
+                                            </button>
                                             <button
                                                 className={`${styles.iconButton} ${
-                                                    learner.status === 'Locked' ? styles.unlock : styles.lock
+                                                    learner.status === 'INACTIVE' ? styles.unlock : styles.lock
                                                 }`}
-                                                onClick={() => handleLockToggle(learner.index)}
-                                                title={learner.status === 'Active' ? 'Khóa tài khoản' : 'Mở khóa'}
+                                                onClick={() => handleLockToggle(learner)}
+                                                title={learner.status === 'ACTIVE' ? 'Khóa tài khoản' : 'Mở khóa'}
                                             >
                                                 <FontAwesomeIcon
-                                                    icon={learner.status === 'Active' ? faLock : faUnlock}
+                                                    icon={learner.status === 'ACTIVE' ? faLock : faUnlock}
                                                 />
                                             </button>
                                         </div>
@@ -304,43 +314,30 @@ function ListLearner() {
                 </table>
             </div>
 
-            {/* Reset Password Modal */}
-            {/* {showResetPasswordModal && selectedLearner && (
-                <div className={styles.modalOverlay} onClick={closeResetPasswordModal}>
-                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <h2>Reset Mật khẩu</h2>
-                            <button className={styles.closeButton} onClick={closeResetPasswordModal}>
-                                ×
-                            </button>
-                        </div>
-                        <div className={styles.modalBody}>
-                            <div className={styles.confirmMessage}>
-                                <FontAwesomeIcon icon={faKey} className={styles.modalIcon} />
-                                <p>
-                                    Bạn có chắc chắn muốn reset mật khẩu cho người dùng{' '}
-                                    <strong>{selectedLearner.fullName}</strong>?
-                                </p>
-                                <p className={styles.emailInfo}>
-                                    Email reset sẽ được gửi đến: <strong>{selectedLearner.email}</strong>
-                                </p>
-                            </div>
-                        </div>
-                        <div className={styles.modalFooter}>
-                            <Button variant="primary" onClick={confirmResetPassword}>
-                                Xác nhận Reset
-                            </Button>
-                            <Button variant="outline" onClick={closeResetPasswordModal}>
-                                Hủy
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )} */}
+            <div className={styles.pagination}>
+                <button
+                    className={styles.pageButton}
+                    onClick={() => changePage(page - 1)}
+                    disabled={page === 0 || loading}
+                >
+                    Trang trước
+                </button>
+                <span className={styles.pageInfo}>
+                    Trang {page + 1} / {pagination.totalPages || 1}
+                </span>
+                <button
+                    className={styles.pageButton}
+                    onClick={() => changePage(page + 1)}
+                    disabled={page + 1 >= pagination.totalPages || loading}
+                >
+                    Trang sau
+                </button>
+            </div>
 
             <LearnerInfoModal
                 isOpen={showLearnerInfoModal}
                 learnerData={selectedLearner}
+                isLoading={detailLoading}
                 onClose={() => setShowLearnerInfoModal(false)}
             />
         </div>
