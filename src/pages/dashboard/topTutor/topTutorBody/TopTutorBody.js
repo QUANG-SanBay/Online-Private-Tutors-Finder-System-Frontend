@@ -1,55 +1,42 @@
+import { useEffect, useState } from 'react';
 import TutorCard from '~/components/tutorCard/TutorCard';
+import { getFeaturedTutors } from '~/api/services/homeService';
 import styles from './TopTutorBody.module.scss';
-import img from '~/assets/imgs/img.jpg';
 
 function TopTutorBody() {
-    // Mock data - will be replaced with API data later
-    const tutors = [
-        {
-            id: 1,
-            image: img,
-            isVerified: true,
-            name: 'Nguyễn Văn An',
-            subject: 'Toán học',
-            rating: 4.9,
-            reviewCount: 127,
-            location: 'Hà Nội',
-            price: '250.000đ/giờ'
-        },
-        {
-            id: 2,
-            image: img,
-            isVerified: true,
-            name: 'Trần Thị Bình',
-            subject: 'Tiếng Anh',
-            rating: 5.0,
-            reviewCount: 98,
-            location: 'TP. HCM',
-            price: '300.000đ/giờ'
-        },
-        {
-            id: 3,
-            image: img,
-            isVerified: true,
-            name: 'Lê Hoàng Cường',
-            subject: 'Vật lý',
-            rating: 4.8,
-            reviewCount: 156,
-            location: 'Đà Nẵng',
-            price: '280.000đ/giờ'
-        },
-        {
-            id: 4,
-            image: img,
-            isVerified: true,
-            name: 'Phạm Minh Đức',
-            subject: 'Hóa học',
-            rating: 4.9,
-            reviewCount: 89,
-            location: 'Hà Nội',
-            price: '270.000đ/giờ'
-        }
-    ];
+    const [tutors, setTutors] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const load = async () => {
+            setLoading(true);
+            try {
+                const data = await getFeaturedTutors();
+                const mapped = (data || []).map((t) => ({
+                    id: t.tutorId || t.id,
+                    image: t.avatarUrl || t.imageUrl,
+                    isVerified: t.verified ?? true,
+                    name: t.fullName || t.name,
+                    subject: (t.subjects && t.subjects[0]) || t.subject || '—',
+                    rating: t.averageRating ?? t.rating ?? 0,
+                    reviewCount: t.reviewCount ?? t.totalReviews ?? t.totalRatings ?? 0,
+                    location: t.address || t.city || '',
+                    price: t.pricePerHour
+                        ? `${Number(t.pricePerHour).toLocaleString('vi-VN')}đ/giờ`
+                        : '',
+                }));
+                setTutors(mapped);
+            } catch (e) {
+                console.error('Load featured tutors failed', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        load();
+    }, []);
+
+    if (loading) return <div className={styles.topTutorBody}>Đang tải...</div>;
 
     return (
         <div className={styles.topTutorBody}>

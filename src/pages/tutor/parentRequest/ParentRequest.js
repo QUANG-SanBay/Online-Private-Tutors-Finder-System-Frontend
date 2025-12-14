@@ -105,7 +105,6 @@ function ParentRequest() {
 
     const filteredRequests = requests; // already filtered via API params
 
-    console.log('Requests Data:', requests);
 
     const handlePageChange = (nextPage) => {
         const target = Math.min(Math.max(nextPage, 0), Math.max((pageInfo.totalPages || 1) - 1, 0));

@@ -46,7 +46,6 @@ function ListClasses() {
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
-  console.log('Active Classes Data:', data);
   return (
     <div className={styles.listClasses}>
       <div className={styles.ctn}>

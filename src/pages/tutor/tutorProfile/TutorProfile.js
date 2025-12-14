@@ -53,6 +53,18 @@ function TutorProfile() {
 
     const [formData, setFormData] = useState(emptyProfile);
 
+    const normalizeCertificates = (certsArr = []) => certsArr.map((c, idx) => {
+        const activeFile = (c.files || []).find(f => f.isActive) || (c.files || [])[0];
+        return {
+            id: c.certificateId ?? idx,
+            name: c.certificateName ?? 'Chứng chỉ',
+            fileUrl: activeFile?.fileUrl || '',
+            status: activeFile?.status,
+            file: null,
+            deleted: false,
+        };
+    });
+
     const mapTutorData = (personal = {}, education = {}, ratings = {}) => ({
         id: personal.id ?? '',
         fullName: personal.fullName ?? '',
@@ -96,18 +108,7 @@ function TutorProfile() {
                 setInitialSubjects(normalizedSubjects);
 
                 const certsArr = education?.certificates || [];
-                const normalizedCerts = certsArr.map((c, idx) => {
-                    const files = c.files || [];
-                    const activeFile = files.find(f => f.isActive) || files[0];
-                    return {
-                        id: c.certificateId ?? idx,
-                        name: c.certificateName ?? 'Chứng chỉ',
-                        fileUrl: activeFile?.fileUrl || '',
-                        status: activeFile?.status,
-                        file: null,
-                    };
-                });
-                setCertificates(normalizedCerts);
+                setCertificates(normalizeCertificates(certsArr));
             } catch (e) {
                 setError(e.response?.data?.message || e.message || 'Lỗi tải hồ sơ');
             } finally {
@@ -130,7 +131,10 @@ function TutorProfile() {
     };
 
     const handleAddCertificate = () => {
-        setCertificates(prev => [...prev, { id: Date.now(), name: '', fileUrl: '', file: null }]);
+        setCertificates(prev => ([
+            ...prev,
+            { id: `new-${Date.now()}`, name: '', fileUrl: '', file: null, status: undefined, deleted: false },
+        ]));
     };
 
     const handleCertificateNameChange = (index, value) => {
@@ -142,7 +146,14 @@ function TutorProfile() {
     };
 
     const handleRemoveCertificate = (index) => {
-        setCertificates(prev => prev.filter((_, idx) => idx !== index));
+        setCertificates(prev => prev.map((c, idx) => {
+            if (idx !== index) return c;
+            const isNew = String(c.id || '').startsWith('new');
+            if (isNew) {
+                return { ...c, deleted: true }; // dropped when sending
+            }
+            return { ...c, deleted: true, file: null };
+        }));
     };
 
     const handleAddSubject = (subjectId) => {
@@ -172,12 +183,21 @@ function TutorProfile() {
             formData.address !== tutorData.address
         );
 
+        const visibleCertificates = certificates.filter(c => !c.deleted);
+        const hasNewCertFiles = certificates.some(c => c.file);
+        const hasNewCertificates = visibleCertificates.some(c => String(c.id || '').startsWith('new'));
+        const hasDeletedCertificates = certificates.some(c => c.deleted);
+
         const educationChanged = (
             formData.university !== tutorData.university ||
             formData.introduction !== tutorData.introduction ||
             formData.pricePerHour !== tutorData.pricePerHour ||
-            certificates.some(c => c.file)
+            hasNewCertFiles ||
+            hasNewCertificates ||
+            hasDeletedCertificates
         );
+
+        const newCertMissingFile = certificates.some(c => String(c.id || '').startsWith('new') && !c.file);
 
         const currentSubjectIds = subjects.map(s => Number(s.id)).sort((a, b) => a - b);
         const initialSubjectIds = initialSubjects.map(s => Number(s.id)).sort((a, b) => a - b);
@@ -217,26 +237,56 @@ function TutorProfile() {
             }
 
             if (educationChanged) {
-                const firstCertFile = certificates[0]?.file;
-                if (!firstCertFile) {
-                    setError('Vui lòng chọn file PDF chứng chỉ');
-                    setLoading(false);
-                    return;
+                const withFiles = [];
+                const withoutFiles = [];
+                const files = [];
+
+                certificates.forEach((c) => {
+                    const cid = c.id;
+                    const isNew = cid === null || cid === undefined || String(cid).startsWith('new');
+                    if (c.deleted && isNew) return; // skip brand-new rows deleted before save
+
+                    const dto = {
+                        certificateId: isNew ? null : cid,
+                        certificateName: (c.name || '').trim() || 'Chứng chỉ',
+                        deleted: !!c.deleted,
+                    };
+
+                    if (!c.deleted && c.file) {
+                        withFiles.push(dto);
+                        files.push(c.file); // keep same order
+                    } else {
+                        withoutFiles.push(dto);
+                    }
+                });
+
+                const certPayload = [...withFiles, ...withoutFiles];
+
+                const rawPrice = formData.pricePerHour === '' || formData.pricePerHour === undefined
+                    ? tutorData.pricePerHour
+                    : formData.pricePerHour;
+                const priceNumber = Number(rawPrice);
+                if (!Number.isFinite(priceNumber) || priceNumber < 10000) {
+                    throw new Error('Học phí phải >= 10000');
                 }
 
-                const eduForm = new FormData();
-                eduForm.append('data', JSON.stringify({
+                const educationPayload = {
                     university: formData.university,
                     introduction: formData.introduction,
-                    pricePerHour: formData.pricePerHour,
-                }));
-                eduForm.append('proofFile', firstCertFile);
-                await updateEducationInfo(eduForm);
+                    pricePerHour: priceNumber,
+                    certificates: certPayload,
+                };
+
+                await updateEducationInfo(educationPayload, files);
+
+                const refreshedEducation = await fetchEducationInfo();
+                setCertificates(normalizeCertificates(refreshedEducation?.certificates || []));
+
                 updatedTutor = {
                     ...updatedTutor,
-                    university: formData.university,
-                    introduction: formData.introduction,
-                    pricePerHour: formData.pricePerHour,
+                    university: educationPayload.university,
+                    introduction: educationPayload.introduction,
+                    pricePerHour: educationPayload.pricePerHour,
                 };
             }
 
@@ -245,9 +295,10 @@ function TutorProfile() {
             }
 
             setTutorData(updatedTutor);
+            setFormData(updatedTutor);
             setInitialSubjects(subjects);
             setIsEditing(false);
-            setInfo('Đã lưu thay đổi');
+            setInfo(hasNewCertFiles ? 'Đã lưu thay đổi. Nếu upload file mới, admin sẽ duyệt lại' : 'Đã lưu thay đổi');
         } catch (e) {
             setError(e.response?.data?.message || e.message || 'Lưu hồ sơ thất bại');
         } finally {
@@ -287,7 +338,6 @@ function TutorProfile() {
             setLoading(false);
         }
     };
-    console.log('Tutor Data:', tutorData, 'Form Data:', formData, 'Certificates:', certificates);
     return (
         <div className={styles.tutorProfile}>
             <div className={styles.container}>

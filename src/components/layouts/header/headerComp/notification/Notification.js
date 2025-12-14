@@ -1,29 +1,49 @@
-import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
-import styles from './Notification.module.scss'
-// import Modal from "~/components/modal/Modal";
-import NotifiDropdown from "~/components/dropdown/notifiDropdown/NotifiDropdown";
+import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-regular-svg-icons';
+import NotifiDropdown from '~/components/dropdown/notifiDropdown/NotifiDropdown';
+import { getNotifications } from '~/api/services/homeService';
+import styles from './Notification.module.scss';
 
-function Notification(){
-    const [isOpenNotifi, setIsOpenNotifi] = useState(false);
-    const listNotifi = [
-        { title: 'Thông báo 1', content: 'Nội dung thông báo 1', isRead: false },
-        { title: 'Thông báo 2', content: 'Nội dung thông báo 2', isRead: true },
-    ];
-    const handleClick = () => {
-        setIsOpenNotifi(!isOpenNotifi);
-    }
-    return(
-        <div className={styles.notification} onClick={handleClick}>
+function Notification() {
+    const [open, setOpen] = useState(false);
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const load = async () => {
+            setLoading(true);
+            try {
+                const data = await getNotifications();
+                setItems(data || []);
+            } catch (e) {
+                console.error('Load notifications failed', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
+
+    const unread = items.filter((i) => !i?.isRead).length;
+
+    return (
+        <div className={styles.notification} onClick={() => setOpen(!open)}>
             <div className={styles.notificationIcon}>
                 <span className={styles.notificationIconItem}>
-                    <FontAwesomeIcon icon={faBell}/>
+                    <FontAwesomeIcon icon={faBell} />
                 </span>
-                <span className={styles.notificationNumber}>{listNotifi.length}</span>
+                <span className={styles.notificationNumber}>{unread || items.length}</span>
             </div>
-            {isOpenNotifi && <NotifiDropdown listNotifi={listNotifi} className={styles.notificationDropdown} />}
+            {open && (
+                <NotifiDropdown
+                    listNotifi={items}
+                    loading={loading}
+                    className={styles.notificationDropdown}
+                />
+            )}
         </div>
-    )
+    );
 }
+
 export default Notification;

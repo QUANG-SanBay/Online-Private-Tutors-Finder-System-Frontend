@@ -12,7 +12,7 @@ function EBooksDB() {
     const navigate = useNavigate();
 
     const handleViewAll = () => {
-        navigate('/learner/e-books');
+        navigate('/EBooks');
     };
     return (
         <section className={styles.ebooks}>
