@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 function TutorCard({ id, image, isVerified, name, subject, rating, reviewCount, location, price }) {
     const navigate = useNavigate();
 
+    const ratingValue = Number(rating ?? 0).toFixed(1);
+
     const handleViewProfile = () => {
         navigate(`/tutor/${id}`);
     };
@@ -31,7 +33,7 @@ function TutorCard({ id, image, isVerified, name, subject, rating, reviewCount, 
                 <div className={styles.infoRow}>
                     <div className={styles.rating}>
                         <FontAwesomeIcon icon={faStar} className={styles.starIcon} />
-                        <span className={styles.ratingValue}>{rating}</span>
+                        <span className={styles.ratingValue}>{ratingValue}</span>
                         <span className={styles.reviewCount}>({reviewCount})</span>
                     </div>
                     

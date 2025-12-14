@@ -1,44 +1,38 @@
+import { useEffect, useState } from 'react';
 import EBookCard from '~/components/e-Books-Card/E-Book-Card';
+import { getFeaturedEbooks } from '~/api/services/homeService';
 import styles from './E-BooksDB-Body.module.scss';
-import img from '~/assets/imgs/img.jpg';
 
 function EBooksDBBody() {
-    // Mock data - will be replaced with API data later
-    const ebooks = [
-        {
-            id: 1,
-            cover: img,
-            title: 'Toán học nâng cao lớp 12',
-            author: 'PGS.TS Nguyễn Văn A',
-            category: 'Toán học',
-            description: 'Tài liệu bổ trợ chương trình toán nâng cao dành cho học sinh lớp 12'
-        },
-        {
-            id: 2,
-            cover: img,
-            title: 'Tiếng Anh giao tiếp thực tế',
-            author: 'MA. Trần Thị B',
-            category: 'Tiếng Anh',
-            description: '500 mẫu câu giao tiếp tiếng Anh thông dụng trong cuộc sống hàng ngày'
-        },
-        {
-            id: 3,
-            cover: img,
-            title: 'Vật lý đại cương',
-            author: 'TS. Lê Văn C',
-            category: 'Vật lý',
-            description: 'Kiến thức cơ bản về cơ học, nhiệt học và điện từ học'
-        },
-        {
-            id: 4,
-            cover: img,
-            title: 'Hóa học hữu cơ căn bản',
-            author: 'PGS. Phạm Thị D',
-            category: 'Hóa học',
-            description: 'Tổng hợp kiến thức hóa học hữu cơ từ cơ bản đến nâng cao'
-        },
-    ];
+    const [ebooks, setEbooks] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        const load = async () => {
+            setLoading(true);
+            try {
+                const data = await getFeaturedEbooks();
+                const mapped = (data || []).map((e, idx) => ({
+                    id: e.ebookId || e.id || idx,
+                    cover: e.coverUrl || e.imageUrl || '',
+                    title: e.title,
+                    author: e.uploadedByName || e.author,
+                    category: e.type || e.category,
+                    description: e.description,
+                    downloadUrl: e.filePath || e.downloadUrl,
+                }));
+                setEbooks(mapped);
+            } catch (err) {
+                console.error('Load ebooks failed', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        load();
+    }, []);
+
+    if (loading) return <div className={styles.ebooksBody}>Đang tải...</div>;
     return (
         <div className={styles.ebooksBody}>
             {ebooks.map((ebook) => (
@@ -50,6 +44,7 @@ function EBooksDBBody() {
                     author={ebook.author}
                     category={ebook.category}
                     description={ebook.description}
+                    downloadUrl={ebook.downloadUrl}
                 />
             ))}
         </div>
