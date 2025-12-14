@@ -78,6 +78,80 @@
     flex: 1;
 }
 
+.loadingMessage {
+    text-align: center;
+    color: var(--text-c);
+    padding: 1rem 0;
+    font-size: 1.4rem;
+}
+
+.sectionBlock {
+    margin: 1.6rem 0;
+}
+
+.sectionTitle {
+    font-weight: 600;
+    color: var(--text-c);
+    margin-bottom: 0.8rem;
+}
+
+.tags {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    padding: 0.4rem 0.8rem;
+    background: var(--primary-c-01);
+    color: var(--primary-c);
+    border-radius: 4px;
+    font-size: 1.2rem;
+}
+
+.certList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.certRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    background: var(--bg-light-c);
+    border: 1px solid var(--border-c-04);
+    border-radius: 6px;
+}
+
+.certName {
+    font-size: 1.4rem;
+    color: var(--text-c);
+    flex: 1;
+}
+
+.viewCertButton {
+    padding: 0.6rem 1.2rem;
+    background: var(--primary-c);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.3rem;
+    transition: all 0.2s ease;
+
+    &:hover:enabled {
+        background: var(--hover-c-pmr);
+    }
+
+    &:disabled {
+        background: var(--border-c-04);
+        cursor: not-allowed;
+    }
+}
+
 .topRow {
     display: grid;
     grid-template-columns: 1fr 200px;

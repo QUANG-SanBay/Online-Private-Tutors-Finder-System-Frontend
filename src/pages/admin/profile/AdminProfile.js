@@ -1,36 +1,62 @@
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faEdit, faSave, faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faSave, faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import Button from '~/components/button/Button';
 import AvatarSection from './avataSection/AvatarSection';
 import styles from './AdminProfile.module.scss';
 import InforSection from './inforSection/InforSection';
+import { fetchAdminProfile, updateAdminProfile } from '~/api/services/adminProfileService';
 
 function AdminProfile() {
     const [isEditing, setIsEditing] = useState(false);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [avatarFile, setAvatarFile] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const fileInputRef = useRef(null);
 
-    const [adminData, setAdminData] = useState({
-        fullName: 'Nguyễn Văn Admin',
-        email: 'admin@tutorfinder.com',
-        phone: '0912345678',
-        role: 'Quản trị viên',
-        avatar: null,
-        createdAt: '2024-01-01'
-    });
+    const [adminData, setAdminData] = useState(null);
+    const [editData, setEditData] = useState({ fullName: '', phone: '' });
 
-    const [editData, setEditData] = useState({ ...adminData });
+    useEffect(() => {
+        const loadProfile = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const res = await fetchAdminProfile();
+                const data = res.data.result;
+                const mapped = {
+                    fullName: data.fullName,
+                    email: data.email,
+                    phone: data.phoneNumber,
+                    role: data.roleLabel || data.role,
+                    avatar: data.avatarUrl,
+                    createdAt: data.createdAt,
+                };
+                setAdminData(mapped);
+                setEditData({ fullName: mapped.fullName, phone: mapped.phone });
+            } catch (err) {
+                setError(err?.response?.data?.message || 'Không tải được hồ sơ');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProfile();
+    }, []);
 
     const handleEdit = () => {
-        setEditData({ ...adminData });
+        if (adminData) {
+            setEditData({ fullName: adminData.fullName, phone: adminData.phone });
+        }
         setIsEditing(true);
     };
 
     const handleCancel = () => {
-        setEditData({ ...adminData });
+        if (adminData) {
+            setEditData({ fullName: adminData.fullName, phone: adminData.phone });
+        }
         setIsEditing(false);
         if (avatarPreview && typeof avatarPreview === 'string' && avatarPreview.startsWith('blob:')) {
             URL.revokeObjectURL(avatarPreview);
@@ -41,42 +67,24 @@ function AdminProfile() {
 
     const handleSave = async () => {
         try {
-            let updatedData = { ...editData };
-            
-            // Nếu có file mới, upload lên server
-            if (avatarFile) {
-                const formData = new FormData();
-                formData.append('avatar', avatarFile);
-                
-                // TODO: Gọi API upload
-                // const response = await fetch('/api/upload-avatar', {
-                //     method: 'POST',
-                //     body: formData
-                // });
-                // const { avatarUrl } = await response.json();
-                
-                // Giả lập response (xóa dòng này khi có API thật)
-                const avatarUrl = avatarPreview; // Tạm thời dùng blob URL
-                
-                updatedData.avatar = avatarUrl; // Lưu URL string từ server
-            }
-            
-            // TODO: Gọi API cập nhật thông tin admin
-            // await fetch('/api/admin/profile', {
-            //     method: 'PUT',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(updatedData)
-            // });
-            
-            setAdminData(updatedData);
+            await updateAdminProfile({ fullName: editData.fullName, phoneNumber: editData.phone });
+
+            setAdminData((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    fullName: editData.fullName,
+                    phone: editData.phone,
+                    avatar: prev.avatar,
+                };
+            });
             setIsEditing(false);
             setAvatarFile(null);
             setAvatarPreview(null);
             setShowNotification(true);
-        } catch (error) {
-            //debug
-            console.error('Error saving profile:', error);
-            alert('Có lỗi xảy ra khi lưu thông tin!');
+        } catch (err) {
+            console.error('Error saving profile:', err);
+            alert(err?.response?.data?.message || 'Cập nhật thất bại');
         }
     };
 
@@ -116,6 +124,24 @@ function AdminProfile() {
             fileInputRef.current?.click();
         }
     };
+
+    if (loading) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.adminProfile}>Đang tải...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.adminProfile}>{error}</div>
+            </div>
+        );
+    }
+
+    if (!adminData) return null;
 
     return (
         <div className={styles.container}>

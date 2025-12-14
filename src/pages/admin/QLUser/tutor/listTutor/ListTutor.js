@@ -1,159 +1,159 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faUnlock, faEye, faSearch, faPlus, faEdit } from '@fortawesome/free-solid-svg-icons';
-import Button from '~/components/button/Button';
+import { faLock, faUnlock, faEye, faSearch } from '@fortawesome/free-solid-svg-icons';
 import TutorInfoModal from '../tutorInfoModal/TutorInfoModal';
 import styles from './ListTutor.module.scss';
+import { getTutorDetail, getTutors, toggleTutorStatus } from '~/api/services/adminService';
 
 function ListTutor() {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [dateFilter, setDateFilter] = useState({ from: '', to: '' });
     const [showTutorInfoModal, setShowTutorInfoModal] = useState(false);
-    const [editingTutor, setEditingTutor] = useState(null);
-    const [tutors, setTutors] = useState([
-        {
-            index: '1',
-            fullName: 'Nguyễn Văn An',
-            gender: 'Nam',
-            subjects: ['Toán', 'Lý'],
-            rating: 4.8,
-            status: 'Active',
-            email: 'nguyenvanan@email.com',
-            phone: '0901234567',
-            address: 'Hà Nội',
-            currentLevel: 'Cử nhân',
-            certifications: 'Chứng chỉ Sư phạm',
-            introduction: 'Có 5 năm kinh nghiệm giảng dạy Toán và Lý',
-            pricePerHour: '150000',
-            university: 'ĐH Sư phạm Hà Nội',
-            joinDate: '2024-01-15'
-        },
-        {
-            index: '2',
-            fullName: 'Trần Thị Bình',
-            gender: 'Nữ',
-            subjects: ['Tiếng Anh', 'Văn'],
-            rating: 4.5,
-            status: 'Active',
-            email: 'tranthibinh@email.com',
-            phone: '0912345678',
-            address: 'TP. Hồ Chí Minh',
-            currentLevel: 'Thạc sĩ',
-            certifications: 'IELTS 7.5',
-            introduction: 'Chuyên dạy Tiếng Anh giao tiếp và luyện thi',
-            pricePerHour: '180000',
-            university: 'ĐH Ngoại ngữ',
-            joinDate: '2024-03-20'
-        },
-        {
-            index: '3',
-            fullName: 'Lê Văn Công',
-            gender: 'Nam',
-            subjects: ['Hóa', 'Sinh'],
-            rating: 4.9,
-            status: 'Locked',
-            email: 'levancong@email.com',
-            phone: '0923456789',
-            address: 'Đà Nẵng',
-            currentLevel: 'Cử nhân',
-            certifications: '',
-            introduction: 'Đam mê giảng dạy Hóa và Sinh học',
-            pricePerHour: '140000',
-            university: 'ĐH Khoa học Tự nhiên',
-            joinDate: '2024-02-10'
-        },
-        {
-            index: '4',
-            fullName: 'Phạm Thị Dung',
-            gender: 'Nữ',
-            subjects: ['Toán', 'Tiếng Anh'],
-            rating: 4.7,
-            status: 'Active',
-            email: 'phamthidung@email.com',
-            phone: '0934567890',
-            address: 'Hải Phòng',
-            currentLevel: 'Sinh viên',
-            certifications: 'TOEIC 850',
-            introduction: 'Sinh viên năm cuối ngành Sư phạm Toán',
-            pricePerHour: '120000',
-            university: 'ĐH Sư phạm Kỹ thuật',
-            joinDate: '2024-05-08'
-        }
-    ]);
-
+    const [tutors, setTutors] = useState([]);
     const [selectedTutor, setSelectedTutor] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [page, setPage] = useState(0);
+    const [pagination, setPagination] = useState({ size: 5, totalPages: 1, totalItems: 0 });
 
-    const handleLockToggle = (tutorindex) => {
-        setTutors(prevTutors =>
-            prevTutors.map(tutor =>
-                tutor.index === tutorindex
-                    ? { ...tutor, status: tutor.status === 'Active' ? 'Locked' : 'Active' }
-                    : tutor
-            )
-        );
+    const pageSize = 5;
+
+    const handleApiError = (err, fallbackMessage) => {
+        const message = err?.response?.data?.message || fallbackMessage;
+        setError(message);
+
+        if (err?.response?.status === 401 || err?.response?.status === 403) {
+            alert('Bạn không có quyền thực hiện chức năng này. Vui lòng đăng nhập bằng tài khoản quản trị.');
+        }
     };
 
-    // const handleAddTutor = () => {
-    //     setEditingTutor(null);
-    //     setShowTutorInfoModal(true);
-    // };
+    const fetchTutors = async (pageIndex = page) => {
+        setLoading(true);
+        setError('');
+        try {
+            const data = await getTutors(pageIndex, pageSize);
+            const items = data?.items || [];
 
-    const handleViewDetail = () => {
+            setTutors(
+                items.map((item, idx) => ({
+                    id: item.tutor_id,
+                    userId: item.user_id,
+                    fullName: item.full_name,
+                    subjects: item.subjects || [],
+                    rating: item.average_rating ?? 0,
+                    status: item.status,
+                    updatedAt: item.updated_at,
+                    rowNumber: pageIndex * pageSize + idx + 1,
+                }))
+            );
+
+            setPagination({
+                size: data?.size ?? pageSize,
+                totalPages: data?.totalPages ?? 1,
+                totalItems: data?.totalItems ?? items.length,
+            });
+        } catch (err) {
+            handleApiError(err, 'Không thể tải danh sách gia sư');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchTutors(0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        fetchTutors(page);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page]);
+
+    const handleLockToggle = async (tutor) => {
+        const action = tutor.status === 'ACTIVE' ? 'khóa' : 'mở khóa';
+        if (!window.confirm(`Xác nhận ${action} tài khoản gia sư ${tutor.fullName}?`)) return;
+
+        try {
+            const result = await toggleTutorStatus(tutor.id);
+            const newStatus = result?.newStatus || (tutor.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE');
+            setTutors((prev) => prev.map((item) => (item.id === tutor.id ? { ...item, status: newStatus } : item)));
+        } catch (err) {
+            handleApiError(err, 'Không thể cập nhật trạng thái gia sư');
+        }
+    };
+
+    const handleViewDetail = async (tutor) => {
         setShowTutorInfoModal(true);
-    };
-
-    // const handleSaveTutor = (tutorData) => {
-    //     if (editingTutor) {
-    //         // Update existing tutor
-    //         setTutors(prevTutors =>
-    //             prevTutors.map(tutor =>
-    //                 tutor.index === editingTutor.index ? { ...tutorData, index: tutor.index, rating: tutor.rating } : tutor
-    //             )
-    //         );
-    //         alert('Đã cập nhật thông tin gia sư!');
-    //     } else {
-    //         // Add new tutor
-    //         const newTutor = {
-    //             ...tutorData,
-    //             index: `TUT${(tutors.length + 1).toString().padStart(3, '0')}`,
-    //             rating: 0,
-    //             joinDate: new Date().toISOString().split('T')[0]
-    //         };
-    //         setTutors(prevTutors => [...prevTutors, newTutor]);
-    //         alert('Đã thêm gia sư mới!');
-    //     }
-    // };
-
-    // const handleViewDetail = (tutor) => {
-    //     setSelectedTutor(tutor);
-    // };
-
-    const closeDetailModal = () => {
+        setDetailLoading(true);
         setSelectedTutor(null);
+
+        try {
+            const detail = await getTutorDetail(tutor.id);
+            const certificates = (detail?.certificates ?? detail?.pending_certificates ?? []).map((cert, idx) => ({
+                name: cert?.certificateName ?? cert?.name ?? cert?.title ?? `Chứng chỉ ${idx + 1}`,
+                files: (cert?.files ?? [])
+                    .map((f) => f?.fileUrl ?? f?.url ?? f?.file_url ?? f)
+                    .filter(Boolean),
+            }));
+            setSelectedTutor({
+                id: detail?.tutor_id,
+                userId: detail?.user_id,
+                fullName: detail?.full_name,
+                gender: detail?.gender,
+                email: detail?.email,
+                phone: detail?.phone_number,
+                address: detail?.address,
+                subjects: detail?.subjects || [],
+                currentLevel: detail?.educational_level,
+                certifications: certificates,
+                introduction: detail?.introduction,
+                pricePerHour: detail?.price_per_hour,
+                university: detail?.university,
+                status: detail?.status,
+                rating: detail?.average_rating,
+            });
+        } catch (err) {
+            handleApiError(err, 'Không thể tải thông tin gia sư');
+            setShowTutorInfoModal(false);
+        } finally {
+            setDetailLoading(false);
+        }
     };
 
-    const filteredTutors = tutors.filter(tutor => {
-        // Text search
-        const matchesSearch = tutor.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            tutor.index.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            tutor.subjects.some(subject => subject.toLowerCase().includes(searchTerm.toLowerCase()));
-        
-        // Status filter
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        const parsed = new Date(dateStr);
+        if (Number.isNaN(parsed)) return dateStr;
+        return parsed.toLocaleDateString('vi-VN');
+    };
+
+    const filteredTutors = tutors.filter((tutor) => {
+        const matchesSearch =
+            tutor.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            tutor.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (tutor.subjects || []).some((subject) => subject.toLowerCase().includes(searchTerm.toLowerCase()));
+
         const matchesStatus = statusFilter === 'all' || tutor.status === statusFilter;
-        
-        // Date filter
+
+        const updatedAt = tutor.updatedAt ? new Date(tutor.updatedAt) : null;
         let matchesDate = true;
         if (dateFilter.from) {
-            matchesDate = matchesDate && new Date(tutor.joinDate) >= new Date(dateFilter.from);
+            matchesDate = matchesDate && updatedAt && updatedAt >= new Date(dateFilter.from);
         }
         if (dateFilter.to) {
-            matchesDate = matchesDate && new Date(tutor.joinDate) <= new Date(dateFilter.to);
+            matchesDate = matchesDate && updatedAt && updatedAt <= new Date(dateFilter.to);
         }
-        
+
         return matchesSearch && matchesStatus && matchesDate;
     });
 
+    const changePage = (nextPage) => {
+        if (nextPage < 0 || nextPage >= pagination.totalPages) return;
+        setPage(nextPage);
+    };
+    console.log(selectedTutor)
     return (
         <div className={styles.listTutor}>
             <div className={styles.filterSection}>
@@ -182,8 +182,8 @@ function ListTutor() {
                             className={styles.filterSelect}
                         >
                             <option value="all">Tất cả</option>
-                            <option value="Active">Hoạt động</option>
-                            <option value="Locked">Bị khóa</option>
+                            <option value="ACTIVE">Hoạt động</option>
+                            <option value="INACTIVE">Bị khóa</option>
                         </select>
                     </div>
                     
@@ -209,6 +209,8 @@ function ListTutor() {
                 </div>
             </div>
 
+            {error && <div className={styles.error}>{error}</div>}
+
             <div className={styles.tableWrapper}>
                 <table className={styles.table}>
                     <thead>
@@ -223,15 +225,19 @@ function ListTutor() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredTutors.length > 0 ? (
+                        {loading ? (
+                            <tr>
+                                <td colSpan="7" className={styles.noData}>Đang tải dữ liệu...</td>
+                            </tr>
+                        ) : filteredTutors.length > 0 ? (
                             filteredTutors.map((tutor) => (
-                                <tr key={tutor.index}>
-                                    <td>{tutor.index}</td>
+                                <tr key={tutor.id || tutor.rowNumber}>
+                                    <td>{tutor.rowNumber}</td>
                                     <td className={styles.nameCell}>{tutor.fullName}</td>
                                     <td>
                                         <div className={styles.subjects}>
-                                            {tutor.subjects.map((subject, index) => (
-                                                <span key={index} className={styles.subjectTag}>
+                                            {(tutor.subjects || []).map((subject, index) => (
+                                                <span key={`${tutor.id}-${index}`} className={styles.subjectTag}>
                                                     {subject}
                                                 </span>
                                             ))}
@@ -239,17 +245,17 @@ function ListTutor() {
                                     </td>
                                     <td>
                                         <span className={styles.rating}>
-                                            ⭐ {tutor.rating.toFixed(1)}
+                                            ⭐ {(tutor.rating ?? 0).toFixed(1)}
                                         </span>
                                     </td>
-                                    <td>{new Date(tutor.joinDate).toLocaleDateString('vi-VN')}</td>
+                                    <td>{formatDate(tutor.updatedAt)}</td>
                                     <td>
                                         <span
                                             className={`${styles.status} ${
-                                                tutor.status === 'Active' ? styles.active : styles.locked
+                                                tutor.status === 'ACTIVE' ? styles.active : styles.locked
                                             }`}
                                         >
-                                            {tutor.status === 'Active' ? 'Hoạt động' : 'Bị khóa'}
+                                            {tutor.status === 'ACTIVE' ? 'Hoạt động' : 'Bị khóa'}
                                         </span>
                                     </td>
                                     <td>
@@ -264,13 +270,13 @@ function ListTutor() {
 
                                             <button
                                                 className={`${styles.iconButton} ${
-                                                    tutor.status === 'Locked' ? styles.unlock : styles.lock
+                                                    tutor.status === 'INACTIVE' ? styles.unlock : styles.lock
                                                 }`}
-                                                onClick={() => handleLockToggle(tutor.index)}
-                                                title={tutor.status === 'Active' ? 'Khóa tài khoản' : 'Mở khóa'}
+                                                onClick={() => handleLockToggle(tutor)}
+                                                title={tutor.status === 'ACTIVE' ? 'Khóa tài khoản' : 'Mở khóa'}
                                             >
                                                 <FontAwesomeIcon
-                                                    icon={tutor.status === 'Active' ? faLock : faUnlock}
+                                                    icon={tutor.status === 'ACTIVE' ? faLock : faUnlock}
                                                 />
                                             </button>
                                         </div>
@@ -279,7 +285,7 @@ function ListTutor() {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="6" className={styles.noData}>
+                                <td colSpan="7" className={styles.noData}>
                                     Không tìm thấy gia sư nào
                                 </td>
                             </tr>
@@ -287,65 +293,31 @@ function ListTutor() {
                     </tbody>
                 </table>
             </div>
-
-            {selectedTutor && (
-                <div className={styles.modalOverlay} onClick={closeDetailModal}>
-                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <h2>Chi tiết Gia sư</h2>
-                            <button className={styles.closeButton} onClick={closeDetailModal}>
-                                ×
-                            </button>
-                        </div>
-                        <div className={styles.modalBody}>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>index:</span>
-                                <span className={styles.value}>{selectedTutor.index}</span>
-                            </div>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>Họ và Tên:</span>
-                                <span className={styles.value}>{selectedTutor.fullName}</span>
-                            </div>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>Email:</span>
-                                <span className={styles.value}>{selectedTutor.email}</span>
-                            </div>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>Số điện thoại:</span>
-                                <span className={styles.value}>{selectedTutor.phone}</span>
-                            </div>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>Môn dạy:</span>
-                                <span className={styles.value}>{selectedTutor.subjects.join(', ')}</span>
-                            </div>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>Đánh giá:</span>
-                                <span className={styles.value}>⭐ {selectedTutor.rating.toFixed(1)}</span>
-                            </div>
-                            <div className={styles.detailRow}>
-                                <span className={styles.label}>Trạng thái:</span>
-                                <span
-                                    className={`${styles.statusBadge} ${
-                                        selectedTutor.status === 'Active' ? styles.active : styles.locked
-                                    }`}
-                                >
-                                    {selectedTutor.status === 'Active' ? 'Hoạt động' : 'Bị khóa'}
-                                </span>
-                            </div>
-                        </div>
-                        <div className={styles.modalFooter}>
-                            <Button variant="outline" onClick={closeDetailModal}>
-                                Đóng
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <div className={styles.pagination}>
+                <button
+                    className={styles.pageButton}
+                    onClick={() => changePage(page - 1)}
+                    disabled={page === 0 || loading}
+                >
+                    Trang trước
+                </button>
+                <span className={styles.pageInfo}>
+                    Trang {page + 1} / {pagination.totalPages || 1}
+                </span>
+                <button
+                    className={styles.pageButton}
+                    onClick={() => changePage(page + 1)}
+                    disabled={page + 1 >= pagination.totalPages || loading}
+                >
+                    Trang sau
+                </button>
+            </div>
 
             <TutorInfoModal
                 isOpen={showTutorInfoModal}
                 onClose={() => setShowTutorInfoModal(false)}
-                tutorData={editingTutor}
+                tutorData={selectedTutor}
+                isLoading={detailLoading}
             />
         </div>
     );
