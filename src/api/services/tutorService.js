@@ -88,6 +88,7 @@ export const updatePersonalInfo = async (payload) => {
 export const fetchEducationInfo = async () => {
   try {
     const response = await axiosInstance.get('/tutors/profile/education');
+    console.log('fetchEducationInfo response:', response.data?.result); 
     return response.data.result;
   } catch (error) {
     console.error('Error fetching education info:', error);
@@ -97,12 +98,19 @@ export const fetchEducationInfo = async () => {
 // ========================
 // 8. Cập nhật thông tin trình độ học vấn của gia sư (Update Tutor Education Info)
 // ========================
-export const updateEducationInfo = async (payload) => {
+export const updateEducationInfo = async (data, files = []) => {
   try {
-    const response = await axiosInstance.put('/tutors/profile/education', payload);
-    return response.data.result;
+    const form = new FormData();
+    form.append('data', JSON.stringify(data));
+    files.forEach(file => {
+      form.append('certificateFiles', file);
+    });
+
+    const response = await axiosInstance.put('/tutors/profile/education', form);
+    console.log('updateEducationInfo response:', response.data?.result);
+    return response.data?.result;
   } catch (error) {
-    console.error('Error updating education info:', error);
+    console.error('Error updating education info:', error?.response?.data || error);
     throw error;
   }
 };
@@ -229,9 +237,9 @@ export const createAvailability = async ({ dayOfWeek, startTime, endTime, status
   }
 };
 
-export const updateAvailability = async (slotId, { dayOfWeek, startTime, endTime, status }) => {
+export const updateAvailability = async (slotId, { startTime, endTime, status }) => {
   try {
-    const payload = { dayOfWeek, timeRange: `${startTime}-${endTime}`, status };
+    const payload = { timeRange: `${startTime}-${endTime}`, status };
     const response = await axiosInstance.put(`/tutors/schedule/availability/${slotId}`, payload);
     return response.data.result;
   } catch (error) {
@@ -246,6 +254,17 @@ export const deleteAvailability = async (slotId) => {
     return response.data.result;
   } catch (error) {
     console.error('Error deleting tutor availability:', error);
+    throw error;
+  }
+};
+
+export const fetchTeachingSchedule = async () => {
+  try {
+    const response = await axiosInstance.get('/tutors/schedule/teaching');
+    console.log('fetchTeachingSchedule response:', response.data?.result);
+    return response.data.result;
+  } catch (error) {
+    console.error('Error fetching teaching schedule:', error);
     throw error;
   }
 };

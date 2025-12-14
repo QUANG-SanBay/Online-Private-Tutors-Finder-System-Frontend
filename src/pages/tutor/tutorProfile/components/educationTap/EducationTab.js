@@ -14,6 +14,10 @@ function EducationTab({
     onCertificateFileChange,
     onRemoveCertificate,
 }) {
+    const visibleCertificates = certificates
+        .map((c, idx) => ({ ...c, _origIdx: idx }))
+        .filter(c => !c.deleted);
+
     return (
         <div className={styles.section}>
             <h2 className={styles.sectionTitle}>Học vấn & Chứng chỉ</h2>
@@ -52,22 +56,30 @@ function EducationTab({
 
             <div className={styles.proofFile}>
                 <h3>Chứng chỉ & Bằng cấp <span>{isEditing ? "(Lưu ý: Không thêm file mới vào nếu không có thay đổi)" : ""}</span></h3>
+                <p className={styles.reviewNote}>Nếu upload file mới, admin sẽ duyệt lại.</p>
                 <div className={styles.certList}>
-                    {certificates.length === 0 && <p className={styles.empty}>Chưa có chứng chỉ</p>}
-                    {certificates.map((cert, idx) => (
-                        <div key={cert.id || idx} className={styles.certRow}>
+                    {visibleCertificates.length === 0 && <p className={styles.empty}>Chưa có chứng chỉ</p>}
+                    {visibleCertificates.map((cert) => (
+                        <div key={cert.id || cert._origIdx} className={styles.certRow}>
                             <div className={styles.certInfo}>
                                 <FormGroup
                                     label="Tên chứng chỉ"
                                     placeholder='Ví dụ: Bằng cử nhân Toán học'
                                     icon={faFileAlt}
-                                    name={`certificate-${idx}`}
+                                    name={`certificate-${cert._origIdx}`}
                                     value={cert.name}
-                                    onChange={(e) => onCertificateNameChange(idx, e.target.value)}
+                                    onChange={(e) => onCertificateNameChange(cert._origIdx, e.target.value)}
                                     disabled={!isEditing}
                                     required
                                     className={styles.formGroup}
                                 />
+                                {cert.status && (
+                                    <span
+                                        className={`${styles.certStatus} ${cert.status === 'PENDING' ? styles.pending : styles.approved}`}
+                                    >
+                                        {cert.status === 'PENDING' ? 'Chờ duyệt' : cert.status}
+                                    </span>
+                                )}
                                 {cert.fileUrl && !cert.file && (
                                     <Button
                                         size="small"
@@ -88,14 +100,14 @@ function EducationTab({
                                     <input
                                         type="file"
                                         accept=".pdf"
-                                        onChange={(e) => onCertificateFileChange(idx, e.target.files?.[0] || null)}
+                                        onChange={(e) => onCertificateFileChange(cert._origIdx, e.target.files?.[0] || null)}
                                         className={styles.fileInput}
                                     />
                                     <Button
                                         type="button"
                                         size="small"
                                         className={styles.removeCertBtn}
-                                        onClick={() => onRemoveCertificate(idx)}
+                                        onClick={() => onRemoveCertificate(cert._origIdx)}
                                         title="Xóa chứng chỉ"
                                         variant="danger"
                                     >

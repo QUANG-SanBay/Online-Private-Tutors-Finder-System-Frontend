@@ -26,6 +26,8 @@
     display: flex;
     flex-wrap: wrap;
     list-style: none;
+    max-height: 180px;
+    overflow-y: auto;
 }
 .notificationItem{
     width: 100%;

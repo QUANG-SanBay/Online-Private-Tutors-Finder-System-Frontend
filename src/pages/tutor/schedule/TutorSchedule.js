@@ -9,7 +9,13 @@ import ConfirmDialog from "./components/confirmDialog/ConfirmDialog";
 import ScheduleTabs from "./components/scheduleTabs/ScheduleTabs";
 
 import HeaderPage from "~/components/headerPage/HeaderPage";
-import { fetchAvailabilities, createAvailability, updateAvailability, deleteAvailability } from "~/api/services/tutorService";
+import {
+  fetchAvailabilities,
+  fetchTeachingSchedule,
+  createAvailability,
+  updateAvailability,
+  deleteAvailability,
+} from "~/api/services/tutorService";
 
 const dayViToEnum = {
   "Thứ 2": "MONDAY",
@@ -31,68 +37,13 @@ const enumToDayVi = {
   SUNDAY: "Chủ nhật",
 };
 
-const statusLabel = { AVAILABLE: "Rảnh", CANCELLED: "Không rảnh", BOOKED: "Đã đặt" };
-
-// Mock schedule data for tutor - showing students instead of tutors
-const scheduleData = [
-  {
-    date: "2025-11-04",
-    session: "Sáng",
-    shift: "Ca 1",
-    subject: "Toán học",
-    time: "08:00 - 09:30",
-    student: "Nguyễn Văn A",
-  },
-  {
-    date: "2025-11-04",
-    session: "Sáng",
-    shift: "Ca 2",
-    subject: "Toán học",
-    time: "09:30 - 11:00",
-    student: "Trần Thị B",
-  },
-  {
-    date: "2025-11-05",
-    session: "Chiều",
-    shift: "Ca 3",
-    subject: "Toán nâng cao",
-    time: "12:30 - 15:00",
-    student: "Lê Văn C",
-  },
-  {
-    date: "2025-11-06",
-    session: "Chiều",
-    shift: "Ca 4",
-    subject: "Toán học",
-    time: "15:00 - 16:30",
-    student: "Phạm Thị D",
-    status: "pause", 
-  },
-  {
-    date: "2025-11-05",
-    session: "Tối",
-    shift: "Ca 5",
-    subject: "Toán học",
-    time: "19:00 - 20:30",
-    student: "Hoàng Văn E",
-  },
-  {
-    date: "2025-11-07",
-    session: "Sáng",
-    shift: "Ca 1",
-    subject: "Toán học",
-    time: "08:00 - 09:30",
-    student: "Nguyễn Thị F",
-  },
-  {
-    date: "2025-11-08",
-    session: "Chiều",
-    shift: "Ca 4",
-    subject: "Toán nâng cao",
-    time: "15:00 - 16:30",
-    student: "Võ Văn G",
-  },
-];
+const sessionOf = (startTime = "") => {
+  const [h] = startTime.split(":").map(Number);
+  if (Number.isNaN(h)) return "";
+  if (h < 12) return "Sáng";
+  if (h < 18) return "Chiều";
+  return "Tối";
+};
 
 export default function TutorSchedule() {
   const [activeTab, setActiveTab] = useState('schedule');
@@ -103,6 +54,7 @@ export default function TutorSchedule() {
   const [deletingIndex, setDeletingIndex] = useState(null);
   const [availabilities, setAvailabilities] = useState([]);
   const [loadingAvailability, setLoadingAvailability] = useState(false);
+  const [teachingSchedule, setTeachingSchedule] = useState([]);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(currentDate);
@@ -112,27 +64,28 @@ export default function TutorSchedule() {
     return d;
   });
 
-  const mapApiToUi = (list = []) => {
-    const dedup = new Map();
+  const mapApiToUi = (list = []) => list.map((item) => {
+    const isoToHm = (s = '') => (s.includes('T') ? s.split('T')[1].slice(0, 5) : s);
+    return {
+      id: item.availabilityId || item.id,
+      dayOfWeek: enumToDayVi[item.dayOfWeek] || item.dayOfWeek,
+      startTime: isoToHm(item.startTime),
+      endTime: isoToHm(item.endTime),
+      status: item.status || 'AVAILABLE',
+      startDate: item.startDate,
+      endDate: item.endDate,
+    };
+  });
 
-    list.forEach((item) => {
-      const timeRange = (item.timeRange || '').trim();
-      const [rawStartR, rawEndR] = timeRange.split('-');
-      const rawStart = rawStartR || item.startTime || '';
-      const rawEnd = rawEndR || item.endTime || '';
-      const isoToHm = (s) => (s.includes('T') ? s.split('T')[1].slice(0, 5) : s);
-      const startTime = isoToHm(rawStart.trim());
-      const endTime = isoToHm(rawEnd.trim());
-      const id = item.availabilityId || item.id;
-      const dayOfWeek = enumToDayVi[item.dayOfWeek] || item.dayOfWeek;
-      const status = item.status || 'AVAILABLE';
-
-      const key = `${id || ''}-${dayOfWeek}-${startTime}-${endTime}-${status}`;
-      dedup.set(key, { id, dayOfWeek, startTime, endTime, status });
-    });
-
-    return Array.from(dedup.values());
-  };
+  const mapTeachingToUi = (list = []) => list.map((x) => ({
+    date: x.studyDate,
+    session: sessionOf(x.startTime),
+    shift: `${x.startTime} - ${x.endTime}`,
+    subject: x.subjectName,
+    time: `${x.startTime} - ${x.endTime}`,
+    student: x.learnerName,
+    status: x.classStatus,
+  }));
 
   const refreshAvailabilities = async () => {
     try {
@@ -149,6 +102,20 @@ export default function TutorSchedule() {
 
   useEffect(() => {
     refreshAvailabilities();
+  }, []);
+
+  useEffect(() => {
+    const loadTeachingSchedule = async () => {
+      try {
+        const list = await fetchTeachingSchedule();
+        setTeachingSchedule(mapTeachingToUi(list || []));
+      } catch (e) {
+        console.error(e);
+        alert('Tải lịch dạy thất bại');
+      }
+    };
+
+    loadTeachingSchedule();
   }, []);
 
   const go = (days) => {
@@ -195,8 +162,14 @@ export default function TutorSchedule() {
   };
 
   const handleSaveAvailability = async (data) => {
-    const payload = {
+    const createPayload = {
       dayOfWeek: dayViToEnum[data.dayOfWeek] || data.dayOfWeek,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      status: data.status || 'AVAILABLE',
+    };
+
+    const updatePayload = {
       startTime: data.startTime,
       endTime: data.endTime,
       status: data.status || 'AVAILABLE',
@@ -204,9 +177,9 @@ export default function TutorSchedule() {
 
     try {
       if (editingAvailability?.id) {
-        await updateAvailability(editingAvailability.id, payload);
+        await updateAvailability(editingAvailability.id, updatePayload);
       } else {
-        await createAvailability(payload);
+        await createAvailability(createPayload);
       }
       await refreshAvailabilities();
       setShowAvailabilityModal(false);
@@ -278,7 +251,7 @@ export default function TutorSchedule() {
         <div className={styles.session}>Sáng</div>
         {weekDays.map((day, i) => (
           <div key={i} className={styles.cell}>
-            {scheduleData
+            {teachingSchedule
               .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Sáng")
               .map((x, i) => (<TutorEventCard key={i} data={x} />))
             }
@@ -289,7 +262,7 @@ export default function TutorSchedule() {
         <div className={styles.session}>Chiều</div>
         {weekDays.map((day, i) => (
           <div key={i} className={styles.cell}>
-            {scheduleData
+            {teachingSchedule
               .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Chiều")
               .map((x, i) => (<TutorEventCard key={i} data={x} />))
             }
@@ -300,7 +273,7 @@ export default function TutorSchedule() {
         <div className={styles.session}>Tối</div>
         {weekDays.map((day, i) => (
           <div key={i} className={styles.cell}>
-            {scheduleData
+            {teachingSchedule
               .filter(x => x.date === format(day, "yyyy-MM-dd") && x.session === "Tối")
               .map((x, i) => (<TutorEventCard key={i} data={x} />))
             }
