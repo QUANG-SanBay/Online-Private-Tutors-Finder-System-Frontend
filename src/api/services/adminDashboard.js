@@ -6,16 +6,11 @@ export const getDashboard = async () => {
       timeout: 15000,
     });
 
-    const data = res.data?.result;  // ⭐ LẤY ĐÚNG THẰNG result
-
-    if (!data) {
-      console.error("❌ Backend không trả result");
-      return null;
-    }
+    const data = res.data?.result;
+    if (!data) return null;
 
     return {
-      raw: data, // để debug
-
+      // ===== Tổng quan =====
       overview: {
         totalLearners: data.totalLearners ?? 0,
         totalTutors: data.totalTutors ?? 0,
@@ -23,22 +18,30 @@ export const getDashboard = async () => {
         totalEbooks: data.totalEbooks ?? 0,
       },
 
+      // ===== Ebook =====
       ebookStats: {
         SACH_GIAO_KHOA: data.ebookByType?.SACH_GIAO_KHOA ?? 0,
         TAI_LIEU: data.ebookByType?.TAI_LIEU ?? 0,
         DE_THI_THAM_KHAO: data.ebookByType?.DE_THI_THAM_KHAO ?? 0,
       },
 
+      // ===== Top môn được yêu cầu =====
       topRequestedSubjects: data.topRequestedSubjects ?? [],
 
+      // ===== Top môn có nhiều gia sư ===== ✅ FIX
+      topSubjectsByTutor: data.topSubjectsByTutor ?? [],
+
+      // ===== Rating =====
+      ratingDistribution: data.ratingDistribution ?? {},
+
+      // ===== Request status =====
+      requestStatusDistribution: data.requestStatusDistribution ?? {},
+
+      // ===== Tutor verification =====
       tutorVerification: {
         approved: data.tutorVerificationStatus?.APPROVED ?? 0,
         pending: data.tutorVerificationStatus?.PENDING ?? 0,
       },
-
-      ratingDistribution: data.ratingDistribution ?? {},
-
-      requestStatusDistribution: data.requestStatusDistribution ?? {},
     };
 
   } catch (err) {

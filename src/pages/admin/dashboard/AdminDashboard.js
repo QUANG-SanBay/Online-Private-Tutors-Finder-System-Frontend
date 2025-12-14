@@ -21,9 +21,10 @@ const AdminDashboard = () => {
   const [ebookData, setEbookData] = useState(null);
   const [topRequestedSubjectsData, setTopRequestedSubjectsData] = useState(null);
   const [tutorVerificationData, setTutorVerificationData] = useState(null);
+  const [topTutorSubjectsData, setTopTutorSubjectsData] = useState(null);
+  const [ratingDistributionData, setRatingDistributionData] = useState(null);
+  const [requestStatusData, setRequestStatusData] = useState(null);
 
-  // BE chưa trả danh sách yêu cầu → tạm để []
-  const [classRequests, setClassRequests] = useState([]);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -41,7 +42,7 @@ const AdminDashboard = () => {
           { title: "Tổng số Ebook", value: ov.totalEbooks, color: "#9C27B0" },
         ]);
 
-        // ============== 2. Ebook chart ==============
+        // ============== 2. Ebook theo loại ==============
         const e = res.ebookStats;
 
         setEbookData({
@@ -60,7 +61,7 @@ const AdminDashboard = () => {
           ],
         });
 
-        // ============== 3. Top requested subjects ==============
+        // ============== 3. Top Môn học được yêu cầu nhiều nhất ==============
         const topSub = res.topRequestedSubjects;
 
         setTopRequestedSubjectsData({
@@ -75,7 +76,7 @@ const AdminDashboard = () => {
           ],
         });
 
-        // ============== 4. Tutor verification ==============
+        // ============== 4. Trạng thái xác minh gia sư ==============
         const verify = res.tutorVerification;
 
         setTutorVerificationData({
@@ -89,8 +90,55 @@ const AdminDashboard = () => {
           ],
         });
 
-        // ============== 5. Class requests ==============
-        setClassRequests([]); // BE chưa trả → để trống
+        // ============== 5. Top môn học có nhiều gia sư dạy ==============
+        const topTutorSubjects = res.topSubjectsByTutor;
+
+        setTopTutorSubjectsData({
+          labels: topTutorSubjects.map(s => s.subjectName),
+          datasets: [
+            {
+              label: "Số gia sư",
+              data: topTutorSubjects.map(s => s.count),
+              backgroundColor: "#4CAF50",
+              borderRadius: 8,
+            },
+          ],
+        });
+
+        // ============== 6. Phân bố đánh giá ==============
+        const rating = res.ratingDistribution;
+
+        setRatingDistributionData({
+          labels: ["1⭐", "2⭐", "3⭐", "4⭐", "5⭐"],
+          datasets: [
+            {
+              label: "Số lượng đánh giá",
+              data: [
+                rating[1],
+                rating[2],
+                rating[3],
+                rating[4],
+                rating[5],
+              ],
+              backgroundColor: "#2196F3",
+              borderRadius: 8,
+            },
+          ],
+        });
+
+        // ============== 7. Phân bố trạng thái yêu cầu ==============
+        const req = res.requestStatusDistribution;
+
+        setRequestStatusData({
+          labels: ["Chờ xử lý", "Đã xác nhận", "Đã hủy"],
+          datasets: [
+            {
+              data: [req.PENDING, req.CONFIRMED, req.CANCELLED],
+              backgroundColor: ["#FFC107", "#4CAF50", "#F44336"],
+            },
+          ],
+        });
+
 
       } catch (err) {
         console.error("Dashboard load error:", err);
@@ -129,38 +177,29 @@ const AdminDashboard = () => {
           <h3>Trạng thái xác minh gia sư</h3>
           {tutorVerificationData && <Doughnut data={tutorVerificationData} />}
         </div>
-      </div>
 
-      {/* Bảng dữ liệu */}
-      <div className={styles.tableContainer}>
-        <h3>Danh sách yêu cầu học mới</h3>
+        <div className={`${styles.chart} ${styles.analyticsChart}`}>
+          <h3 className={styles.chartTitleGreen}>
+            Top 5 môn học có nhiều gia sư nhất
+          </h3>
+          {topTutorSubjectsData && <Bar data={topTutorSubjectsData} />}
+        </div>
 
-        {classRequests.length === 0 ? (
-          <p>Chưa có dữ liệu.</p>
-        ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>STT</th>
-                <th>Học viên</th>
-                <th>Môn học</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
+        <div className={`${styles.chart} ${styles.analyticsChart}`}>
+          <h3 className={styles.chartTitleBlue}>
+            Phân bố rating gia sư
+          </h3>
+          {ratingDistributionData && <Bar data={ratingDistributionData} />}
+        </div>
 
-            <tbody>
-              {classRequests.map((req, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{req.learnerName}</td>
-                  <td>{req.subjectName}</td>
-                  <td>{req.status}</td>
-                </tr>
-              ))}
-            </tbody>
+        <div className={`${styles.chart} ${styles.analyticsChart}`}>
+          <h3 className={styles.chartTitleOrange}>
+            Trạng thái yêu cầu học
+          </h3>
+          {requestStatusData && <Doughnut data={requestStatusData} />}
+        </div>
 
-          </table>
-        )}
+
       </div>
 
     </div>

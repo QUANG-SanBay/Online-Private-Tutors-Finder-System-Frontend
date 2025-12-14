@@ -1,31 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "~/components/Learner/profile/Profile.module.scss";
-import avt from '~/assets/imgs/img.jpg'
-
+import avt from "~/assets/imgs/img.jpg";
+import { getLearnerProfile } from "~/api/services/leanerService";
 
 // ----- Profile Tab -----
-function ProfileTab({ user, onSave }) {
-  const [form, setForm] = useState({ ...user });
-  const [editing, setEditing] = useState(false);
+function ProfileTab({ onSave }) {
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    email: "",
+  });
 
-return (
+  const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // ===== LOAD PROFILE FROM API =====
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await getLearnerProfile();
+        if (!data) return;
+
+        // ⭐ MAP DATA TỪ BE → FORM FE
+        setForm({
+          name: data.fullName || "",
+          phone: data.phoneNumber || "",
+          address: data.address || "",
+          email: data.email || "",
+        });
+      } catch (err) {
+        console.error("Load profile error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  if (loading) return <div>Đang tải thông tin...</div>;
+
+  return (
     <div className={styles.card}>
       {/* HEADER */}
       <div className={styles.header}>
         <div className={styles.avatarWrap}>
-          {form.avatar ? (
-            <img
-              src={avt}
-              className={styles.avatarImg}
-            />
-          ) : (
-            <div className={styles.avatarFallback}>
-              {form.name?.charAt(0).toUpperCase() || "U"}
-            </div>
-          )} 
+          <img src={avt} className={styles.avatarImg} alt="avatar" />
         </div>
 
-        <h2 className={styles.username}>{form.name}</h2>
+        <h2 className={styles.username}>{form.name || "Người học"}</h2>
+        <p style={{ color: "#666", fontSize: 14 }}>{form.email}</p>
       </div>
 
       {/* FORM */}
@@ -36,7 +61,9 @@ return (
             <input
               disabled={!editing}
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, name: e.target.value })
+              }
             />
           </div>
 
@@ -45,7 +72,9 @@ return (
             <input
               disabled={!editing}
               value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, phone: e.target.value })
+              }
             />
           </div>
 
@@ -54,7 +83,9 @@ return (
             <input
               disabled={!editing}
               value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, address: e.target.value })
+              }
             />
           </div>
         </div>
@@ -67,7 +98,6 @@ return (
                 className={`${styles.btn} ${styles.btnSecondary}`}
                 onClick={() => {
                   setEditing(false);
-                  setForm({ ...user });
                 }}
               >
                 Hủy
@@ -76,7 +106,11 @@ return (
               <button
                 className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={() => {
-                  onSave(form);
+                  onSave?.({
+                    fullName: form.name,
+                    phoneNumber: form.phone,
+                    address: form.address,
+                  });
                   setEditing(false);
                 }}
               >
@@ -98,4 +132,3 @@ return (
 }
 
 export default ProfileTab;
-

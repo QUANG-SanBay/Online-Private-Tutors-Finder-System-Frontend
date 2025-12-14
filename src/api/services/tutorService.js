@@ -1,5 +1,3 @@
-// src/services/tutorService.js
-
 import axiosInstance from "../client/axios";
 
 // ========================
