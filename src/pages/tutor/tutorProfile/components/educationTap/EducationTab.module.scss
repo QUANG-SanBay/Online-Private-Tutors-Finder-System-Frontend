@@ -37,6 +37,12 @@
             }
         }
 
+        .reviewNote {
+            margin: 0 0 1rem 0;
+            font-size: 1.3rem;
+            color: #666;
+        }
+
         ul {
             list-style: none;
             padding: 0;
@@ -64,6 +70,23 @@
     align-items: end;
     .formGroup{
         flex: 1;
+    }
+    .certStatus{
+        display: inline-block;
+        margin-left: 12px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 1.2rem;
+        line-height: 1;
+        text-transform: capitalize;
+    }
+    .pending{
+        background: #fff7e6;
+        color: #d46b08;
+    }
+    .approved{
+        background: #e6fffb;
+        color: #08979c;
     }
     .certLinkBtn{
         margin-left: 12px;

@@ -23,7 +23,6 @@ function MiniProfile({ className }) {
                 setTutorData(tutorInfo);
                 setError(null);
             } catch (err) {
-                console.error('Error fetching tutor data:', err);
                 setError(err.message || 'Lỗi khi tải dữ liệu gia sư');
             } finally {
                 setLoading(false);
@@ -52,7 +51,6 @@ function MiniProfile({ className }) {
             </div>
         );
     }
-    console.log('Tutor Data:', tutorData);
     return (
         <div className={clsx(styles.miniProfile, className)}>
             <div className={styles.miniProfileCtn}>

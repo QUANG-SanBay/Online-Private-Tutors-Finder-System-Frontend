@@ -12,6 +12,5 @@ export const getFeaturedTutors = async () => {
 
 export const getFeaturedEbooks = async () => {
 	const res = await axiosInstance.get('/public/home/featured-ebooks');
-    console.log('getFeaturedEbooks response:', res.data?.result);
 	return res.data?.result || [];
 };
